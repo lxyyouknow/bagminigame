@@ -1,0 +1,5 @@
+[
+  { "id": 1, "name": "普通", "color": "#d9e4ef", "attackMul": 1, "mergeNeed": 2, "nextQuality": 2 },
+  { "id": 2, "name": "精良", "color": "#45b7ff", "attackMul": 1.45, "mergeNeed": 2, "nextQuality": 3 },
+  { "id": 3, "name": "史诗", "color": "#a865ff", "attackMul": 2.05, "mergeNeed": 2, "nextQuality": 0 }
+]

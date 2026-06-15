@@ -1,0 +1,7 @@
+[
+  { "id": 301, "type": "armor", "value": 2, "duration": 6 },
+  { "id": 302, "type": "armor", "value": 4, "duration": 7 },
+  { "id": 303, "type": "heal", "value": 65, "duration": 0 },
+  { "id": 311, "type": "slow", "value": 0.35, "duration": 3 },
+  { "id": 312, "type": "slow", "value": 0.5, "duration": 4 }
+]

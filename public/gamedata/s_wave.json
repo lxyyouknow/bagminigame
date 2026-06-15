@@ -1,0 +1,16 @@
+[
+  { "waveGroupId": 101, "wave": 1, "time": 0.2, "monsterId": 1, "count": 6, "interval": 0.5, "spawn": "top", "rewardGold": 4 },
+  { "waveGroupId": 101, "wave": 2, "time": 7, "monsterId": 1, "count": 9, "interval": 0.38, "spawn": "spread", "rewardGold": 6 },
+  { "waveGroupId": 101, "wave": 3, "time": 15, "monsterId": 3, "count": 5, "interval": 0.5, "spawn": "spread", "rewardGold": 10 },
+  { "waveGroupId": 102, "wave": 1, "time": 0.2, "monsterId": 1, "count": 8, "interval": 0.4, "spawn": "top", "rewardGold": 5 },
+  { "waveGroupId": 102, "wave": 2, "time": 6, "monsterId": 2, "count": 10, "interval": 0.32, "spawn": "spread", "rewardGold": 7 },
+  { "waveGroupId": 102, "wave": 3, "time": 12, "monsterId": 3, "count": 8, "interval": 0.38, "spawn": "spread", "rewardGold": 9 },
+  { "waveGroupId": 102, "wave": 4, "time": 19, "monsterId": 4, "count": 6, "interval": 0.45, "spawn": "spread", "rewardGold": 12 },
+  { "waveGroupId": 102, "wave": 5, "time": 27, "monsterId": 2, "count": 16, "interval": 0.22, "spawn": "spread", "rewardGold": 16 },
+  { "waveGroupId": 103, "wave": 1, "time": 0.2, "monsterId": 1, "count": 10, "interval": 0.32, "spawn": "top", "rewardGold": 5 },
+  { "waveGroupId": 103, "wave": 2, "time": 6, "monsterId": 2, "count": 14, "interval": 0.25, "spawn": "spread", "rewardGold": 8 },
+  { "waveGroupId": 103, "wave": 3, "time": 12, "monsterId": 3, "count": 10, "interval": 0.32, "spawn": "spread", "rewardGold": 11 },
+  { "waveGroupId": 103, "wave": 4, "time": 19, "monsterId": 4, "count": 9, "interval": 0.36, "spawn": "spread", "rewardGold": 14 },
+  { "waveGroupId": 103, "wave": 5, "time": 27, "monsterId": 2, "count": 22, "interval": 0.18, "spawn": "spread", "rewardGold": 16 },
+  { "waveGroupId": 103, "wave": 6, "time": 36, "monsterId": 5, "count": 1, "interval": 1, "spawn": "top", "rewardGold": 35 }
+]

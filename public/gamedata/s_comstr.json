@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "confirmType": 1,
+    "title": "提示",
+    "content": "是否确认退出当前关卡，无法获得全部奖励",
+    "cancelText": "取消",
+    "confirmText": "确定"
+  },
+  {
+    "id": 2,
+    "confirmType": 2,
+    "title": "提示",
+    "content": "是否重新开始当前关卡，本次挑战进度会清空",
+    "cancelText": "取消",
+    "confirmText": "重来"
+  }
+]

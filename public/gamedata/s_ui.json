@@ -1,0 +1,16 @@
+[
+  { "key": "button_basic", "assetKey": "ui_button_basic", "desc": "普通小按钮底图，建议透明 PNG/WebP，可做九宫格切图", "defaultWidth": 122, "defaultHeight": 42 },
+  { "key": "button_yellow", "assetKey": "ui_button_yellow", "desc": "黄色主按钮底图，用于开始、确定、继续挑战", "defaultWidth": 176, "defaultHeight": 64 },
+  { "key": "button_blue", "assetKey": "ui_button_blue", "desc": "蓝色按钮底图，用于取消、设置等次级操作", "defaultWidth": 168, "defaultHeight": 58 },
+  { "key": "button_green", "assetKey": "ui_button_green", "desc": "绿色功能按钮底图，用于主页、广告收益等", "defaultWidth": 70, "defaultHeight": 64 },
+  { "key": "button_white", "assetKey": "ui_button_white", "desc": "白色左右切换按钮底图", "defaultWidth": 54, "defaultHeight": 64 },
+
+  { "key": "resource_energy_icon", "assetKey": "ui_res_energy", "desc": "主界面体力/能量图标", "defaultWidth": 38, "defaultHeight": 38 },
+  { "key": "resource_ticket_icon", "assetKey": "ui_res_ticket", "desc": "主界面门票/火箭道具图标", "defaultWidth": 38, "defaultHeight": 38 },
+  { "key": "resource_coin_icon", "assetKey": "ui_res_coin", "desc": "主界面金币/星币图标", "defaultWidth": 38, "defaultHeight": 38 },
+  { "key": "side_minigame_icon", "assetKey": "ui_side_minigame", "desc": "主界面右侧小游戏入口图标", "defaultWidth": 52, "defaultHeight": 52 },
+  { "key": "side_game_circle_icon", "assetKey": "ui_side_game_circle", "desc": "主界面右侧游戏圈入口图标", "defaultWidth": 52, "defaultHeight": 52 },
+  { "key": "rogue_option_icon", "assetKey": "ui_rogue_option", "desc": "局内升级三选一卡牌默认图标", "defaultWidth": 54, "defaultHeight": 54 },
+  { "key": "result_exp_icon", "assetKey": "ui_result_exp", "desc": "结算 EXP 奖励图标", "defaultWidth": 54, "defaultHeight": 54 },
+  { "key": "result_coin_icon", "assetKey": "ui_result_coin", "desc": "结算金币奖励图标", "defaultWidth": 54, "defaultHeight": 54 }
+]

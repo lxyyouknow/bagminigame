@@ -1,0 +1,7 @@
+[
+  { "key": "bag_refresh_free_count", "value": 3, "adPlacement": "", "desc": "每关免费刷新次数" },
+  { "key": "bag_refresh_gold_cost", "value": 15, "adPlacement": "bag_refresh", "desc": "金币刷新价格" },
+  { "key": "bag_expand_gold_cost", "value": 30, "adPlacement": "bag_expand", "desc": "扩展一格/一列价格" },
+  { "key": "rogue_refresh_free_count", "value": 1, "adPlacement": "rogue_refresh", "desc": "升级选项免费刷新次数" },
+  { "key": "exp_need_base", "value": 12, "adPlacement": "", "desc": "升级经验基础值" }
+]

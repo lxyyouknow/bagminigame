@@ -1,0 +1,11 @@
+[
+  { "id": 1, "poolId": 101, "title": "精准打击", "desc": "所有武器攻击 +18%", "icon": "atk", "weight": 30, "effectType": "attackMul", "effectTarget": "all", "effectValue": 1.18, "maxStack": 5 },
+  { "id": 2, "poolId": 101, "title": "快速装填", "desc": "所有武器 CD -12%", "icon": "cd", "weight": 25, "effectType": "cdMul", "effectTarget": "all", "effectValue": 0.88, "maxStack": 4 },
+  { "id": 3, "poolId": 101, "title": "急救补给", "desc": "立即恢复 160 生命", "icon": "heal", "weight": 20, "effectType": "heal", "effectTarget": "base", "effectValue": 160, "maxStack": 99 },
+  { "id": 4, "poolId": 102, "title": "爆破专精", "desc": "范围技能半径 +18%", "icon": "aoe", "weight": 22, "effectType": "radiusMul", "effectTarget": "aoe", "effectValue": 1.18, "maxStack": 4 },
+  { "id": 5, "poolId": 102, "title": "毒雾强化", "desc": "减速效果更强，伤害 +15%", "icon": "poison", "weight": 22, "effectType": "dotBoost", "effectTarget": "dot", "effectValue": 1.15, "maxStack": 4 },
+  { "id": 6, "poolId": 102, "title": "钢板加固", "desc": "护甲 +4", "icon": "armor", "weight": 22, "effectType": "armorAdd", "effectTarget": "base", "effectValue": 4, "maxStack": 5 },
+  { "id": 7, "poolId": 103, "title": "紫晶共鸣", "desc": "史诗武器攻击 +35%", "icon": "purple", "weight": 18, "effectType": "qualityAttackMul", "effectTarget": "3", "effectValue": 1.35, "maxStack": 3 },
+  { "id": 8, "poolId": 103, "title": "炮台过载", "desc": "所有武器攻击 +22%，CD -8%", "icon": "overload", "weight": 16, "effectType": "overload", "effectTarget": "all", "effectValue": 1.22, "maxStack": 3 },
+  { "id": 9, "poolId": 103, "title": "堡垒维修", "desc": "恢复 220 生命，护甲 +2", "icon": "repair", "weight": 18, "effectType": "repair", "effectTarget": "base", "effectValue": 220, "maxStack": 99 }
+]

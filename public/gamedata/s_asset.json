@@ -1,0 +1,36 @@
+[
+  { "key": "ui_loading_bg", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" },
+  { "key": "atlas_ui_main", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" },
+  { "key": "atlas_battle_main", "type": "generated", "url": "", "preloadGroup": "battle", "fallbackKey": "" },
+
+  { "key": "ui_button_basic", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "" },
+  { "key": "ui_button_yellow", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
+  { "key": "ui_button_blue", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
+  { "key": "ui_button_green", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
+  { "key": "ui_button_white", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
+
+  { "key": "ui_res_energy", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_res_ticket", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_res_coin", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_side_minigame", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_side_game_circle", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_rogue_option", "type": "image", "url": "", "preloadGroup": "battle", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_result_exp", "type": "image", "url": "", "preloadGroup": "battle", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_result_coin", "type": "image", "url": "", "preloadGroup": "battle", "fallbackKey": "placeholder_icon" },
+
+  { "key": "level_map_1", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "" },
+  { "key": "level_map_2", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_1" },
+  { "key": "level_map_3", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_1" },
+  { "key": "level_map_2_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_2" },
+  { "key": "level_map_3_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_3" },
+
+  { "key": "weapon_ball_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_bat_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_spear_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_shield_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_bomb_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_staff_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+
+  { "key": "placeholder_enemy", "type": "generated", "url": "", "preloadGroup": "battle", "fallbackKey": "" },
+  { "key": "placeholder_icon", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" }
+]
