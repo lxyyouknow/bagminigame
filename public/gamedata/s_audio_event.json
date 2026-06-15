@@ -1,0 +1,19 @@
+[
+  { "event": "music_main", "audioKey": "bgm_main", "category": "music", "cooldownMs": 0, "desc": "进入选关/主界面" },
+  { "event": "music_battle", "audioKey": "bgm_battle", "category": "music", "cooldownMs": 0, "desc": "进入普通战斗" },
+  { "event": "music_boss", "audioKey": "bgm_boss", "category": "music", "cooldownMs": 0, "desc": "进入 Boss 战，当前预留" },
+
+  { "event": "ui_click", "audioKey": "sfx_ui_click", "category": "sfx", "cooldownMs": 35, "desc": "所有按钮点击" },
+  { "event": "bag_place", "audioKey": "sfx_bag_place", "category": "sfx", "cooldownMs": 60, "desc": "背包放置成功" },
+  { "event": "bag_invalid", "audioKey": "sfx_bag_invalid", "category": "sfx", "cooldownMs": 120, "desc": "背包非法放置" },
+  { "event": "bag_merge", "audioKey": "sfx_bag_merge", "category": "sfx", "cooldownMs": 80, "desc": "背包合成成功" },
+  { "event": "bag_refresh", "audioKey": "sfx_bag_refresh", "category": "sfx", "cooldownMs": 120, "desc": "候选区刷新" },
+  { "event": "bag_expand", "audioKey": "sfx_bag_expand", "category": "sfx", "cooldownMs": 120, "desc": "背包扩格" },
+
+  { "event": "battle_shoot", "audioKey": "sfx_battle_shoot", "category": "sfx", "cooldownMs": 80, "desc": "普通投射物发射" },
+  { "event": "battle_hit", "audioKey": "sfx_battle_hit", "category": "sfx", "cooldownMs": 70, "desc": "命中怪物" },
+  { "event": "battle_cast", "audioKey": "sfx_battle_cast", "category": "sfx", "cooldownMs": 120, "desc": "范围技能释放" },
+  { "event": "battle_level_up", "audioKey": "sfx_battle_level_up", "category": "sfx", "cooldownMs": 300, "desc": "升级三选一弹窗" },
+  { "event": "result_win", "audioKey": "sfx_result_win", "category": "sfx", "cooldownMs": 500, "desc": "胜利结算" },
+  { "event": "result_lose", "audioKey": "sfx_result_lose", "category": "sfx", "cooldownMs": 500, "desc": "失败结算" }
+]

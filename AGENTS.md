@@ -168,6 +168,15 @@ public/
 
 - 数据、数值、关卡、武器、怪物、肉鸽、经济：读 `DATA_DESIGN.md`。
 - 美术换皮、UI 图片、关卡图、武器图标、怪物动作、攻击特效：读 `ART_PIPELINE.md`。
+- 音频、BGM、按钮音、战斗音效、音量设置、上线小游戏音频限制：读 `AUDIO_DESIGN.md`。
+
+项目根目录已经改为英文 ASCII 路径：
+
+```text
+/Users/lxy/MiniGameWork/backpack-mini-game
+```
+
+原因：中文路径对当前 H5 构建产物上线 TikTok 不构成直接影响，但后续接 CI、TikTok playable 打包脚本、Cocos/Godot 迁移、Windows 协作、第三方 SDK 或命令行工具时，英文路径更稳。
 
 已完成的玩法闭环：
 
@@ -191,12 +200,48 @@ public/
 - `WndRogueOption`：局内升级三选一。
 - `WndResult`：结算界面。
 
+当前源码目录结构：
+
+```text
+src/
+  main.ts                  # 只负责注册场景导航和启动 Loading
+  types.ts                 # 全局数据和运行时类型
+  core/
+    runtime.ts             # Pixi Application、全局 service 单例、setScene
+    navigation.ts          # 场景跳转注册，避免窗口/场景互相循环引用
+  data/
+    GameDataManager.ts     # 所有 gamedata 表读取和查询
+  services/
+    AdService.ts           # 广告 mock
+    AssetManager.ts        # 图片/图集资源加载
+    AudioManager.ts        # BGM/SFX/音量设置
+  utils/
+    display.ts             # 通用绘制、按钮、图标、拖拽点转换、随机权重
+  windows/
+    GameWindow.ts
+    WndConfirm.ts
+    WndPause.ts
+    WndSetting.ts
+    WndRogueOption.ts
+    WndResult.ts
+  scenes/
+    BaseScene.ts
+    LoadingScene.ts
+    WndMain.ts             # 选关主界面
+    BagScene.ts            # 背包玩法界面
+    BattleScene.ts         # 战斗地图和战斗逻辑
+```
+
+后续新增 UI 界面时，优先放到 `src/windows/`。新增完整游戏阶段时，优先放到 `src/scenes/`。不要再把窗口类、战斗类、数据类塞回 `src/main.ts`。
+
 当前资源化进度：
 
 - 已有 `AssetManager`，读取 `public/gamedata/s_asset.json` 中配置了 `url` 的图片资源。
 - 已有 `s_ui.json`，用于按钮、资源图标、侧边入口、肉鸽图标、结算图标等 UI 皮肤 key。
+- 已有 `s_audio.json` 和 `s_audio_event.json`，用于背景音乐、按钮音效、背包音效、战斗音效、结算音效配置。
 - 正式图片还没接入时，运行时会自动回退到 Pixi `Graphics` 占位图，不影响 demo 运行。
 - 已接资源入口：按钮底图、顶部资源图标、关卡地图图、侧边入口图标、武器图标、肉鸽卡牌图标、结算奖励图标。
+- 正式音频还没接入时，BGM 不播放，音效可使用轻量生成音作为占位反馈。
 
 后续改动原则：
 
@@ -204,4 +249,5 @@ public/
 - 不要把正式图片路径写死在代码里，优先加到 `s_asset.json`，再通过表里的 `assetKey` 引用。
 - 如果新增 UI 功能，优先独立成 `WndXxx` 或 `ComXxx`，不要继续把所有界面逻辑堆到一个函数里。
 - 如果新增弹窗文案，优先加 `s_comstr.json`，再用 `confirmType` 或业务 id 调用。
+- 如果新增音频，优先加 `s_audio.json` 和 `s_audio_event.json`，玩法代码只调用 `audio.playSfxEvent()` 或 `audio.playMusicEvent()`。
 - 每轮交付前至少运行 `npm run build`。如果涉及浏览器交互，还要刷新 `http://localhost:5173/game.html` 做一次实际验证。

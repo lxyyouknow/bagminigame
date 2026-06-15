@@ -25,6 +25,8 @@ public/gamedata/
 - `s_comstr.json`：通用弹窗文案表。
 - `s_asset.json`：资源 key 到图片/图集/音效路径。
 - `s_ui.json`：UI 皮肤 key 到资源 key。
+- `s_audio.json`：背景音乐、按钮音、背包音、战斗音、结算音的资源和性能配置。
+- `s_audio_event.json`：玩法事件到音频 key 的映射。
 - `s_animation.json`：帧动画配置，当前为预留和少量占位。
 
 ## 当前 3 关定位
@@ -286,6 +288,30 @@ public/gamedata/
 - `id = 2` / `confirmType = 2`：重新开始当前关卡预留。
 
 新增确认类功能时，先加 `s_comstr`，再在对应 UI 模块里调用。
+
+## 音频配置：s_audio / s_audio_event
+
+音频详细说明见 `AUDIO_DESIGN.md`。
+
+`s_audio` 控制具体音频资源：
+
+- `key`：音频资源 key。
+- `type`：`music` 或 `sfx`。
+- `url`：正式音频路径，留空时使用占位策略。
+- `preloadGroup`：预加载组，例如 `main`、`bag`、`battle`、`ui`。
+- `loop`：是否循环。
+- `volume`：单条音频基础音量。
+- `maxConcurrent`：同一音效最大并发数。
+- `generatedFreq`：无正式音效时的生成音频率，BGM 填 `0`。
+
+`s_audio_event` 控制玩法调用：
+
+- `event`：玩法事件 key，例如 `ui_click`、`bag_merge`、`battle_hit`。
+- `audioKey`：引用 `s_audio.key`。
+- `category`：`music` 或 `sfx`。
+- `cooldownMs`：事件冷却，防止高频音效卡顿。
+
+新增音频时，不要在玩法代码里写音频路径。先加 `s_audio`，再加 `s_audio_event`，玩法只调用事件 key。
 
 ## 数据修改验证
 

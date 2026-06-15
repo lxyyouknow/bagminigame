@@ -1,0 +1,235 @@
+export type ThemeName = "green" | "purple" | "steel";
+
+export interface LevelDef {
+  id: number;
+  name: string;
+  desc: string;
+  theme: ThemeName;
+  initRows: number;
+  initCols: number;
+  maxRows: number;
+  maxCols: number;
+  initGold: number;
+  baseHp: number;
+  baseArmor: number;
+  waveGroupId: number;
+  shopPoolId: number;
+  roguePoolId: number;
+  winWave: number;
+  mapAssetKey?: string;
+  lockedMapAssetKey?: string;
+}
+
+export interface ItemShapeDef {
+  id: string;
+  name: string;
+  cells: [number, number][];
+  allowRotate: boolean;
+  previewScale: number;
+}
+
+export interface QualityDef {
+  id: number;
+  name: string;
+  color: string;
+  attackMul: number;
+  mergeNeed: number;
+  nextQuality: number;
+}
+
+export interface ItemDef {
+  id: number;
+  baseId: string;
+  name: string;
+  quality: number;
+  shapeId: string;
+  icon: string;
+  iconAssetKey?: string;
+  skillId: number;
+  mergeToId: number;
+  weight: number;
+  pools: number[];
+}
+
+export interface SkillDef {
+  id: number;
+  name: string;
+  type: "projectile" | "melee" | "aoe" | "dot" | "shield" | "heal";
+  attack: number;
+  cd: number;
+  range: number;
+  speed: number;
+  radius: number;
+  targetRule: string;
+  effectId: number;
+  color: string;
+}
+
+export interface EffectDef {
+  id: number;
+  type: string;
+  value: number;
+  duration: number;
+}
+
+export interface MonsterDef {
+  id: number;
+  name: string;
+  hp: number;
+  armor: number;
+  speed: number;
+  attack: number;
+  gold: number;
+  exp: number;
+  radius: number;
+  color: string;
+  boss: boolean;
+}
+
+export interface WaveDef {
+  waveGroupId: number;
+  wave: number;
+  time: number;
+  monsterId: number;
+  count: number;
+  interval: number;
+  spawn: string;
+  rewardGold: number;
+}
+
+export interface RogueOptionDef {
+  id: number;
+  poolId: number;
+  title: string;
+  desc: string;
+  icon: string;
+  weight: number;
+  effectType: string;
+  effectTarget: string;
+  effectValue: number;
+  maxStack: number;
+}
+
+export interface EconomyDef {
+  key: string;
+  value: number;
+  adPlacement: string;
+  desc: string;
+}
+
+export interface ComStrDef {
+  id: number;
+  confirmType: number;
+  title: string;
+  content: string;
+  cancelText: string;
+  confirmText: string;
+}
+
+export interface AssetDef {
+  key: string;
+  type: "image" | "spritesheet" | "audio" | "generated";
+  url: string;
+  preloadGroup: string;
+  fallbackKey: string;
+  frame?: string;
+}
+
+export interface UiSkinDef {
+  key: string;
+  assetKey: string;
+  desc: string;
+  defaultWidth: number;
+  defaultHeight: number;
+}
+
+export interface AudioDef {
+  key: string;
+  type: "music" | "sfx";
+  url: string;
+  preloadGroup: string;
+  loop: boolean;
+  volume: number;
+  maxConcurrent: number;
+  generatedFreq: number;
+  desc: string;
+}
+
+export interface AudioEventDef {
+  event: string;
+  audioKey: string;
+  category: "music" | "sfx";
+  cooldownMs: number;
+  desc: string;
+}
+
+export interface AudioSettings {
+  masterVolume: number;
+  musicVolume: number;
+  sfxVolume: number;
+  mutedMusic: boolean;
+  mutedSfx: boolean;
+}
+
+export interface PlacedItem {
+  uid: number;
+  itemId: number;
+  x: number;
+  y: number;
+  cdLeft: number;
+}
+
+export interface BagState {
+  rows: number;
+  cols: number;
+  gold: number;
+  refreshFree: number;
+  candidates: number[];
+  placed: PlacedItem[];
+}
+
+export type DragSource = { type: "candidate"; index: number } | { type: "placed"; uid: number };
+
+export type DropResult =
+  | { kind: "place"; x: number; y: number }
+  | { kind: "mergePlaced"; targetUid: number }
+  | { kind: "mergeCandidate"; targetIndex: number }
+  | { kind: "invalid"; x: number; y: number };
+
+export interface CombatBuffs {
+  attackMul: number;
+  cdMul: number;
+  radiusMul: number;
+  dotMul: number;
+  armorBonus: number;
+  qualityAttack: Record<number, number>;
+}
+
+export interface MonsterRuntime {
+  uid: number;
+  def: MonsterDef;
+  view: Container;
+  hp: number;
+  maxHp: number;
+  x: number;
+  y: number;
+  slowTimer: number;
+  dead: boolean;
+}
+
+export interface ProjectileRuntime {
+  view: Container;
+  target: MonsterRuntime;
+  x: number;
+  y: number;
+  speed: number;
+  damage: number;
+  radius: number;
+  color: number;
+}
+
+export interface FloatingRuntime {
+  view: Container;
+  ttl: number;
+  vy: number;
+}
