@@ -9,7 +9,7 @@ import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
-import { computeBattleBottomPanelRect, computeBattleEquipListLayout } from "./battleEquipLayout";
+import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
 import { BaseScene } from "./BaseScene";
 
 export class BattleScene extends BaseScene {
@@ -169,54 +169,6 @@ export class BattleScene extends BaseScene {
     killText.anchor.set(0, 0.5);
     killText.position.set(18, statPos.y + 40);
 
-    const baseLayout = this.layout("base_panel", {
-      scene: "battle",
-      key: "base_panel",
-      anchor: "bottomCenter",
-      x: 0,
-      y: -132,
-      width: Math.round(w * 0.82),
-      height: 158,
-      fontSize: 16,
-      visible: true,
-      desc: "战斗底部基地区域",
-    });
-    const baseRect = computeBattleBottomPanelRect(w, h, baseLayout.width, baseLayout.height, baseLayout.y);
-    const base = new Graphics();
-    base.roundRect(baseRect.x + 12, baseRect.y + 18, baseRect.width - 24, baseRect.height - 50, 28).fill({ color: 0x7f6b43, alpha: 0.96 });
-    base.stroke({ color: 0x362916, width: 4, alpha: 0.72 });
-    base.circle(baseRect.x + baseRect.width * 0.28, baseRect.y + baseRect.height * 0.5, 28).fill({ color: 0x5f4f30 }).stroke({ color: 0x2b2113, width: 3 });
-    base.circle(baseRect.x + baseRect.width * 0.72, baseRect.y + baseRect.height * 0.5, 28).fill({ color: 0x5f4f30 }).stroke({ color: 0x2b2113, width: 3 });
-    base.roundRect(baseRect.x + 42, baseRect.y + 30, baseRect.width - 84, 60, 18).fill({ color: 0x8a7447 });
-    base.roundRect(baseRect.x + baseRect.width * 0.18, baseRect.y + 46, baseRect.width * 0.44, 28, 10).fill({ color: 0x3b342d });
-
-    const heroPlate = new Graphics();
-    heroPlate.circle(baseRect.x + baseRect.width * 0.5, baseRect.y + 72, 26).fill({ color: 0xd64d44 }).stroke({ color: 0xffffff, width: 3, alpha: 0.45 });
-    const hero = text("守卫", 18, "#ffdf8a", "700");
-    hero.anchor.set(0.5, 1);
-    hero.position.set(baseRect.x + baseRect.width * 0.5, baseRect.y + 18);
-
-    const armorIcon = new Graphics();
-    armorIcon.moveTo(0, -12).lineTo(12, -4).lineTo(8, 12).lineTo(0, 18).lineTo(-8, 12).lineTo(-12, -4).closePath();
-    armorIcon.fill({ color: 0x6db9ff }).stroke({ color: 0xffffff, width: 2, alpha: 0.35 });
-    armorIcon.position.set(baseRect.x + baseRect.width - 98, baseRect.y + 66);
-    const armorText = text(String(this.armor + this.buffs.armorBonus), 18, "#ffffff", "700");
-    armorText.anchor.set(0, 0.5);
-    armorText.position.set(armorIcon.x + 18, armorIcon.y + 1);
-
-    const hpIcon = new Graphics();
-    hpIcon.moveTo(0, 14).bezierCurveTo(-18, 0, -16, -14, 0, -6).bezierCurveTo(16, -14, 18, 0, 0, 14).fill({ color: 0xff6071 });
-    hpIcon.position.set(baseRect.x + baseRect.width - 42, baseRect.y + 66);
-    const hpText = text(String(Math.max(0, Math.round(this.baseHp))), 18, "#ffffff", "700");
-    hpText.anchor.set(0, 0.5);
-    hpText.position.set(hpIcon.x + 18, hpIcon.y + 1);
-
-    const hpBarY = baseRect.y + baseRect.height - 20;
-    const hpTrack = new Graphics();
-    hpTrack.roundRect(baseRect.x + 8, hpBarY, baseRect.width - 16, 14, 7).fill({ color: 0x0f1318, alpha: 0.92 });
-    const hpFill = new Graphics();
-    hpFill.roundRect(baseRect.x + 8, hpBarY, (baseRect.width - 16) * Math.max(0, this.baseHp / this.level.baseHp), 14, 7).fill({ color: 0x34ed70 });
-
     const equipLayout = this.layout("equip_bar", {
       scene: "battle",
       key: "equip_bar",
@@ -224,23 +176,83 @@ export class BattleScene extends BaseScene {
       x: 0,
       y: -18,
       width: Math.min(w - 28, 366),
-      height: 122,
+      height: 112,
       gap: 8,
       iconSize: 42,
       visible: true,
       desc: "战斗底部横向武器槽面板",
     });
-    const equipList = computeBattleEquipListLayout(Math.min(this.bag.placed.length, 10), equipLayout.width - 24, 52, equipLayout.gap ?? 8);
-    const equipPanelHeight = Math.max(equipLayout.height, equipList.panelHeight + 20);
-    const equipRect = computeBattleBottomPanelRect(w, h, equipLayout.width, equipPanelHeight, equipLayout.y);
+    const equipList = computeBattleEquipListLayout(Math.min(this.bag.placed.length, 10), equipLayout.width - 24, 50, equipLayout.gap ?? 8);
+    const equipPanelHeight = Math.max(equipLayout.height, equipList.panelHeight + 18);
+    const baseLayout = this.layout("base_panel", {
+      scene: "battle",
+      key: "base_panel",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -132,
+      width: Math.min(w - 40, 360),
+      height: 128,
+      fontSize: 16,
+      visible: true,
+      desc: "战斗底部基地区域",
+    });
+    const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipLayout.width, equipPanelHeight, equipLayout.y);
+    const { base: baseRect, equip: equipRect, hpBar: hpRect } = hud;
+
+    const base = new Graphics();
+    const baseTop = baseRect.y + 10;
+    const baseBodyH = baseRect.height - 16;
+    const turretX = baseRect.x + baseRect.width * 0.42;
+    base.roundRect(baseRect.x + 10, baseTop + 16, baseRect.width - 20, baseBodyH - 10, 26).fill({ color: 0x6f5c37, alpha: 0.98 });
+    base.stroke({ color: 0x2b2114, width: 4, alpha: 0.86 });
+    base.roundRect(baseRect.x + 28, baseTop + 34, baseRect.width - 56, 48, 16).fill({ color: 0x8b7548, alpha: 0.9 });
+    base.roundRect(baseRect.x + 42, baseTop + 56, baseRect.width - 84, 18, 8).fill({ color: 0x3a3328, alpha: 0.8 });
+    base.roundRect(turretX - 34, baseTop + 44, 68, 34, 12).fill({ color: 0x3e382f, alpha: 0.98 });
+    base.roundRect(turretX - 22, baseTop + 24, 44, 44, 12).fill({ color: 0x8d7a51, alpha: 0.98 });
+    base.roundRect(turretX - 7, baseTop + 2, 14, 38, 7).fill({ color: 0x75694d, alpha: 0.98 });
+    base.roundRect(turretX - 28, baseTop + 51, 56, 13, 6).fill({ color: 0x252c30, alpha: 0.95 });
+    base.roundRect(baseRect.x + 24, baseTop + 72, baseRect.width - 48, 10, 5).fill({ color: 0x2a2115, alpha: 0.48 });
+
+    const guardLabel = text("守卫基地", baseLayout.fontSize ?? 16, "#ffdf83", "700");
+    guardLabel.anchor.set(0, 0.5);
+    guardLabel.position.set(baseRect.x + 30, baseTop + 34);
+
+    const statusBack = new Graphics();
+    const statusX = Math.max(baseRect.x + 118, baseRect.x + baseRect.width - 162);
+    const statusY = baseTop + 34;
+    statusBack.roundRect(statusX - 10, statusY - 20, 148, 40, 18).fill({ color: 0x40372b, alpha: 0.72 });
+    statusBack.stroke({ color: 0xa58b55, width: 1, alpha: 0.38 });
+
+    const armorIcon = new Graphics();
+    armorIcon.moveTo(0, -11).lineTo(11, -4).lineTo(8, 10).lineTo(0, 16).lineTo(-8, 10).lineTo(-11, -4).closePath();
+    armorIcon.fill({ color: 0x6db9ff }).stroke({ color: 0xffffff, width: 2, alpha: 0.45 });
+    armorIcon.position.set(statusX + 12, statusY);
+    const armorText = text(String(this.armor + this.buffs.armorBonus), 18, "#ffffff", "700");
+    armorText.anchor.set(0, 0.5);
+    armorText.position.set(armorIcon.x + 18, armorIcon.y + 1);
+
+    const hpIcon = new Graphics();
+    hpIcon.moveTo(0, 12).bezierCurveTo(-15, 1, -13, -12, 0, -5).bezierCurveTo(13, -12, 15, 1, 0, 12).fill({ color: 0xff5e70 });
+    hpIcon.position.set(statusX + 72, statusY + 1);
+    const hpText = text(String(Math.max(0, Math.round(this.baseHp))), 18, "#ffffff", "700");
+    hpText.anchor.set(0, 0.5);
+    hpText.position.set(hpIcon.x + 18, hpIcon.y + 1);
+
+    const hpTrack = new Graphics();
+    hpTrack.roundRect(hpRect.x, hpRect.y, hpRect.width, hpRect.height, 7).fill({ color: 0x11181f, alpha: 0.96 });
+    hpTrack.stroke({ color: 0x0a0e12, width: 2, alpha: 0.72 });
+    const hpFill = new Graphics();
+    hpFill.roundRect(hpRect.x + 3, hpRect.y + 3, Math.max(0, (hpRect.width - 6) * Math.max(0, this.baseHp / this.level.baseHp)), hpRect.height - 6, 5).fill({ color: 0x2ff16b });
+
     const equipBg = new Graphics();
-    equipBg.roundRect(equipRect.x, equipRect.y, equipRect.width, equipRect.height, 16).fill({ color: 0x596670, alpha: 0.96 });
-    equipBg.stroke({ color: 0x232b34, width: 3, alpha: 0.45 });
+    equipBg.roundRect(equipRect.x, equipRect.y, equipRect.width, equipRect.height, 16).fill({ color: 0x27333d, alpha: 0.97 });
+    equipBg.stroke({ color: 0x9eb3c3, width: 2, alpha: 0.52 });
+    equipBg.roundRect(equipRect.x + 6, equipRect.y + 7, equipRect.width - 12, equipRect.height - 14, 12).stroke({ color: 0x111820, width: 2, alpha: 0.7 });
     if (pauseLayout.visible) this.uiLayer.addChild(pause);
     if (titleLayout.visible) this.uiLayer.addChild(title);
     if (waveLayout.visible) this.uiLayer.addChild(waveBar);
     if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon, goldText, killText);
-    if (baseLayout.visible) this.uiLayer.addChild(base, heroPlate, hero, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
+    if (baseLayout.visible) this.uiLayer.addChild(base, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
     if (equipLayout.visible) this.uiLayer.addChild(equipBg);
 
     this.bag.placed.slice(0, 10).forEach((placed, index) => {
@@ -249,11 +261,12 @@ export class BattleScene extends BaseScene {
       const slot = equipList.slots[index];
       if (!slot) return;
       const slotBg = new Graphics();
-      slotBg.roundRect(equipRect.x + 10 + slot.x, equipRect.y + 10 + slot.y, slot.width, slot.height, 10).fill({ color: 0x28303a, alpha: 0.98 });
-      slotBg.stroke({ color: 0xcfd8e3, width: 2, alpha: 0.65 });
+      slotBg.roundRect(equipRect.x + 12 + slot.x, equipRect.y + 9 + slot.y, slot.width, slot.height, 10).fill({ color: 0x46525a, alpha: 0.92 });
+      slotBg.stroke({ color: 0xcfd8e3, width: 2, alpha: 0.7 });
+      slotBg.roundRect(equipRect.x + 16 + slot.x, equipRect.y + 13 + slot.y, slot.width - 8, slot.height - 8, 8).fill({ color: 0x202b34, alpha: 0.95 });
       const iconSize = equipLayout.iconSize ?? 46;
       const icon = createWeaponIcon(item, quality, iconSize);
-      icon.position.set(equipRect.x + 10 + slot.x + slot.width / 2, equipRect.y + 10 + slot.y + slot.height / 2);
+      icon.position.set(equipRect.x + 12 + slot.x + slot.width / 2, equipRect.y + 9 + slot.y + slot.height / 2);
       const skill = data.getSkill(item.skillId);
       const cdRate = Math.max(0, Math.min(1, placed.cdLeft / Math.max(0.1, skill.cd * this.buffs.cdMul)));
       if (cdRate > 0) {
