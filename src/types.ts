@@ -1,3 +1,5 @@
+import type { Container } from "pixi.js";
+
 export type ThemeName = "green" | "purple" | "steel";
 
 export interface LevelDef {
@@ -18,6 +20,11 @@ export interface LevelDef {
   winWave: number;
   mapAssetKey?: string;
   lockedMapAssetKey?: string;
+  entryCostResource?: "dynamite" | "coin" | "energy";
+  entryCostAmount?: number;
+  firstPassRewardCoin?: number;
+  repeatWinRewardCoin?: number;
+  loseRewardCoin?: number;
 }
 
 export interface ItemShapeDef {
@@ -141,6 +148,34 @@ export interface UiSkinDef {
   desc: string;
   defaultWidth: number;
   defaultHeight: number;
+}
+
+export type UiLayoutAnchor =
+  | "topLeft"
+  | "topCenter"
+  | "topRight"
+  | "centerLeft"
+  | "center"
+  | "centerRight"
+  | "bottomLeft"
+  | "bottomCenter"
+  | "bottomRight";
+
+export interface UiLayoutDef {
+  scene: string;
+  key: string;
+  anchor: UiLayoutAnchor;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  iconSize?: number;
+  labelOffsetY?: number;
+  fontSize?: number;
+  scale?: number;
+  gap?: number;
+  visible: boolean;
+  desc: string;
 }
 
 export interface AudioDef {

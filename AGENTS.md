@@ -161,6 +161,40 @@ public/
 - 所有启动脚本统一委托同一个 Node/Vite server，不要各写一套逻辑。
 - 支持启动 web server 后直接分享到手机测试，启动时尽量打印本机局域网地址。
 - `game.html` 作为游戏入口，通过 dev server 打开，不使用 `file://`。
+- `npm run start`、`npm run dev`、`npm run start:game` 应该走同一条启动链路，避免不同入口行为不一致。
+- 启动脚本不要写死项目绝对路径，必须按脚本所在目录 `cd`，这样项目改名、移动、压缩给别人后仍能运行。
+- 启动脚本不要假设端口一定是 `5173`。如果端口被占用，Vite 可能自动切到新端口，脚本必须读取实际端口再打印电脑和手机访问地址。
+- Mac/Win 点击入口只负责检查 Node/npm、必要时安装依赖、再调用统一 server 脚本；不要在 `.command`、`.bat` 里复制复杂逻辑。
+- 如果出现“我打开的是旧版本/卡 loading/手机打不开”，先确认浏览器访问的是当前 server 输出的真实 URL，而不是旧端口、旧目录或旧服务。
+
+### Loading 卡住排查约定
+
+当游戏卡在 loading，不要先假设是资源缺失或目录改名，按下面顺序查：
+
+1. 先确认 dev server 正常返回：
+
+```bash
+curl -I http://localhost:5173/game.html
+```
+
+2. 再确认 `public/gamedata/*.json` 都能返回 `200`，尤其是新增表。
+3. 刷新浏览器，读取控制台 error/warn；Pixi 游戏大部分内容都在 canvas 内，DOM 没有文字不代表没进游戏。
+4. 检查 loading 阶段的 async 链路：`data.loadAll()`、`audio.init()`、`assetManager.preloadGroups()`、`showMain()`。
+5. 如果 loading 进度到 90% 左右但不跳转，优先怀疑 `showMain()` 或主界面构造阶段运行时报错。
+6. `LoadingScene` 应保留 try/catch 和中文错误提示，不要让玩家只看到静止进度条。
+
+本项目 2026-06-15 曾出现一次卡 loading，根因不是中文根目录改名，而是音频模块运行时错误：
+
+- `AudioManager.playMusicEvent/playSfxEvent` 里误写成 `this.this.data`。
+- Vite 默认构建没有做完整 TypeScript 类型检查，`npm run build` 仍可能通过。
+- 同时存在 `AudioManager -> utils/display -> core/runtime -> AudioManager` 的循环依赖风险。
+
+修复经验：
+
+- 纯工具函数不要放在依赖 runtime 的 UI 工具文件里。
+- `color`、`clamp01`、`weightedPick` 这类纯函数应放到 `src/utils/math.ts`。
+- service 层不要依赖 `utils/display.ts`，因为 display 会依赖 `app/audio/data/assetManager` 等运行时单例。
+- 涉及 loading 和启动链路的修改，除了 `npm run build`，还必须刷新浏览器并确认能从 Loading 进入选关界面。
 
 ## 当前项目制作进度快照
 
@@ -213,10 +247,15 @@ src/
     GameDataManager.ts     # 所有 gamedata 表读取和查询
   services/
     AdService.ts           # 广告 mock
+    AnalyticsService.ts    # 埋点 mock，后续替换为平台/三方统计 SDK
     AssetManager.ts        # 图片/图集资源加载
     AudioManager.ts        # BGM/SFX/音量设置
+    LifecycleService.ts    # 前后台/失焦/恢复生命周期分发
+    SaveService.ts         # 玩家本地存档、资源、关卡进度和结算奖励
+    StorageAdapter.ts      # localStorage/平台缓存/内存兜底适配层
   utils/
-    display.ts             # 通用绘制、按钮、图标、拖拽点转换、随机权重
+    math.ts                # 纯工具函数，不依赖 runtime
+    display.ts             # 通用绘制、按钮、图标、拖拽点转换
   windows/
     GameWindow.ts
     WndConfirm.ts
@@ -238,10 +277,222 @@ src/
 
 - 已有 `AssetManager`，读取 `public/gamedata/s_asset.json` 中配置了 `url` 的图片资源。
 - 已有 `s_ui.json`，用于按钮、资源图标、侧边入口、肉鸽图标、结算图标等 UI 皮肤 key。
+- 已有 `s_ui_layout.json`，用于主要界面 UI 位置、尺寸、字号、显隐等布局配置。策划或美术 agent 调整界面时，优先改这个表，不要改功能代码。
 - 已有 `s_audio.json` 和 `s_audio_event.json`，用于背景音乐、按钮音效、背包音效、战斗音效、结算音效配置。
 - 正式图片还没接入时，运行时会自动回退到 Pixi `Graphics` 占位图，不影响 demo 运行。
 - 已接资源入口：按钮底图、顶部资源图标、关卡地图图、侧边入口图标、武器图标、肉鸽卡牌图标、结算奖励图标。
 - 正式音频还没接入时，BGM 不播放，音效可使用轻量生成音作为占位反馈。
+
+## 上线接入索引
+
+本项目已经补齐 4 个上线准备基础服务：玩家存档、埋点、广告、生命周期。后续真的接微信、抖音、TikTok playable 或服务端时，先读本节，不要全局搜索。
+
+### 玩家存档和测试账号
+
+相关文件：
+
+- `PLAYER_DATA_STORAGE_DESIGN.md`：玩家数据存储完整方案。
+- `src/services/SaveService.ts`：玩家资源、关卡解锁、通关记录、奖励结算。
+- `src/services/StorageAdapter.ts`：底层存储适配，当前默认 `localStorage`，不可用时内存兜底。
+- `src/core/runtime.ts`：导出全局 `save` 单例。
+- `src/scenes/LoadingScene.ts`：`data.loadAll()` 后调用 `save.init(data.levels)`。
+- `src/scenes/WndMain.ts`：显示测试账号、长期资源、最高记录、关卡锁定；点击开始时扣入场道具。
+- `src/scenes/BattleScene.ts`：结算时调用 `save.applyBattleResult()` 写入通关和奖励。
+- `public/gamedata/s_level.json`：每关 `entryCostResource`、`entryCostAmount`、`firstPassRewardCoin`、`repeatWinRewardCoin`、`loseRewardCoin`。
+
+测试版本账号规则：
+
+- URL 参数指定本地测试账号：`game.html?account=test_lxy`、`game.html?account=test_alt`。
+- 不传 `account` 时沿用上次账号；从未指定过时默认 `test_lxy`。
+- 每个账号独立存档，key 形如 `backpack_defense_save_v1:test_lxy`。
+- 控制台调试入口：`__debugSave.account()`、`__debugSave.state()`、`__debugSave.switchAccount("test_alt")`、`__debugSave.reset()`、`__debugSave.addDynamite(30)`、`__debugSave.addCoin(500)`、`__debugSave.unlockAll()`。
+
+正式接入建议：
+
+- 微信小游戏本地缓存：新增 `WechatStorageAdapter`，内部使用 `wx.getStorageSync/wx.setStorageSync`，再在 `runtime.ts` 替换 `createDefaultStorageAdapter()`。
+- 抖音小游戏本地缓存：新增 `DouyinStorageAdapter`，内部使用 `tt.getStorageSync/tt.setStorageSync`。
+- 正式运营跨设备：保留 `SaveService` 业务接口，在外层增加远端同步，例如 `RemoteSaveSyncService`；服务端用微信/抖音登录后的 `openid/unionid` 或平台用户 id 保存权威数据，本地 storage 只做缓存。
+- 不要让 `WndMain`、`BattleScene`、`BagScene` 直接调用平台缓存或服务端接口，统一走 `save`。
+
+### 埋点统计
+
+相关文件：
+
+- `src/services/AnalyticsService.ts`：埋点 mock，当前记录内存事件并 `console.info` 输出。
+- `src/core/runtime.ts`：导出全局 `analytics` 单例。
+- `src/scenes/LoadingScene.ts`：`loading_complete`。
+- `src/scenes/WndMain.ts`：`main_show`、`level_start_click`、`level_start_success`、`level_start_failed`。
+- `src/scenes/BattleScene.ts`：`battle_start`、`rogue_option_select`、`battle_result`。
+
+当前事件：
+
+- `loading_complete`：Loading 完成。
+- `main_show`：进入主界面。
+- `level_start_click`：点击开始游戏。
+- `level_start_success`：扣入场道具成功。
+- `level_start_failed`：关卡未解锁或资源不足。
+- `battle_start`：进入战斗。
+- `rogue_option_select`：选择肉鸽强化。
+- `battle_result`：战斗结算，包含胜负、波次、击杀、本局金币、奖励金币、战斗时长。
+
+正式接入建议：
+
+- 接平台或三方 SDK 时，优先只改 `AnalyticsService.track()`。
+- 事件名和参数尽量保持稳定，方便广告投放对比不同版本数据。
+- 不要在玩法代码里直接写 SDK 调用。玩法只调用 `analytics.track(event, params)`。
+- 后续广告投放建议至少补：广告请求、广告成功、广告失败、资源不足弹窗曝光、结算确认、留存关键节点。
+
+### 激励广告
+
+相关文件：
+
+- `src/services/AdService.ts`：广告 mock，支持 `success`、`failed`、`canceled`、`busy`。
+- `src/core/runtime.ts`：导出全局 `ads` 单例。
+- `src/scenes/BagScene.ts`：金币不足时，刷新候选区和扩格调用 `ads.showRewardedAd()`。
+- `src/data/GameDataManager.ts`：`getEconomyAdPlacement(key)` 读取经济表里的广告点位。
+- `public/gamedata/s_economy.json`：`bag_refresh_gold_cost`、`bag_expand_gold_cost` 等配置 `adPlacement`。
+
+当前返回结构：
+
+```ts
+{
+  ok: boolean;
+  placementId: string;
+  status: "success" | "failed" | "canceled" | "busy";
+  message: string;
+}
+```
+
+调试入口：
+
+```ts
+__debugAds.setOutcome("bag_refresh", "canceled");
+__debugAds.setOutcome("bag_expand", "failed");
+__debugAds.setOutcome("bag_refresh", "success");
+__debugAds.clearOutcome("bag_refresh");
+__debugAds.history();
+```
+
+正式接入建议：
+
+- 微信/抖音/TikTok 接广告 SDK 时，优先只改 `AdService.showRewardedAd()`。
+- 点位 id 必须继续来自 `s_economy.json` 或功能表，不要写死在按钮逻辑里。
+- SDK 的关闭、失败、超时、未加载、频控，都要映射成 `canceled/failed/busy` 这类稳定状态。
+- 发奖励只看 `result.ok`，不要在按钮回调里假设广告一定成功。
+
+### 小游戏生命周期
+
+相关文件：
+
+- `src/services/LifecycleService.ts`：监听页面 `visibilitychange`、`blur`、`focus`、`pagehide`、`pageshow`。
+- `src/core/runtime.ts`：生命周期统一分发到 `activeScene?.onAppPause/onAppResume`，并调用音频暂停/恢复。
+- `src/services/AudioManager.ts`：`pauseForLifecycle()`、`resumeFromLifecycle()`。
+- `src/scenes/BattleScene.ts`：后台或失焦时自动打开暂停弹窗。
+
+当前策略：
+
+- 进后台、失焦、页面隐藏：暂停 BGM/AudioContext；战斗中自动暂停。
+- 回前台：恢复音频；不自动继续战斗，等待玩家点“继续挑战”。
+- 这是市面小游戏常见处理，避免玩家切出去后回来已经死亡。
+
+正式接入建议：
+
+- 微信小游戏：在平台启动层桥接 `wx.onHide(() => lifecycle.pause("manual"))`、`wx.onShow(() => lifecycle.resume("manual"))`。
+- 抖音小游戏：桥接 `tt.onHide/tt.onShow`。
+- 如果平台没有浏览器 `document/window` 事件，要保留 `LifecycleService` 接口，只替换事件来源。
+- 场景层不要直接监听平台生命周期。新增场景需要响应后台时，实现 `onAppPause(reason)` / `onAppResume(reason)`。
+
+### UI 控件和预制件替代方案
+
+PixiJS 没有 Cocos 那种编辑器 prefab。当前统一按钮入口在 `src/utils/display.ts` 的 `button()`、`glossyButton()`，皮肤 key 来自 `public/gamedata/s_ui.json`，主要界面布局来自 `public/gamedata/s_ui_layout.json`。
+
+当前主要界面已经接入布局配置：
+
+- `src/ui/layout/UiLayout.ts`：把 `anchor + x/y` 解析成屏幕坐标。
+- `public/gamedata/s_ui_layout.json`：主要界面 UI 的位置、尺寸、字号、显隐。
+- `src/data/GameDataManager.ts`：读取 `s_ui_layout` 并提供 `data.getUiLayout(scene, key)`。
+- `src/scenes/WndMain.ts`、`BagScene.ts`、`BattleScene.ts`、`LoadingScene.ts` 和 `src/windows/Wnd*.ts`：功能逻辑仍在代码里，UI 摆放读布局表。
+
+例如右侧“小游戏 / 游戏圈”按钮歪了，优先改：
+
+```text
+public/gamedata/s_ui_layout.json
+```
+
+对应 key：
+
+- `side_minigame`
+- `side_game_circle`
+
+当前 `scene` 覆盖：
+
+- `loading`：Loading 角色、进度条、提示、错误文本。
+- `main`：主界面头像区、右侧入口、关卡图、切关箭头、记录、开始按钮、toast。
+- `bag`：背包标题、资源文本、棋盘、候选区、底部按钮、toast。
+- `battle`：暂停按钮、战斗标题、波次条、状态文本、基地面板、装备栏。
+- `pause`：暂停标题、内容面板、关卡信息、底部三个按钮。
+- `setting`：设置面板、音量行、开关、提示、确定按钮。
+- `confirm`：确认框面板、标题、图标、内容、取消/确认按钮。
+- `rogue`：三选一标题、卡牌组。
+- `result`：结算图标、标题、结果文本、奖励面板、奖励卡、确定按钮。
+
+字段说明：
+
+- `anchor`：基准点，例如 `topRight` 表示以屏幕右上角为基准。
+- `x` / `y`：相对基准点偏移。`topRight` 下 `x` 通常是负数，表示离右边缘多少像素。
+- `width` / `height`：组件尺寸。
+- `iconSize`：图标尺寸。
+- `labelOffsetY`：文字相对图标中心的纵向偏移。
+- `fontSize`：字号。
+- `visible`：是否显示。
+
+如果只是调位置、字号、尺寸、显隐，不要改 scene/window 功能代码。只有新增功能、改点击逻辑、增加新组件类型时才改代码。
+
+后续收到策划或美术 agent 的界面调整提示词时，默认判断规则：
+
+- “按钮/文本/面板/卡牌/进度条/入口太上、太下、偏左、偏右、太大、太小、字号不对、隐藏/显示”：优先改 `s_ui_layout.json`。
+- “换按钮图、换图标、换背景、换关卡图”：优先改 `s_asset.json` 和 `s_ui.json`。
+- “点击后做什么、消耗什么、跳到哪里、奖励什么”：才改 `src/scenes/` 或 `src/windows/` 功能代码。
+
+后续如果 UI 增多，建议升级为代码组件：
+
+```text
+src/ui/components/ComButton.ts
+src/ui/components/ComPanel.ts
+src/ui/theme.ts
+```
+
+原则：
+
+- 场景和窗口不要手写多套按钮样式，统一调用组件工厂，例如 `createButton({ variant: "primary", text, onTap })`。
+- `variant` 映射 `s_ui.json` 的 `button_yellow/button_blue/button_green/button_white`。
+- 点击缩放、禁用态、广告角标、红点、音效、九宫格都放在 `ComButton`，不要散落在各个 scene/window。
+- 正式 UI 图片路径仍然走 `s_asset.json`，按钮语义和默认尺寸走 `s_ui.json`。
+- UI 摆放、默认字号、默认尺寸走 `s_ui_layout.json`，不要散落在各个 scene/window。
+
+### 测试和验证命令
+
+当前新增了轻量测试脚本：
+
+```bash
+npm run test:save        # 玩家存档、账号、资源消耗、关卡解锁、奖励
+npm run test:analytics   # 埋点事件结构和历史记录
+npm run test:ad          # 激励广告成功/失败/取消/忙碌
+npm run test:lifecycle   # 前后台、失焦、恢复生命周期
+npm run test:ui-layout   # UI 布局锚点解析和默认值合并
+```
+
+上线准备或改这些服务时，至少执行：
+
+```bash
+npm run test:save
+npm run test:analytics
+npm run test:ad
+npm run test:lifecycle
+npm run test:ui-layout
+node -e "const fs=require('fs'); for (const f of fs.readdirSync('public/gamedata').filter(f=>f.endsWith('.json'))) JSON.parse(fs.readFileSync('public/gamedata/'+f,'utf8')); console.log('json ok')"
+npm run build
+```
 
 后续改动原则：
 
@@ -251,3 +502,4 @@ src/
 - 如果新增弹窗文案，优先加 `s_comstr.json`，再用 `confirmType` 或业务 id 调用。
 - 如果新增音频，优先加 `s_audio.json` 和 `s_audio_event.json`，玩法代码只调用 `audio.playSfxEvent()` 或 `audio.playMusicEvent()`。
 - 每轮交付前至少运行 `npm run build`。如果涉及浏览器交互，还要刷新 `http://localhost:5173/game.html` 做一次实际验证。
+- 如果启动脚本显示的端口不是 `5173`，浏览器和手机都必须使用脚本输出的新端口。

@@ -1,6 +1,6 @@
 import { GameDataManager } from "../data/GameDataManager";
 import type { AudioDef, AudioSettings } from "../types";
-import { clamp01 } from "../utils/display";
+import { clamp01 } from "../utils/math";
 
 export class AudioManager {
   private readonly storageKey = "backpack-mini-game-audio";
@@ -34,7 +34,7 @@ export class AudioManager {
   }
 
   playMusicEvent(eventKey: string): void {
-    const event = this.this.data.getAudioEvent(eventKey);
+    const event = this.data.getAudioEvent(eventKey);
     if (!event) return;
     const def = this.data.getAudio(event.audioKey);
     if (!def || def.type !== "music") return;
@@ -42,7 +42,7 @@ export class AudioManager {
   }
 
   playSfxEvent(eventKey: string): void {
-    const event = this.this.data.getAudioEvent(eventKey);
+    const event = this.data.getAudioEvent(eventKey);
     if (!event || event.category !== "sfx") return;
     const def = this.data.getAudio(event.audioKey);
     if (!def || this.settings.mutedSfx) return;
@@ -93,6 +93,16 @@ export class AudioManager {
   toggleSfx(): void {
     this.settings.mutedSfx = !this.settings.mutedSfx;
     this.persist();
+  }
+
+  pauseForLifecycle(): void {
+    this.currentMusic?.pause();
+    if (this.context?.state === "running") void this.context.suspend().catch(() => {});
+  }
+
+  resumeFromLifecycle(): void {
+    if (this.context?.state === "suspended") void this.context.resume().catch(() => {});
+    if (this.currentMusic && !this.settings.mutedMusic) void this.currentMusic.play().catch(() => {});
   }
 
   private playMusic(def: AudioDef): void {

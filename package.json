@@ -5,8 +5,13 @@
   "type": "module",
   "scripts": {
     "start:game": "node scripts/start-game-server.mjs",
-    "start": "vite --host 0.0.0.0",
-    "dev": "vite --host 0.0.0.0",
+    "start": "npm run start:game",
+    "dev": "npm run start:game",
+    "test:ad": "node scripts/run-ad-tests.mjs",
+    "test:analytics": "node scripts/run-analytics-tests.mjs",
+    "test:lifecycle": "node scripts/run-lifecycle-tests.mjs",
+    "test:save": "node scripts/run-save-tests.mjs",
+    "test:ui-layout": "node scripts/run-ui-layout-tests.mjs",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0"
   },

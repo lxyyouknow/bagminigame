@@ -3,6 +3,8 @@ import type { BagState, DragSource, DropResult, LevelDef, PlacedItem } from "../
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
 import { createItemShapeView, createWeaponIcon, drawGradientBg, screenPoint, text, button, weightedPick, color } from "../utils/display";
+import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
+import { shouldShowInvalidDropHint, shouldToastInvalidDrop } from "./bagDragUi";
 import { BaseScene } from "./BaseScene";
 
 export class BagScene extends BaseScene {
@@ -17,7 +19,7 @@ export class BagScene extends BaseScene {
   private draggingItemId = 0;
   private draggingSource: DragSource | undefined;
 
-  constructor(private readonly level: LevelDef, initialState?: BagState) {
+  constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string) {
     super();
     this.state = initialState ?? {
       rows: level.initRows,
@@ -29,6 +31,10 @@ export class BagScene extends BaseScene {
     };
     for (const placed of this.state.placed) {
       placed.cdLeft = 0;
+    }
+    if (entryToast) {
+      this.toast = entryToast;
+      this.toastTimer = 1.8;
     }
     this.draw();
   }
@@ -52,27 +58,82 @@ export class BagScene extends BaseScene {
     drawGradientBg(this.container, "green");
     const w = app.screen.width;
     const h = app.screen.height;
-    this.cellSize = Math.min(66, Math.floor((w - 76) / Math.max(this.state.cols, 4)));
+    const boardLayout = this.layout("board", {
+      scene: "bag",
+      key: "board",
+      anchor: "topCenter",
+      x: 0,
+      y: 164,
+      width: w - 76,
+      height: w - 76,
+      scale: 66,
+      visible: true,
+      desc: "背包棋盘顶部中心点，scale 为最大格子尺寸",
+    });
+    this.cellSize = Math.min(boardLayout.scale ?? 66, Math.floor(boardLayout.width / Math.max(this.state.cols, 4)));
     const boardW = this.state.cols * this.cellSize;
     const boardH = this.state.rows * this.cellSize;
-    this.gridLeft = (w - boardW) / 2;
-    this.gridTop = 164;
+    const boardPos = resolveUiLayoutPosition(boardLayout, w, h);
+    this.gridLeft = boardPos.x - boardW / 2;
+    this.gridTop = boardPos.y;
 
-    const title = text(this.level.name, 24, "#ffffff", "700");
+    const titleLayout = this.layout("title", {
+      scene: "bag",
+      key: "title",
+      anchor: "topCenter",
+      x: 0,
+      y: 38,
+      width: 320,
+      height: 34,
+      fontSize: 24,
+      visible: true,
+      desc: "背包界面关卡标题",
+    });
+    const title = text(this.level.name, titleLayout.fontSize ?? 24, "#ffffff", "700");
     title.anchor.set(0.5);
-    title.position.set(w / 2, 38);
-    const gold = text(`金币 ${this.state.gold}`, 18, "#ffe67b", "700");
+    const titlePos = resolveUiLayoutPosition(titleLayout, w, h);
+    title.position.set(titlePos.x, titlePos.y);
+    const goldLayout = this.layout("gold", {
+      scene: "bag",
+      key: "gold",
+      anchor: "topLeft",
+      x: 24,
+      y: 78,
+      width: 150,
+      height: 28,
+      fontSize: 18,
+      visible: true,
+      desc: "背包界面金币文本",
+    });
+    const gold = text(`金币 ${this.state.gold}`, goldLayout.fontSize ?? 18, "#ffe67b", "700");
     gold.anchor.set(0, 0.5);
-    gold.position.set(24, 78);
-    const hp = text(`背包 ${this.state.rows}x${this.state.cols}`, 16, "#ffffff", "700");
+    const goldPos = resolveUiLayoutPosition(goldLayout, w, h);
+    gold.position.set(goldPos.x, goldPos.y);
+    const sizeLayout = this.layout("bag_size", {
+      scene: "bag",
+      key: "bag_size",
+      anchor: "topRight",
+      x: -24,
+      y: 78,
+      width: 150,
+      height: 28,
+      fontSize: 16,
+      visible: true,
+      desc: "背包行列文本",
+    });
+    const hp = text(`背包 ${this.state.rows}x${this.state.cols}`, sizeLayout.fontSize ?? 16, "#ffffff", "700");
     hp.anchor.set(1, 0.5);
-    hp.position.set(w - 24, 78);
+    const sizePos = resolveUiLayoutPosition(sizeLayout, w, h);
+    hp.position.set(sizePos.x, sizePos.y);
 
     const boardBg = new Graphics();
     boardBg.roundRect(this.gridLeft - 18, this.gridTop - 18, boardW + 36, boardH + 36, 20);
     boardBg.fill({ color: 0x654b36, alpha: 0.96 });
     boardBg.stroke({ color: 0x261b16, width: 4 });
-    this.container.addChild(title, gold, hp, boardBg);
+    if (titleLayout.visible) this.container.addChild(title);
+    if (goldLayout.visible) this.container.addChild(gold);
+    if (sizeLayout.visible) this.container.addChild(hp);
+    if (boardLayout.visible) this.container.addChild(boardBg);
 
     for (let y = 0; y < this.state.rows; y += 1) {
       for (let x = 0; x < this.state.cols; x += 1) {
@@ -99,30 +160,75 @@ export class BagScene extends BaseScene {
       this.container.addChild(view);
     }
 
-    const hint = text("拖到空格放置，拖到同武器同品质上合成", 14, "#244b3a", "700");
+    const hintLayout = this.layout("hint", {
+      scene: "bag",
+      key: "hint",
+      anchor: "topCenter",
+      x: 0,
+      y: 42,
+      width: 340,
+      height: 28,
+      fontSize: 14,
+      visible: true,
+      desc: "背包棋盘下方提示，y 相对棋盘底部",
+    });
+    const hint = text("拖到空格放置，拖到同武器同品质上合成", hintLayout.fontSize ?? 14, "#244b3a", "700");
     hint.anchor.set(0.5);
-    hint.position.set(w / 2, this.gridTop + boardH + 42);
-    this.container.addChild(hint);
+    const hintPos = resolveUiLayoutPosition({ ...hintLayout, y: this.gridTop + boardH + hintLayout.y }, w, h);
+    hint.position.set(hintPos.x, hintPos.y);
+    if (hintLayout.visible) this.container.addChild(hint);
 
     this.drawCandidateArea(h);
     this.drawActions(w, h);
 
     if (this.toast) {
-      const t = text(this.toast, 18, "#ffffff", "700");
+      const toastLayout = this.layout("toast", {
+        scene: "bag",
+        key: "toast",
+        anchor: "topCenter",
+        x: 0,
+        y: 132,
+        width: 300,
+        height: 42,
+        fontSize: 18,
+        visible: true,
+        desc: "背包提示气泡",
+      });
+      if (!toastLayout.visible) return;
+      const toastRect = resolveUiLayoutRect(toastLayout, w, h);
+      const t = text(this.toast, toastLayout.fontSize ?? 18, "#ffffff", "700");
       t.anchor.set(0.5);
-      t.position.set(w / 2, 132);
+      t.position.set(toastRect.x + toastRect.width / 2, toastRect.y + toastRect.height / 2);
       const bg = new Graphics();
-      bg.roundRect(w / 2 - 150, 112, 300, 42, 20).fill({ color: 0x000000, alpha: 0.55 });
+      bg.roundRect(toastRect.x, toastRect.y, toastRect.width, toastRect.height, 20).fill({ color: 0x000000, alpha: 0.55 });
       this.container.addChild(bg, t);
     }
+
+    if (this.hintLayer) this.container.addChild(this.hintLayer);
+    if (this.dragView) this.container.addChild(this.dragView);
   }
 
   private drawCandidateArea(h: number): void {
-    const slotSize = 74;
-    const gap = 16;
+    const layout = this.layout("candidates", {
+      scene: "bag",
+      key: "candidates",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -142,
+      width: 74,
+      height: 74,
+      gap: 16,
+      fontSize: 12,
+      visible: true,
+      desc: "背包候选区，width/height 为单个槽尺寸",
+    });
+    if (!layout.visible) return;
+    const slotSize = layout.width;
+    const gap = layout.gap ?? 16;
     const totalWidth = this.state.candidates.length * slotSize + (this.state.candidates.length - 1) * gap;
-    const startX = (app.screen.width - totalWidth) / 2;
-    const y = h - 142;
+    const pos = resolveUiLayoutPosition(layout, app.screen.width, h);
+    const startX = pos.x - totalWidth / 2;
+    const y = pos.y;
     this.state.candidates.forEach((itemId, index) => {
       const slotX = startX + index * (slotSize + gap);
       const slotBg = new Graphics();
@@ -148,7 +254,7 @@ export class BagScene extends BaseScene {
         event.stopPropagation();
         this.startDrag(itemId, { type: "candidate", index }, event.global.x, event.global.y);
       });
-      const label = text(item.name, 12, "#ffffff", "700");
+      const label = text(item.name, layout.fontSize ?? 12, "#ffffff", "700");
       label.anchor.set(0.5);
       label.position.set(slotX + slotSize / 2, y + 86);
       this.container.addChild(c, label);
@@ -157,13 +263,54 @@ export class BagScene extends BaseScene {
 
   private drawActions(w: number, h: number): void {
     const refreshLabel = this.state.refreshFree > 0 ? `刷新 免费(${this.state.refreshFree})` : `刷新 ${data.getEconomy("bag_refresh_gold_cost")}`;
-    const refresh = button(refreshLabel, 122, 42, 0x28c9b0, () => void this.refreshCandidates());
-    const expand = button("扩格 30/广告", 122, 42, 0x32a0e6, () => void this.expandBag());
-    const start = button("开始战斗", 122, 48, 0xffb33d, () => this.tryStartBattle());
-    refresh.position.set(20, h - 58);
-    expand.position.set((w - 122) / 2, h - 58);
-    start.position.set(w - 142, h - 61);
-    this.container.addChild(refresh, expand, start);
+    const refreshLayout = this.layout("action_refresh", {
+      scene: "bag",
+      key: "action_refresh",
+      anchor: "bottomLeft",
+      x: 20,
+      y: -58,
+      width: 122,
+      height: 42,
+      fontSize: 16,
+      visible: true,
+      desc: "背包底部刷新按钮",
+    });
+    const expandLayout = this.layout("action_expand", {
+      scene: "bag",
+      key: "action_expand",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -58,
+      width: 122,
+      height: 42,
+      fontSize: 16,
+      visible: true,
+      desc: "背包底部扩格按钮",
+    });
+    const startLayout = this.layout("action_start", {
+      scene: "bag",
+      key: "action_start",
+      anchor: "bottomRight",
+      x: -142,
+      y: -61,
+      width: 122,
+      height: 48,
+      fontSize: 16,
+      visible: true,
+      desc: "背包底部开始战斗按钮",
+    });
+    const refresh = button(refreshLabel, refreshLayout.width, refreshLayout.height, 0x28c9b0, () => void this.refreshCandidates());
+    const expand = button("扩格 30/广告", expandLayout.width, expandLayout.height, 0x32a0e6, () => void this.expandBag());
+    const start = button("开始战斗", startLayout.width, startLayout.height, 0xffb33d, () => this.tryStartBattle());
+    const refreshPos = resolveUiLayoutPosition(refreshLayout, w, h);
+    const expandRect = resolveUiLayoutRect(expandLayout, w, h);
+    const startPos = resolveUiLayoutPosition(startLayout, w, h);
+    refresh.position.set(refreshPos.x, refreshPos.y);
+    expand.position.set(expandRect.x, expandRect.y);
+    start.position.set(startPos.x, startPos.y);
+    if (refreshLayout.visible) this.container.addChild(refresh);
+    if (expandLayout.visible) this.container.addChild(expand);
+    if (startLayout.visible) this.container.addChild(start);
   }
 
   private startDrag(itemId: number, source: DragSource, x: number, y: number): void {
@@ -196,6 +343,7 @@ export class BagScene extends BaseScene {
 
   private finishDrag(x: number, y: number): void {
     const result = this.resolveDrop(x, y);
+    const shouldToastInvalid = shouldToastInvalidDrop(x, y, this.gridRect(), this.candidateRects());
     this.dragView?.destroy({ children: true } as DestroyOptions);
     this.hintLayer?.destroy({ children: true } as DestroyOptions);
     this.dragView = undefined;
@@ -211,10 +359,13 @@ export class BagScene extends BaseScene {
       audio.playSfxEvent("bag_place");
       this.toast = "放置成功";
       this.toastTimer = 0.9;
-    } else {
+    } else if (shouldToastInvalid) {
       audio.playSfxEvent("bag_invalid");
       this.toast = "这里放不下";
       this.toastTimer = 0.9;
+    } else {
+      this.toast = "";
+      this.toastTimer = 0;
     }
     this.draggingSource = undefined;
     this.draw();
@@ -249,6 +400,10 @@ export class BagScene extends BaseScene {
         this.drawShapeHint(target.x, target.y, targetShape, tint, 0.42);
         this.addHintText(this.gridLeft + target.x * this.cellSize + this.cellSize / 2, this.gridTop + target.y * this.cellSize - 18, label, tint);
       }
+      return;
+    }
+
+    if (result.kind === "invalid" && !shouldShowInvalidDropHint(x, y, this.gridRect(), this.candidateRects())) {
       return;
     }
 
@@ -324,11 +479,41 @@ export class BagScene extends BaseScene {
   }
 
   private candidateRect(index: number): { x: number; y: number; w: number; h: number } {
-    const slotSize = 74;
-    const gap = 16;
+    const layout = this.layout("candidates", {
+      scene: "bag",
+      key: "candidates",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -142,
+      width: 74,
+      height: 74,
+      gap: 16,
+      fontSize: 12,
+      visible: true,
+      desc: "背包候选区，width/height 为单个槽尺寸",
+    });
+    const slotSize = layout.width;
+    const gap = layout.gap ?? 16;
     const totalWidth = this.state.candidates.length * slotSize + (this.state.candidates.length - 1) * gap;
-    const startX = (app.screen.width - totalWidth) / 2;
-    return { x: startX + index * (slotSize + gap), y: app.screen.height - 142, w: slotSize, h: slotSize };
+    const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
+    const startX = pos.x - totalWidth / 2;
+    return { x: startX + index * (slotSize + gap), y: pos.y, w: slotSize, h: slotSize };
+  }
+
+  private candidateRects(): { x: number; y: number; width: number; height: number }[] {
+    return this.state.candidates.map((_, index) => {
+      const rect = this.candidateRect(index);
+      return { x: rect.x, y: rect.y, width: rect.w, height: rect.h };
+    });
+  }
+
+  private gridRect(): { x: number; y: number; width: number; height: number } {
+    return {
+      x: this.gridLeft,
+      y: this.gridTop,
+      width: this.state.cols * this.cellSize,
+      height: this.state.rows * this.cellSize,
+    };
   }
 
   private candidateIndexAt(x: number, y: number): number {
@@ -336,6 +521,10 @@ export class BagScene extends BaseScene {
       const rect = this.candidateRect(index);
       return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
     });
+  }
+
+  private layout(key: string, defaults: Parameters<typeof getUiLayout>[3]) {
+    return getUiLayout(data, "bag", key, defaults);
   }
 
   private canMerge(
@@ -443,7 +632,13 @@ export class BagScene extends BaseScene {
     } else if (this.state.gold >= cost) {
       this.state.gold -= cost;
     } else {
-      await ads.showRewardedAd("bag_refresh");
+      const result = await ads.showRewardedAd(data.getEconomyAdPlacement("bag_refresh_gold_cost") || "bag_refresh");
+      if (!result.ok) {
+        this.toast = result.message;
+        this.toastTimer = 1;
+        this.draw();
+        return;
+      }
     }
     this.state.candidates = [this.rollItem(), this.rollItem(), this.rollItem()];
     audio.playSfxEvent("bag_refresh");
@@ -463,7 +658,13 @@ export class BagScene extends BaseScene {
     if (this.state.gold >= cost) {
       this.state.gold -= cost;
     } else {
-      await ads.showRewardedAd("bag_expand");
+      const result = await ads.showRewardedAd(data.getEconomyAdPlacement("bag_expand_gold_cost") || "bag_expand");
+      if (!result.ok) {
+        this.toast = result.message;
+        this.toastTimer = 1;
+        this.draw();
+        return;
+      }
     }
     if (this.state.cols < this.level.maxCols) this.state.cols += 1;
     else this.state.rows += 1;

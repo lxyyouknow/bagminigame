@@ -1,8 +1,10 @@
 import { Container, Graphics, type DestroyOptions } from "pixi.js";
 import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, ProjectileRuntime, RogueOptionDef, SkillDef } from "../types";
-import { app, audio, data, nextUid } from "../core/runtime";
+import type { LifecycleReason } from "../services/LifecycleService";
+import { analytics, app, audio, data, nextUid, save } from "../core/runtime";
 import { showMain } from "../core/navigation";
 import { color, createWeaponIcon, drawGradientBg, text, button, weightedPick } from "../utils/display";
+import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
@@ -41,6 +43,7 @@ export class BattleScene extends BaseScene {
     this.baseHp = level.baseHp;
     this.armor = level.baseArmor;
     this.buildSpawnQueue();
+    analytics.track("battle_start", { levelId: level.id, weaponCount: bag.placed.length, startGold: bag.gold });
     this.container.addChild(this.battleLayer, this.uiLayer);
     this.drawStatic();
   }
@@ -61,6 +64,18 @@ export class BattleScene extends BaseScene {
     }
   }
 
+  override onAppPause(_reason: LifecycleReason): void {
+    if (this.modalWindow) {
+      this.paused = true;
+      return;
+    }
+    this.openPause();
+  }
+
+  override onAppResume(_reason: LifecycleReason): void {
+    // 市面小游戏常见处理：回到前台只恢复音频，不自动继续战斗，等待玩家点“继续挑战”。
+  }
+
   private buildSpawnQueue(): void {
     const waves = data.getWaves(this.level.waveGroupId);
     for (const wave of waves) {
@@ -79,52 +94,136 @@ export class BattleScene extends BaseScene {
       drawGradientBg(this.battleLayer, this.level.theme);
     }
 
-    const pause = button("Ⅱ", 48, 48, 0x2b3441, () => this.openPause());
-    pause.position.set(18, 20);
-    const title = text(`${this.level.name}\n波次 ${this.currentWave}/${this.level.winWave}`, 20, "#ffffff", "700");
+    const pauseLayout = this.layout("pause_button", {
+      scene: "battle",
+      key: "pause_button",
+      anchor: "topLeft",
+      x: 18,
+      y: 20,
+      width: 48,
+      height: 48,
+      fontSize: 16,
+      visible: true,
+      desc: "战斗左上暂停按钮",
+    });
+    const pause = button("Ⅱ", pauseLayout.width, pauseLayout.height, 0x2b3441, () => this.openPause());
+    const pausePos = resolveUiLayoutPosition(pauseLayout, w, h);
+    pause.position.set(pausePos.x, pausePos.y);
+    const titleLayout = this.layout("title", {
+      scene: "battle",
+      key: "title",
+      anchor: "topCenter",
+      x: 0,
+      y: 44,
+      width: 320,
+      height: 56,
+      fontSize: 20,
+      visible: true,
+      desc: "战斗关卡名和波次文本",
+    });
+    const title = text(`${this.level.name}\n波次 ${this.currentWave}/${this.level.winWave}`, titleLayout.fontSize ?? 20, "#ffffff", "700");
     title.anchor.set(0.5);
-    title.position.set(w / 2, 44);
+    const titlePos = resolveUiLayoutPosition(titleLayout, w, h);
+    title.position.set(titlePos.x, titlePos.y);
 
+    const waveLayout = this.layout("wave_bar", {
+      scene: "battle",
+      key: "wave_bar",
+      anchor: "topCenter",
+      x: 0,
+      y: 86,
+      width: Math.round(w * 0.56),
+      height: 14,
+      visible: true,
+      desc: "战斗波次进度条",
+    });
+    const waveRect = resolveUiLayoutRect(waveLayout, w, h);
     const waveBar = new Graphics();
     const progress = Math.min(1, this.time / Math.max(8, this.spawnQueue.at(-1)?.time ?? this.time + 1));
-    waveBar.roundRect(w * 0.22, 86, w * 0.56, 14, 8).fill({ color: 0x10151c, alpha: 0.9 });
-    waveBar.roundRect(w * 0.22, 86, w * 0.56 * progress, 14, 8).fill({ color: 0x4ed5ff });
+    waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width, waveRect.height, 8).fill({ color: 0x10151c, alpha: 0.9 });
+    waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width * progress, waveRect.height, 8).fill({ color: 0x4ed5ff });
     waveBar.stroke({ color: 0xffffff, width: 1, alpha: 0.35 });
 
-    const stat = text(`金币 ${this.bag.gold}   杀敌 ${this.kills}   Lv.${this.levelNo}`, 17, "#ffe67b", "700");
+    const statLayout = this.layout("stat", {
+      scene: "battle",
+      key: "stat",
+      anchor: "topCenter",
+      x: 0,
+      y: 118,
+      width: 340,
+      height: 30,
+      fontSize: 17,
+      visible: true,
+      desc: "战斗金币、杀敌、等级文本",
+    });
+    const stat = text(`金币 ${this.bag.gold}   杀敌 ${this.kills}   Lv.${this.levelNo}`, statLayout.fontSize ?? 17, "#ffe67b", "700");
     stat.anchor.set(0.5);
-    stat.position.set(w / 2, 118);
+    const statPos = resolveUiLayoutPosition(statLayout, w, h);
+    stat.position.set(statPos.x, statPos.y);
 
+    const baseLayout = this.layout("base_panel", {
+      scene: "battle",
+      key: "base_panel",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -180,
+      width: Math.round(w * 0.76),
+      height: 110,
+      fontSize: 16,
+      visible: true,
+      desc: "战斗我方基地面板，y 是面板左上相对底部偏移",
+    });
+    const baseRect = resolveUiLayoutRect(baseLayout, w, h);
     const base = new Graphics();
-    base.roundRect(w * 0.12, h - 180, w * 0.76, 110, 26).fill({ color: 0x4b4138, alpha: 0.96 });
+    base.roundRect(baseRect.x, baseRect.y, baseRect.width, baseRect.height, 26).fill({ color: 0x4b4138, alpha: 0.96 });
     base.stroke({ color: 0xd2b47e, width: 4, alpha: 0.65 });
-    base.rect(w * 0.12, h - 80, w * 0.76, 14).fill({ color: 0x10151c });
-    base.rect(w * 0.12, h - 80, w * 0.76 * Math.max(0, this.baseHp / this.level.baseHp), 14).fill({ color: 0x34ed70 });
+    base.rect(baseRect.x, baseRect.y + baseRect.height - 10, baseRect.width, 14).fill({ color: 0x10151c });
+    base.rect(baseRect.x, baseRect.y + baseRect.height - 10, baseRect.width * Math.max(0, this.baseHp / this.level.baseHp), 14).fill({ color: 0x34ed70 });
 
     const hero = text("守卫", 22, "#ffdf8a", "700");
     hero.anchor.set(0.5);
-    hero.position.set(w / 2 - 54, h - 130);
-    const baseStat = text(`护甲 ${this.armor + this.buffs.armorBonus}   生命 ${Math.max(0, Math.round(this.baseHp))}`, 16, "#ffffff", "700");
+    hero.position.set(baseRect.x + baseRect.width * 0.34, baseRect.y + baseRect.height * 0.45);
+    const baseStat = text(`护甲 ${this.armor + this.buffs.armorBonus}   生命 ${Math.max(0, Math.round(this.baseHp))}`, baseLayout.fontSize ?? 16, "#ffffff", "700");
     baseStat.anchor.set(0.5);
-    baseStat.position.set(w / 2 + 50, h - 126);
+    baseStat.position.set(baseRect.x + baseRect.width * 0.62, baseRect.y + baseRect.height * 0.49);
 
+    const equipLayout = this.layout("equip_bar", {
+      scene: "battle",
+      key: "equip_bar",
+      anchor: "bottomLeft",
+      x: 0,
+      y: -64,
+      width: w,
+      height: 64,
+      gap: 54,
+      iconSize: 46,
+      visible: true,
+      desc: "战斗底部装备栏",
+    });
+    const equipPos = resolveUiLayoutPosition(equipLayout, w, h);
     const equipBg = new Graphics();
-    equipBg.roundRect(0, h - 64, w, 64, 0).fill({ color: 0x1d2935, alpha: 0.96 });
-    this.uiLayer.addChild(pause, title, waveBar, stat, base, hero, baseStat, equipBg);
+    equipBg.roundRect(equipPos.x, equipPos.y, equipLayout.width || w, equipLayout.height, 0).fill({ color: 0x1d2935, alpha: 0.96 });
+    if (pauseLayout.visible) this.uiLayer.addChild(pause);
+    if (titleLayout.visible) this.uiLayer.addChild(title);
+    if (waveLayout.visible) this.uiLayer.addChild(waveBar);
+    if (statLayout.visible) this.uiLayer.addChild(stat);
+    if (baseLayout.visible) this.uiLayer.addChild(base, hero, baseStat);
+    if (equipLayout.visible) this.uiLayer.addChild(equipBg);
 
     this.bag.placed.slice(0, 8).forEach((placed, index) => {
       const item = data.getItem(placed.itemId);
       const quality = data.getQuality(item.quality);
-      const icon = createWeaponIcon(item, quality, 46);
-      icon.position.set(32 + index * 54, h - 32);
+      const iconSize = equipLayout.iconSize ?? 46;
+      const icon = createWeaponIcon(item, quality, iconSize);
+      icon.position.set(equipPos.x + 32 + index * (equipLayout.gap ?? 54), equipPos.y + equipLayout.height / 2);
       const skill = data.getSkill(item.skillId);
       const cdRate = Math.max(0, Math.min(1, placed.cdLeft / Math.max(0.1, skill.cd * this.buffs.cdMul)));
       if (cdRate > 0) {
         const mask = new Graphics();
-        mask.roundRect(-23, -23, 46, 46 * cdRate, 8).fill({ color: 0x000000, alpha: 0.52 });
+        mask.roundRect(-iconSize / 2, -iconSize / 2, iconSize, iconSize * cdRate, 8).fill({ color: 0x000000, alpha: 0.52 });
         icon.addChild(mask);
       }
-      this.uiLayer.addChild(icon);
+      if (equipLayout.visible) this.uiLayer.addChild(icon);
     });
   }
 
@@ -338,6 +437,7 @@ export class BattleScene extends BaseScene {
   }
 
   private applyRogueOption(option: RogueOptionDef): void {
+    analytics.track("rogue_option_select", { levelId: this.level.id, optionId: option.id, effectType: option.effectType });
     if (option.effectType === "attackMul") this.buffs.attackMul *= option.effectValue;
     else if (option.effectType === "cdMul") this.buffs.cdMul *= option.effectValue;
     else if (option.effectType === "heal") this.baseHp = Math.min(this.level.baseHp, this.baseHp + option.effectValue);
@@ -377,11 +477,31 @@ export class BattleScene extends BaseScene {
     this.floating.push({ view: t, ttl: 0.75, vy: -34 });
   }
 
+  private layout(key: string, defaults: Parameters<typeof getUiLayout>[3]) {
+    return getUiLayout(data, "battle", key, defaults);
+  }
+
   private showResult(win: boolean): void {
     this.paused = true;
     if (this.modalWindow) return;
     audio.playSfxEvent(win ? "result_win" : "result_lose");
-    this.modalWindow = new WndResult(this.level, win, this.kills, this.bag.gold, this.currentWave, () => showMain());
+    const reward = save.applyBattleResult(this.level.id, {
+      win,
+      wave: this.currentWave,
+      kills: this.kills,
+      runGold: this.bag.gold,
+      playSeconds: this.time,
+    });
+    analytics.track("battle_result", {
+      levelId: this.level.id,
+      win,
+      wave: this.currentWave,
+      kills: this.kills,
+      runGold: this.bag.gold,
+      rewardCoin: reward.coin,
+      playSeconds: Math.round(this.time),
+    });
+    this.modalWindow = new WndResult(this.level, win, this.kills, reward.coin, this.currentWave, () => showMain());
     this.container.addChild(this.modalWindow.container);
   }
 

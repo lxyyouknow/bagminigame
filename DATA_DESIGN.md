@@ -25,9 +25,61 @@ public/gamedata/
 - `s_comstr.json`：通用弹窗文案表。
 - `s_asset.json`：资源 key 到图片/图集/音效路径。
 - `s_ui.json`：UI 皮肤 key 到资源 key。
+- `s_ui_layout.json`：UI 布局配置，当前主要界面已接入，用于位置、尺寸、字号、显隐。
 - `s_audio.json`：背景音乐、按钮音、背包音、战斗音、结算音的资源和性能配置。
 - `s_audio_event.json`：玩法事件到音频 key 的映射。
 - `s_animation.json`：帧动画配置，当前为预留和少量占位。
+
+## UI 布局配置：s_ui_layout
+
+路径：
+
+```text
+public/gamedata/s_ui_layout.json
+```
+
+目标是让策划或美术 agent 调整界面摆放时，只改配置表，不改功能代码。当前 `Loading`、主界面、背包、战斗 HUD、暂停、设置、确认、三选一、结算等主要界面已接入。
+
+常用字段：
+
+- `scene`：界面名，例如 `loading`、`main`、`bag`、`battle`、`pause`、`setting`、`confirm`、`rogue`、`result`。
+- `key`：组件 key，例如 `side_minigame`、`side_game_circle`、`start_button`。
+- `anchor`：屏幕基准点，支持 `topLeft`、`topCenter`、`topRight`、`centerLeft`、`center`、`centerRight`、`bottomLeft`、`bottomCenter`、`bottomRight`。
+- `x` / `y`：相对基准点偏移。
+- `width` / `height`：组件尺寸。
+- `iconSize`：图标尺寸，可选。
+- `labelOffsetY`：文字相对图标中心的纵向偏移，可选。
+- `fontSize`：字号，可选。
+- `scale`：关卡预览图等组件的缩放，可选。
+- `gap`：列表、候选槽、卡牌组、装备栏的间距，可选。
+- `visible`：是否显示。
+- `desc`：中文说明。
+
+例子：右侧“小游戏”按钮偏左或偏右，只改这一行的 `x`；偏上或偏下，只改 `y`。
+
+```json
+{
+  "scene": "main",
+  "key": "side_minigame",
+  "anchor": "topRight",
+  "x": -78,
+  "y": 104,
+  "width": 64,
+  "height": 82,
+  "iconSize": 52,
+  "labelOffsetY": 28,
+  "fontSize": 14,
+  "visible": true,
+  "desc": "主界面右侧小游戏入口，x 为相对右边缘偏移"
+}
+```
+
+原则：
+
+- 调位置、尺寸、字号、显隐：只改 `s_ui_layout.json`。
+- 换图片：改 `s_asset.json` 和 `s_ui.json`。
+- 改点击行为、打开新系统、扣资源、跳转：才改 `src/scenes/WndMain.ts` 等功能代码。
+- 后续策划提示词只要是“界面元素摆放不满意”，默认先查 `s_ui_layout.json` 的 `scene/key/desc`，不要全局搜索代码。
 
 ## 当前 3 关定位
 

@@ -1,4 +1,4 @@
-import type { AssetDef, AudioDef, AudioEventDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiSkinDef, WaveDef } from "../types";
+import type { AssetDef, AudioDef, AudioEventDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
 
 export class GameDataManager {
   levels: LevelDef[] = [];
@@ -14,6 +14,7 @@ export class GameDataManager {
   comStr: ComStrDef[] = [];
   assets: AssetDef[] = [];
   uiSkins: UiSkinDef[] = [];
+  uiLayouts: UiLayoutDef[] = [];
   audio: AudioDef[] = [];
   audioEvents: AudioEventDef[] = [];
 
@@ -32,6 +33,7 @@ export class GameDataManager {
       comStr,
       assets,
       uiSkins,
+      uiLayouts,
       audio,
       audioEvents,
     ] = await Promise.all([
@@ -48,6 +50,7 @@ export class GameDataManager {
       this.fetchTable<ComStrDef>("s_comstr"),
       this.fetchTable<AssetDef>("s_asset"),
       this.fetchTable<UiSkinDef>("s_ui"),
+      this.fetchTable<UiLayoutDef>("s_ui_layout"),
       this.fetchTable<AudioDef>("s_audio"),
       this.fetchTable<AudioEventDef>("s_audio_event"),
       this.fetchTable<unknown>("s_animation"),
@@ -66,6 +69,7 @@ export class GameDataManager {
     this.comStr = comStr;
     this.assets = assets;
     this.uiSkins = uiSkins;
+    this.uiLayouts = uiLayouts;
     this.audio = audio;
     this.audioEvents = audioEvents;
   }
@@ -102,6 +106,10 @@ export class GameDataManager {
     return this.economy.find((row) => row.key === key)?.value ?? 0;
   }
 
+  getEconomyAdPlacement(key: string): string {
+    return this.economy.find((row) => row.key === key)?.adPlacement ?? "";
+  }
+
   getComStr(id: number): ComStrDef {
     return this.must(this.comStr.find((row) => row.id === id), `通用文案 ${id}`);
   }
@@ -112,6 +120,10 @@ export class GameDataManager {
 
   getUiSkin(key: string): UiSkinDef | undefined {
     return this.uiSkins.find((row) => row.key === key);
+  }
+
+  getUiLayout(scene: string, key: string): UiLayoutDef | undefined {
+    return this.uiLayouts.find((row) => row.scene === scene && row.key === key);
   }
 
   getAudio(key: string): AudioDef | undefined {

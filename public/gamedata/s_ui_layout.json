@@ -1,0 +1,75 @@
+[
+  { "scene": "main", "key": "avatar_group", "anchor": "topLeft", "x": 0, "y": 0, "width": 240, "height": 150, "visible": true, "desc": "主界面左上角色头像、等级、账号区域，当前为组内固定布局" },
+
+  { "scene": "main", "key": "side_minigame", "anchor": "topRight", "x": -78, "y": 104, "width": 64, "height": 82, "iconSize": 52, "labelOffsetY": 28, "fontSize": 14, "visible": true, "desc": "主界面右侧小游戏入口，x 为相对右边缘偏移" },
+  { "scene": "main", "key": "side_game_circle", "anchor": "topRight", "x": -78, "y": 238, "width": 64, "height": 82, "iconSize": 52, "labelOffsetY": 28, "fontSize": 14, "visible": true, "desc": "主界面右侧游戏圈入口，x 为相对右边缘偏移" },
+
+  { "scene": "main", "key": "stage_diorama", "anchor": "center", "x": 0, "y": -52, "width": 320, "height": 240, "scale": 1.12, "visible": true, "desc": "主界面关卡预览图中心点" },
+  { "scene": "main", "key": "arrow_left", "anchor": "centerLeft", "x": 34, "y": -59, "width": 54, "height": 64, "fontSize": 38, "visible": true, "desc": "左切关按钮中心点" },
+  { "scene": "main", "key": "arrow_right", "anchor": "centerRight", "x": -88, "y": -59, "width": 54, "height": 64, "fontSize": 38, "visible": true, "desc": "右切关按钮中心点" },
+
+  { "scene": "main", "key": "level_name", "anchor": "center", "x": 0, "y": 132, "width": 320, "height": 48, "fontSize": 30, "visible": true, "desc": "关卡名文本中心点" },
+  { "scene": "main", "key": "record_bar", "anchor": "center", "x": 0, "y": 154, "width": 276, "height": 36, "fontSize": 18, "visible": true, "desc": "最高记录条中心点" },
+  { "scene": "main", "key": "reward_chest", "anchor": "center", "x": 143, "y": 154, "width": 62, "height": 46, "visible": true, "desc": "记录条右侧宝箱中心点" },
+  { "scene": "main", "key": "start_button", "anchor": "center", "x": 0, "y": 221, "width": 250, "height": 92, "fontSize": 28, "visible": true, "desc": "开始游戏按钮中心点" },
+  { "scene": "main", "key": "toast", "anchor": "center", "x": 0, "y": 191, "width": 300, "height": 44, "fontSize": 18, "visible": true, "desc": "主界面提示气泡中心点" },
+
+  { "scene": "loading", "key": "hero", "anchor": "center", "x": 0, "y": -52, "width": 124, "height": 92, "iconSize": 68, "visible": true, "desc": "Loading 中央角色占位图中心点" },
+  { "scene": "loading", "key": "progress_bar", "anchor": "center", "x": 0, "y": 56, "width": 282, "height": 24, "visible": true, "desc": "Loading 进度条区域" },
+  { "scene": "loading", "key": "label", "anchor": "center", "x": 0, "y": 88, "width": 320, "height": 36, "fontSize": 24, "visible": true, "desc": "Loading 文本中心点" },
+  { "scene": "loading", "key": "error_text", "anchor": "center", "x": 0, "y": 148, "width": 356, "height": 80, "fontSize": 16, "visible": true, "desc": "Loading 错误文本中心点" },
+
+  { "scene": "bag", "key": "title", "anchor": "topCenter", "x": 0, "y": 38, "width": 320, "height": 34, "fontSize": 24, "visible": true, "desc": "背包界面关卡标题" },
+  { "scene": "bag", "key": "gold", "anchor": "topLeft", "x": 24, "y": 78, "width": 150, "height": 28, "fontSize": 18, "visible": true, "desc": "背包界面金币文本" },
+  { "scene": "bag", "key": "bag_size", "anchor": "topRight", "x": -24, "y": 78, "width": 150, "height": 28, "fontSize": 16, "visible": true, "desc": "背包行列文本" },
+  { "scene": "bag", "key": "board", "anchor": "topCenter", "x": 0, "y": 164, "width": 338, "height": 338, "scale": 66, "visible": true, "desc": "背包棋盘顶部中心点，scale 为最大格子尺寸" },
+  { "scene": "bag", "key": "hint", "anchor": "topCenter", "x": 0, "y": 42, "width": 340, "height": 28, "fontSize": 14, "visible": true, "desc": "背包棋盘下方提示，y 相对棋盘底部" },
+  { "scene": "bag", "key": "candidates", "anchor": "bottomCenter", "x": 0, "y": -142, "width": 74, "height": 74, "gap": 16, "fontSize": 12, "visible": true, "desc": "背包候选区，width/height 为单个槽尺寸" },
+  { "scene": "bag", "key": "action_refresh", "anchor": "bottomLeft", "x": 20, "y": -58, "width": 122, "height": 42, "fontSize": 16, "visible": true, "desc": "背包底部刷新按钮" },
+  { "scene": "bag", "key": "action_expand", "anchor": "bottomCenter", "x": 0, "y": -58, "width": 122, "height": 42, "fontSize": 16, "visible": true, "desc": "背包底部扩格按钮" },
+  { "scene": "bag", "key": "action_start", "anchor": "bottomRight", "x": -142, "y": -61, "width": 122, "height": 48, "fontSize": 16, "visible": true, "desc": "背包底部开始战斗按钮" },
+  { "scene": "bag", "key": "toast", "anchor": "topCenter", "x": 0, "y": 132, "width": 300, "height": 42, "fontSize": 18, "visible": true, "desc": "背包提示气泡" },
+
+  { "scene": "battle", "key": "pause_button", "anchor": "topLeft", "x": 18, "y": 20, "width": 48, "height": 48, "fontSize": 16, "visible": true, "desc": "战斗左上暂停按钮" },
+  { "scene": "battle", "key": "title", "anchor": "topCenter", "x": 0, "y": 44, "width": 320, "height": 56, "fontSize": 20, "visible": true, "desc": "战斗关卡名和波次文本" },
+  { "scene": "battle", "key": "wave_bar", "anchor": "topCenter", "x": 0, "y": 86, "width": 232, "height": 14, "visible": true, "desc": "战斗波次进度条" },
+  { "scene": "battle", "key": "stat", "anchor": "topCenter", "x": 0, "y": 118, "width": 340, "height": 30, "fontSize": 17, "visible": true, "desc": "战斗金币、杀敌、等级文本" },
+  { "scene": "battle", "key": "base_panel", "anchor": "bottomCenter", "x": 0, "y": -180, "width": 315, "height": 110, "fontSize": 16, "visible": true, "desc": "战斗我方基地面板，y 是面板左上相对底部偏移" },
+  { "scene": "battle", "key": "equip_bar", "anchor": "bottomLeft", "x": 0, "y": -64, "width": 414, "height": 64, "gap": 54, "iconSize": 46, "visible": true, "desc": "战斗底部装备栏" },
+
+  { "scene": "pause", "key": "title", "anchor": "center", "x": 0, "y": -188, "width": 260, "height": 72, "fontSize": 32, "visible": true, "desc": "暂停弹窗标题区域" },
+  { "scene": "pause", "key": "panel", "anchor": "center", "x": 0, "y": 74, "width": 370, "height": 310, "visible": true, "desc": "暂停弹窗内容面板" },
+  { "scene": "pause", "key": "info", "anchor": "center", "x": 0, "y": 0, "width": 330, "height": 90, "fontSize": 18, "visible": true, "desc": "暂停弹窗关卡和本局数据文本" },
+  { "scene": "pause", "key": "home_button", "anchor": "bottomLeft", "x": 72, "y": -169, "width": 70, "height": 64, "fontSize": 30, "visible": true, "desc": "暂停弹窗回主界面按钮" },
+  { "scene": "pause", "key": "continue_button", "anchor": "bottomCenter", "x": 0, "y": -169, "width": 178, "height": 64, "fontSize": 24, "visible": true, "desc": "暂停弹窗继续挑战按钮" },
+  { "scene": "pause", "key": "setting_button", "anchor": "bottomRight", "x": -142, "y": -169, "width": 70, "height": 64, "fontSize": 30, "visible": true, "desc": "暂停弹窗设置按钮" },
+
+  { "scene": "setting", "key": "panel", "anchor": "center", "x": 0, "y": 52, "width": 348, "height": 440, "visible": true, "desc": "设置弹窗主面板" },
+  { "scene": "setting", "key": "title", "anchor": "center", "x": 0, "y": -184, "width": 320, "height": 40, "fontSize": 28, "visible": true, "desc": "设置标题" },
+  { "scene": "setting", "key": "volume_master", "anchor": "center", "x": 0, "y": -125, "width": 300, "height": 44, "fontSize": 18, "visible": true, "desc": "总音量行中心点" },
+  { "scene": "setting", "key": "volume_music", "anchor": "center", "x": 0, "y": -59, "width": 300, "height": 44, "fontSize": 18, "visible": true, "desc": "背景音乐行中心点" },
+  { "scene": "setting", "key": "volume_sfx", "anchor": "center", "x": 0, "y": 7, "width": 300, "height": 44, "fontSize": 18, "visible": true, "desc": "战斗音效行中心点" },
+  { "scene": "setting", "key": "music_toggle", "anchor": "center", "x": -77, "y": 82, "width": 130, "height": 48, "fontSize": 18, "visible": true, "desc": "音乐开关按钮" },
+  { "scene": "setting", "key": "sfx_toggle", "anchor": "center", "x": 77, "y": 82, "width": 130, "height": 48, "fontSize": 18, "visible": true, "desc": "音效开关按钮" },
+  { "scene": "setting", "key": "hint", "anchor": "center", "x": 0, "y": 155, "width": 300, "height": 48, "fontSize": 13, "visible": true, "desc": "设置说明文本" },
+  { "scene": "setting", "key": "close_button", "anchor": "center", "x": 0, "y": 191, "width": 140, "height": 56, "fontSize": 24, "visible": true, "desc": "设置确定按钮" },
+
+  { "scene": "confirm", "key": "panel", "anchor": "center", "x": 0, "y": -21, "width": 362, "height": 250, "visible": true, "desc": "确认弹窗面板" },
+  { "scene": "confirm", "key": "title", "anchor": "center", "x": -105, "y": -156, "width": 230, "height": 58, "fontSize": 25, "visible": true, "desc": "确认弹窗标题" },
+  { "scene": "confirm", "key": "icon", "anchor": "center", "x": -139, "y": -156, "width": 68, "height": 68, "visible": true, "desc": "确认弹窗标题图标" },
+  { "scene": "confirm", "key": "content", "anchor": "center", "x": 0, "y": -50, "width": 274, "height": 90, "fontSize": 22, "visible": true, "desc": "确认弹窗内容" },
+  { "scene": "confirm", "key": "cancel_button", "anchor": "center", "x": -83, "y": 65, "width": 168, "height": 58, "fontSize": 24, "visible": true, "desc": "确认弹窗取消按钮" },
+  { "scene": "confirm", "key": "confirm_button", "anchor": "center", "x": 83, "y": 65, "width": 168, "height": 58, "fontSize": 24, "visible": true, "desc": "确认弹窗确认按钮" },
+
+  { "scene": "rogue", "key": "title", "anchor": "center", "x": 0, "y": -162, "width": 320, "height": 40, "fontSize": 28, "visible": true, "desc": "肉鸽三选一标题" },
+  { "scene": "rogue", "key": "cards", "anchor": "center", "x": 0, "y": 15, "width": 118, "height": 190, "gap": 10, "iconSize": 54, "fontSize": 16, "visible": true, "desc": "肉鸽三选一卡牌组，width 为单张卡宽" },
+
+  { "scene": "result", "key": "hero", "anchor": "center", "x": 0, "y": -243, "width": 124, "height": 124, "visible": true, "desc": "结算顶部圆形图标" },
+  { "scene": "result", "key": "title", "anchor": "center", "x": 0, "y": -162, "width": 320, "height": 48, "fontSize": 24, "visible": true, "desc": "结算关卡波次标题" },
+  { "scene": "result", "key": "result_text", "anchor": "center", "x": 0, "y": -125, "width": 320, "height": 42, "fontSize": 26, "visible": true, "desc": "结算结果文本" },
+  { "scene": "result", "key": "panel", "anchor": "center", "x": 0, "y": 127, "width": 414, "height": 310, "visible": true, "desc": "结算奖励面板" },
+  { "scene": "result", "key": "reward_title", "anchor": "center", "x": 0, "y": -70, "width": 360, "height": 44, "fontSize": 24, "visible": true, "desc": "结算获得奖励标题" },
+  { "scene": "result", "key": "exp_card", "anchor": "center", "x": -126, "y": 95, "width": 88, "height": 88, "fontSize": 20, "visible": true, "desc": "结算 EXP 奖励卡" },
+  { "scene": "result", "key": "coin_card", "anchor": "center", "x": -14, "y": 95, "width": 88, "height": 88, "fontSize": 20, "visible": true, "desc": "结算金币奖励卡" },
+  { "scene": "result", "key": "ok_button", "anchor": "bottomCenter", "x": 0, "y": -132, "width": 176, "height": 64, "fontSize": 26, "visible": true, "desc": "结算确定按钮" }
+]

@@ -15,6 +15,7 @@
 
 - `s_asset.json` 配置资源 key 到图片路径。
 - `s_ui.json` 配置 UI 皮肤 key。
+- `s_ui_layout.json` 配置主要界面 UI 的位置、尺寸、字号、显隐。
 - 有正式图时使用 Pixi `Sprite`。
 - 没有正式图时自动回退到代码绘制的占位 UI。
 
@@ -114,6 +115,41 @@ public/gamedata/s_ui.json
 2. 在 `s_asset.json` 找到对应资源 key，例如 `ui_button_yellow`。
 3. 填写 `url`，例如 `/game-assets/ui/button-yellow.png`。
 4. 刷新游戏验证。
+
+## UI 布局表：s_ui_layout
+
+界面布局入口：
+
+```text
+public/gamedata/s_ui_layout.json
+```
+
+用途：
+
+- 调整 Loading、主界面、背包、战斗 HUD、暂停、设置、确认、三选一、结算等主要界面的按钮、入口、关卡图、标题、记录条、开始按钮、面板、卡牌、进度条位置。
+- 调整图标大小、文字偏移、字号、显隐。
+- 让策划或美术 agent 能只改表，不碰功能代码。
+
+主界面右侧入口示例：
+
+- `side_minigame`：小游戏入口。
+- `side_game_circle`：游戏圈入口。
+
+如果按钮偏了，优先调：
+
+- `x`：横向偏移。`anchor = topRight` 时，`x` 是相对屏幕右边缘的偏移，通常为负数。
+- `y`：纵向偏移。
+- `iconSize`：圆形图标大小。
+- `labelOffsetY`：文字离图标中心的距离。
+- `fontSize`：文字字号。
+
+不要为了调位置改 `src/scenes/` 或 `src/windows/`。只有新增按钮功能、改点击逻辑或新增组件类型时，才需要技术同学改代码。
+
+给策划或美术 agent 的默认规则：
+
+- 界面元素偏移、大小、字号、显隐：改 `public/gamedata/s_ui_layout.json`。
+- 图片、按钮底图、图标、关卡图：改 `public/gamedata/s_asset.json` 和 `public/gamedata/s_ui.json`。
+- 功能行为、跳转、消耗、奖励：再改 TypeScript 功能代码。
 
 ## 关卡地图图
 

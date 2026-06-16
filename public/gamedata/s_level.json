@@ -16,7 +16,12 @@
     "roguePoolId": 101,
     "winWave": 3,
     "mapAssetKey": "level_map_1",
-    "lockedMapAssetKey": "level_map_1"
+    "lockedMapAssetKey": "level_map_1",
+    "entryCostResource": "dynamite",
+    "entryCostAmount": 6,
+    "firstPassRewardCoin": 80,
+    "repeatWinRewardCoin": 30,
+    "loseRewardCoin": 10
   },
   {
     "id": 2,
@@ -35,7 +40,12 @@
     "roguePoolId": 102,
     "winWave": 5,
     "mapAssetKey": "level_map_2",
-    "lockedMapAssetKey": "level_map_2_locked"
+    "lockedMapAssetKey": "level_map_2_locked",
+    "entryCostResource": "dynamite",
+    "entryCostAmount": 6,
+    "firstPassRewardCoin": 120,
+    "repeatWinRewardCoin": 45,
+    "loseRewardCoin": 12
   },
   {
     "id": 3,
@@ -54,6 +64,11 @@
     "roguePoolId": 103,
     "winWave": 6,
     "mapAssetKey": "level_map_3",
-    "lockedMapAssetKey": "level_map_3_locked"
+    "lockedMapAssetKey": "level_map_3_locked",
+    "entryCostResource": "dynamite",
+    "entryCostAmount": 6,
+    "firstPassRewardCoin": 160,
+    "repeatWinRewardCoin": 60,
+    "loseRewardCoin": 15
   }
 ]

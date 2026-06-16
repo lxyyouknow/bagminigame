@@ -1,14 +1,10 @@
 import { Container, Graphics, Sprite, Text, TextStyle, type DestroyOptions } from "pixi.js";
 import type { ItemDef, ItemShapeDef, LevelDef, QualityDef, ThemeName } from "../types";
 import { app, assetManager, audio, data } from "../core/runtime";
+import { getTopResourceEntries, type TopResourceLabels } from "../ui/resourceMeta";
+import { color, clamp01, weightedPick } from "./math";
 
-export function color(hex: string): number {
-  return Number.parseInt(hex.replace("#", ""), 16);
-}
-
-export function clamp01(value: number): number {
-  return Math.max(0, Math.min(1, Math.round(value * 100) / 100));
-}
+export { color, clamp01, weightedPick };
 
 export function text(content: string, size: number, fill = "#ffffff", weight: "400" | "700" = "400"): Text {
   return new Text({
@@ -132,12 +128,8 @@ export function drawMainBg(container: Container): void {
   container.addChildAt(g, 0);
 }
 
-export function drawTopResourceBar(container: Container): void {
-  const entries = [
-    { label: "30/30", color: 0xff384e, uiKey: "resource_energy_icon" },
-    { label: "0", color: 0xffc34a, uiKey: "resource_ticket_icon" },
-    { label: "440", color: 0x39b8ff, uiKey: "resource_coin_icon" },
-  ];
+export function drawTopResourceBar(container: Container, labels?: TopResourceLabels): void {
+  const entries = getTopResourceEntries(labels);
   entries.forEach((entry, index) => {
     const x = 24 + index * 150;
     const icon = new Container();
@@ -151,16 +143,19 @@ export function drawTopResourceBar(container: Container): void {
     }
     const pill = new Graphics();
     pill.roundRect(x + 10, 12, 112, 30, 15).fill({ color: 0x2f2b2a, alpha: 0.9 });
-    const t = text(entry.label, 20, "#ffffff", "700");
-    t.anchor.set(0.5);
-    t.position.set(x + 70, 27);
-    container.addChild(pill, icon, t);
+    const nameText = text(entry.name, 10, "#ffd8ad", "700");
+    nameText.anchor.set(0, 0.5);
+    nameText.position.set(x + 26, 21);
+    const valueText = text(entry.value, 18, "#ffffff", "700");
+    valueText.anchor.set(1, 0.5);
+    valueText.position.set(x + 112, 31);
+    container.addChild(pill, icon, nameText, valueText);
   });
 }
 
-export function drawStageDiorama(level: LevelDef, scale = 1): Container {
+export function drawStageDiorama(level: LevelDef, scale = 1, locked = false): Container {
   const c = new Container();
-  const mapKey = level.id > 1 ? level.lockedMapAssetKey || level.mapAssetKey : level.mapAssetKey;
+  const mapKey = locked ? level.lockedMapAssetKey || level.mapAssetKey : level.mapAssetKey;
   const map = spriteFromAsset(mapKey, 320 * scale, 240 * scale);
   if (map) {
     map.anchor.set(0.5);
@@ -190,7 +185,7 @@ export function drawStageDiorama(level: LevelDef, scale = 1): Container {
   }
 
   const lock = new Graphics();
-  if (level.id > 1) {
+  if (locked) {
     lock.roundRect(-32 * scale, -8 * scale, 64 * scale, 52 * scale, 8 * scale).fill({ color: 0x202020, alpha: 0.8 });
     lock.circle(0, 10 * scale, 14 * scale).fill({ color: 0xdadada });
     c.addChild(lock);
@@ -253,18 +248,6 @@ export function createItemShapeView(item: ItemDef, shape: ItemShapeDef, quality:
   icon.position.set((maxX + 1) * cellSize * 0.5 - 2, (maxY + 1) * cellSize * 0.5 - 2);
   c.addChild(icon);
   return c;
-}
-
-export function weightedPick<T extends { weight: number }>(items: T[]): T {
-  const total = items.reduce((sum, item) => sum + item.weight, 0);
-  let roll = Math.random() * total;
-  for (const item of items) {
-    roll -= item.weight;
-    if (roll <= 0) {
-      return item;
-    }
-  }
-  return items[items.length - 1];
 }
 
 export function screenPoint(event: PointerEvent): { x: number; y: number } {
