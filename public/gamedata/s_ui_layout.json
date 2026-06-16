@@ -34,8 +34,8 @@
   { "scene": "battle", "key": "title", "anchor": "topCenter", "x": 0, "y": 44, "width": 320, "height": 56, "fontSize": 20, "visible": true, "desc": "战斗关卡名和波次文本" },
   { "scene": "battle", "key": "wave_bar", "anchor": "topCenter", "x": 0, "y": 86, "width": 232, "height": 14, "visible": true, "desc": "战斗波次进度条" },
   { "scene": "battle", "key": "stat", "anchor": "topCenter", "x": 0, "y": 118, "width": 340, "height": 30, "fontSize": 17, "visible": true, "desc": "战斗金币、杀敌、等级文本" },
-  { "scene": "battle", "key": "base_panel", "anchor": "bottomCenter", "x": 0, "y": -180, "width": 315, "height": 110, "fontSize": 16, "visible": true, "desc": "战斗我方基地面板，y 是面板左上相对底部偏移" },
-  { "scene": "battle", "key": "equip_bar", "anchor": "bottomLeft", "x": 0, "y": -64, "width": 414, "height": 64, "gap": 54, "iconSize": 46, "visible": true, "desc": "战斗底部装备栏" },
+  { "scene": "battle", "key": "base_panel", "anchor": "bottomCenter", "x": 0, "y": -132, "width": 338, "height": 158, "fontSize": 16, "visible": true, "desc": "战斗底部基地区域" },
+  { "scene": "battle", "key": "equip_bar", "anchor": "bottomCenter", "x": 0, "y": -18, "width": 366, "height": 122, "gap": 8, "iconSize": 42, "visible": true, "desc": "战斗底部横向武器槽面板" },
 
   { "scene": "pause", "key": "title", "anchor": "center", "x": 0, "y": -188, "width": 260, "height": 72, "fontSize": 32, "visible": true, "desc": "暂停弹窗标题区域" },
   { "scene": "pause", "key": "panel", "anchor": "center", "x": 0, "y": 74, "width": 370, "height": 310, "visible": true, "desc": "暂停弹窗内容面板" },
