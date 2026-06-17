@@ -113,19 +113,23 @@ export function drawGradientBg(container: Container, theme: ThemeName): void {
   container.addChildAt(g, 0);
 }
 
-export function drawMainBg(container: Container): void {
+export function drawGrassBg(container: Container, fallbackTheme: ThemeName = "green"): void {
   const w = app.screen.width;
   const h = app.screen.height;
-  const g = new Graphics();
-  g.rect(0, 0, w, h).fill({ color: 0xffb16f });
-  g.rect(0, 0, w, h).fill({ color: 0xff805f, alpha: 0.22 });
-  for (let i = 0; i < 20; i += 1) {
-    const x = (i * 97) % w;
-    const y = 110 + ((i * 143) % Math.max(1, h - 160));
-    g.circle(x, y, 44).stroke({ color: 0xe87a52, width: 10, alpha: 0.08 });
-    g.moveTo(x - 16, y).lineTo(x + 42, y).stroke({ color: 0xe87a52, width: 9, alpha: 0.08 });
+  const texture = assetManager.texture("bg_grass_cartoon");
+  if (!texture) {
+    drawGradientBg(container, fallbackTheme);
+    return;
   }
-  container.addChildAt(g, 0);
+  const bg = new Sprite(texture);
+  const scale = Math.max(w / texture.width, h / texture.height);
+  bg.scale.set(scale);
+  bg.position.set((w - texture.width * scale) / 2, (h - texture.height * scale) / 2);
+  container.addChildAt(bg, 0);
+}
+
+export function drawMainBg(container: Container): void {
+  drawGrassBg(container);
 }
 
 export function drawTopResourceBar(container: Container, labels?: TopResourceLabels): void {
@@ -231,22 +235,25 @@ export function createWeaponIcon(item: ItemDef, quality: QualityDef, size: numbe
   return c;
 }
 
-export function createItemShapeView(item: ItemDef, shape: ItemShapeDef, quality: QualityDef, cellSize: number): Container {
+export function createItemShapeView(item: ItemDef, shape: ItemShapeDef, _quality: QualityDef, cellSize: number, cellGap = 0, iconScale = 1): Container {
   const c = new Container();
-  const qColor = color(quality.color);
   for (const [x, y] of shape.cells) {
-    const g = new Graphics();
-    g.roundRect(x * cellSize, y * cellSize, cellSize - 4, cellSize - 4, 9);
-    g.fill({ color: 0x233140, alpha: 0.92 });
-    g.stroke({ color: qColor, width: 3 });
-    c.addChild(g);
-  }
+    const iconSize = 150 * iconScale;
+    const px = x * (cellSize + cellGap) + cellSize * 0.5;
+    const py = y * (cellSize + cellGap) + cellSize * 0.5 - 25;
+    const art = spriteFromAsset(item.iconAssetKey || `weapon_${item.icon}_icon`, iconSize, iconSize);
+    if (art) {
+      art.anchor.set(0.5);
+      art.position.set(px, py);
+      c.addChild(art);
+      continue;
+    }
 
-  const maxX = Math.max(...shape.cells.map(([x]) => x));
-  const maxY = Math.max(...shape.cells.map(([, y]) => y));
-  const icon = createWeaponIcon(item, quality, Math.min(cellSize * 0.82, 58));
-  icon.position.set((maxX + 1) * cellSize * 0.5 - 2, (maxY + 1) * cellSize * 0.5 - 2);
-  c.addChild(icon);
+    const fallback = new Graphics();
+    fallback.circle(px, py, iconSize * 0.32).fill({ color: 0x7fbf55, alpha: 0.95 });
+    fallback.stroke({ color: 0x426f2a, width: 3, alpha: 0.9 });
+    c.addChild(fallback);
+  }
   return c;
 }
 

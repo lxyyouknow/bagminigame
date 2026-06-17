@@ -1,5 +1,6 @@
 [
   { "key": "ui_loading_bg", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" },
+  { "key": "bg_grass_cartoon", "type": "image", "url": "/game-assets/backgrounds/grass-cartoon-base.png", "preloadGroup": "boot", "fallbackKey": "" },
   { "key": "atlas_ui_main", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" },
   { "key": "atlas_battle_main", "type": "generated", "url": "", "preloadGroup": "battle", "fallbackKey": "" },
 
@@ -24,12 +25,21 @@
   { "key": "level_map_2_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_2" },
   { "key": "level_map_3_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_3" },
 
-  { "key": "weapon_ball_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_bat_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_spear_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_shield_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_bomb_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_staff_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "bag_farm_frame", "type": "image", "url": "/game-assets/bag/farm/bag-farm-frame.png", "preloadGroup": "bag", "fallbackKey": "" },
+  { "key": "bag_farm_cell", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell.png", "preloadGroup": "bag", "fallbackKey": "" },
+
+  { "key": "weapon_tomato_lv1_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv1-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_tomato_lv2_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv2-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_tomato_lv1_icon" },
+  { "key": "weapon_tomato_lv3_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv3-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_tomato_lv2_icon" },
+  { "key": "weapon_blueberry_lv1_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv1-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_blueberry_lv2_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv2-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_blueberry_lv1_icon" },
+  { "key": "weapon_blueberry_lv3_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv3-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_blueberry_lv2_icon" },
+  { "key": "weapon_ball_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_bat_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-carrot-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_spear_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-wheat-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_shield_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_bomb_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-pepper-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
+  { "key": "weapon_staff_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-cabbage-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
 
   { "key": "fx_merge_test_00", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-00.svg", "preloadGroup": "battle", "fallbackKey": "" },
   { "key": "fx_merge_test_01", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-01.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_00" },

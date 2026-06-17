@@ -1,7 +1,7 @@
 import { Graphics } from "pixi.js";
 import { analytics, app, assetManager, audio, data, lifecycle, save } from "../core/runtime";
 import { showMain } from "../core/navigation";
-import { drawGradientBg, text } from "../utils/display";
+import { drawGrassBg, text } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { BaseScene } from "./BaseScene";
 
@@ -57,7 +57,7 @@ export class LoadingScene extends BaseScene {
 
   private redraw(): void {
     this.container.removeChildren();
-    drawGradientBg(this.container, "green");
+    drawGrassBg(this.container);
     const w = app.screen.width;
     const h = app.screen.height;
     const heroLayout = getUiLayout(data, "loading", "hero", {

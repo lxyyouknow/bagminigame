@@ -2,7 +2,7 @@ import { Container, Graphics, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, LevelDef, PlacedItem } from "../types";
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
-import { createItemShapeView, createWeaponIcon, drawGradientBg, screenPoint, text, button, weightedPick, color } from "../utils/display";
+import { addImageOrFallback, createItemShapeView, createWeaponIcon, drawGrassBg, screenPoint, text, button, weightedPick, color, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { shouldShowInvalidDropHint, shouldToastInvalidDrop } from "./bagDragUi";
 import { BaseScene } from "./BaseScene";
@@ -12,6 +12,8 @@ export class BagScene extends BaseScene {
   private toast = "";
   private toastTimer = 0;
   private cellSize = 66;
+  private cellGap = 5;
+  private boardPadding = 28;
   private gridLeft = 0;
   private gridTop = 0;
   private dragView: Container | undefined;
@@ -55,7 +57,7 @@ export class BagScene extends BaseScene {
 
   private draw(): void {
     this.container.removeChildren();
-    drawGradientBg(this.container, "green");
+    drawGrassBg(this.container);
     const w = app.screen.width;
     const h = app.screen.height;
     const boardLayout = this.layout("board", {
@@ -70,12 +72,17 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "背包棋盘顶部中心点，scale 为最大格子尺寸",
     });
-    this.cellSize = Math.min(boardLayout.scale ?? 66, Math.floor(boardLayout.width / Math.max(this.state.cols, 4)));
-    const boardW = this.state.cols * this.cellSize;
-    const boardH = this.state.rows * this.cellSize;
-    const boardPos = resolveUiLayoutPosition(boardLayout, w, h);
-    this.gridLeft = boardPos.x - boardW / 2;
-    this.gridTop = boardPos.y;
+    const boardAvailableW = Math.min(boardLayout.width, w - 76);
+    this.cellSize = Math.min(boardLayout.scale ?? 120, Math.floor(boardAvailableW / Math.max(this.state.cols, 1)));
+    const pitch = this.cellSize + this.cellGap;
+    const boardW = this.state.cols * this.cellSize + Math.max(0, this.state.cols - 1) * this.cellGap;
+    const boardH = this.state.rows * this.cellSize + Math.max(0, this.state.rows - 1) * this.cellGap;
+    const boardFrameW = boardW + this.boardPadding * 2;
+    const boardFrameH = boardH + this.boardPadding * 2;
+    const boardCenterX = w / 2 + boardLayout.x;
+    const boardCenterY = h * 0.35 + boardLayout.y - 164;
+    this.gridLeft = boardCenterX - boardW / 2;
+    this.gridTop = boardCenterY - boardFrameH / 2 + this.boardPadding;
 
     const titleLayout = this.layout("title", {
       scene: "bag",
@@ -126,10 +133,15 @@ export class BagScene extends BaseScene {
     const sizePos = resolveUiLayoutPosition(sizeLayout, w, h);
     hp.position.set(sizePos.x, sizePos.y);
 
-    const boardBg = new Graphics();
-    boardBg.roundRect(this.gridLeft - 18, this.gridTop - 18, boardW + 36, boardH + 36, 20);
-    boardBg.fill({ color: 0x654b36, alpha: 0.96 });
-    boardBg.stroke({ color: 0x261b16, width: 4 });
+    const boardBg = new Container();
+    boardBg.position.set(this.gridLeft - this.boardPadding, this.gridTop - this.boardPadding);
+    const boardFallback = new Container();
+    const fallbackBg = new Graphics();
+    fallbackBg.roundRect(0, 0, boardFrameW, boardFrameH, 20);
+    fallbackBg.fill({ color: 0x654b36, alpha: 0.96 });
+    fallbackBg.stroke({ color: 0x261b16, width: 4 });
+    boardFallback.addChild(fallbackBg);
+    addImageOrFallback(boardBg, spriteFromAsset("bag_farm_frame", boardFrameW, boardFrameH), boardFallback);
     if (titleLayout.visible) this.container.addChild(title);
     if (goldLayout.visible) this.container.addChild(gold);
     if (sizeLayout.visible) this.container.addChild(hp);
@@ -137,10 +149,16 @@ export class BagScene extends BaseScene {
 
     for (let y = 0; y < this.state.rows; y += 1) {
       for (let x = 0; x < this.state.cols; x += 1) {
-        const cell = new Graphics();
-        cell.roundRect(this.gridLeft + x * this.cellSize + 3, this.gridTop + y * this.cellSize + 3, this.cellSize - 6, this.cellSize - 6, 8);
-        cell.fill({ color: 0xf3e7d1 });
-        cell.stroke({ color: 0x2d241d, width: 2, alpha: 0.75 });
+        const cell = new Container();
+        cell.position.set(this.gridLeft + x * pitch, this.gridTop + y * pitch);
+        const fallbackCell = new Container();
+        fallbackCell.addChild(
+          new Graphics()
+            .roundRect(0, 0, this.cellSize, this.cellSize, 8)
+            .fill({ color: 0xf3e7d1 })
+            .stroke({ color: 0x2d241d, width: 2, alpha: 0.75 }),
+        );
+        addImageOrFallback(cell, spriteFromAsset("bag_farm_cell", this.cellSize, this.cellSize), fallbackCell);
         this.container.addChild(cell);
       }
     }
@@ -149,8 +167,8 @@ export class BagScene extends BaseScene {
       const item = data.getItem(placed.itemId);
       const shape = data.getShape(item.shapeId);
       const quality = data.getQuality(item.quality);
-      const view = createItemShapeView(item, shape, quality, this.cellSize);
-      view.position.set(this.gridLeft + placed.x * this.cellSize + 2, this.gridTop + placed.y * this.cellSize + 2);
+      const view = createItemShapeView(item, shape, quality, this.cellSize, this.cellGap, 0.9);
+      view.position.set(this.gridLeft + placed.x * pitch, this.gridTop + placed.y * pitch);
       view.eventMode = "static";
       view.cursor = "grab";
       view.on("pointerdown", (event) => {
@@ -315,7 +333,7 @@ export class BagScene extends BaseScene {
 
   private startDrag(itemId: number, source: DragSource, x: number, y: number): void {
     const item = data.getItem(itemId);
-    const view = createItemShapeView(item, data.getShape(item.shapeId), data.getQuality(item.quality), this.cellSize);
+    const view = createItemShapeView(item, data.getShape(item.shapeId), data.getQuality(item.quality), this.cellSize, this.cellGap);
     view.alpha = 0.88;
     view.position.set(x, y);
     view.scale.set(0.9);
@@ -398,7 +416,8 @@ export class BagScene extends BaseScene {
         const targetItem = data.getItem(target.itemId);
         const targetShape = data.getShape(targetItem.shapeId);
         this.drawShapeHint(target.x, target.y, targetShape, tint, 0.42);
-        this.addHintText(this.gridLeft + target.x * this.cellSize + this.cellSize / 2, this.gridTop + target.y * this.cellSize - 18, label, tint);
+        const pitch = this.cellSize + this.cellGap;
+        this.addHintText(this.gridLeft + target.x * pitch + this.cellSize / 2, this.gridTop + target.y * pitch - 18, label, tint);
       }
       return;
     }
@@ -418,7 +437,8 @@ export class BagScene extends BaseScene {
     if (!this.hintLayer) return;
     for (const [dx, dy] of shape.cells) {
       const g = new Graphics();
-      g.roundRect(this.gridLeft + (x + dx) * this.cellSize + 3, this.gridTop + (y + dy) * this.cellSize + 3, this.cellSize - 6, this.cellSize - 6, 8);
+      const pitch = this.cellSize + this.cellGap;
+      g.roundRect(this.gridLeft + (x + dx) * pitch, this.gridTop + (y + dy) * pitch, this.cellSize, this.cellSize, 8);
       g.fill({ color: tint, alpha });
       g.stroke({ color: tint, width: 4, alpha: 0.92 });
       this.hintLayer.addChild(g);
@@ -445,8 +465,9 @@ export class BagScene extends BaseScene {
       return { kind: "invalid", x: 0, y: 0 };
     }
 
-    const gridX = Math.floor((x - this.gridLeft) / this.cellSize);
-    const gridY = Math.floor((y - this.gridTop) / this.cellSize);
+    const pitch = this.cellSize + this.cellGap;
+    const gridX = Math.floor((x - this.gridLeft) / pitch);
+    const gridY = Math.floor((y - this.gridTop) / pitch);
     const target = this.findPlacedAt(gridX, gridY);
     if (target && this.canMerge(this.draggingItemId, target.itemId, this.draggingSource, { type: "placed", uid: target.uid })) {
       return { kind: "mergePlaced", targetUid: target.uid };
@@ -511,8 +532,8 @@ export class BagScene extends BaseScene {
     return {
       x: this.gridLeft,
       y: this.gridTop,
-      width: this.state.cols * this.cellSize,
-      height: this.state.rows * this.cellSize,
+      width: this.state.cols * this.cellSize + Math.max(0, this.state.cols - 1) * this.cellGap,
+      height: this.state.rows * this.cellSize + Math.max(0, this.state.rows - 1) * this.cellGap,
     };
   }
 

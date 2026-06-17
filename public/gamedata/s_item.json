@@ -1,19 +1,270 @@
 [
-  { "id": 101, "baseId": "ball", "name": "弹力球", "quality": 1, "shapeId": "single", "icon": "ball", "iconAssetKey": "weapon_ball_icon", "skillId": 201, "mergeToId": 102, "weight": 34, "pools": [101, 102, 103] },
-  { "id": 102, "baseId": "ball", "name": "精良弹力球", "quality": 2, "shapeId": "single", "icon": "ball", "iconAssetKey": "weapon_ball_icon", "skillId": 202, "mergeToId": 103, "weight": 8, "pools": [102, 103] },
-  { "id": 103, "baseId": "ball", "name": "史诗弹力球", "quality": 3, "shapeId": "single", "icon": "ball", "iconAssetKey": "weapon_ball_icon", "skillId": 203, "mergeToId": 0, "weight": 2, "pools": [103] },
-  { "id": 111, "baseId": "bat", "name": "短棍", "quality": 1, "shapeId": "h2", "icon": "bat", "iconAssetKey": "weapon_bat_icon", "skillId": 211, "mergeToId": 112, "weight": 28, "pools": [101, 102, 103] },
-  { "id": 112, "baseId": "bat", "name": "精良短棍", "quality": 2, "shapeId": "h2", "icon": "bat", "iconAssetKey": "weapon_bat_icon", "skillId": 212, "mergeToId": 113, "weight": 7, "pools": [102, 103] },
-  { "id": 113, "baseId": "bat", "name": "史诗短棍", "quality": 3, "shapeId": "h2", "icon": "bat", "iconAssetKey": "weapon_bat_icon", "skillId": 213, "mergeToId": 0, "weight": 2, "pools": [103] },
-  { "id": 121, "baseId": "spear", "name": "长矛", "quality": 1, "shapeId": "v2", "icon": "spear", "iconAssetKey": "weapon_spear_icon", "skillId": 221, "mergeToId": 122, "weight": 26, "pools": [101, 102, 103] },
-  { "id": 122, "baseId": "spear", "name": "精良长矛", "quality": 2, "shapeId": "v2", "icon": "spear", "iconAssetKey": "weapon_spear_icon", "skillId": 222, "mergeToId": 123, "weight": 7, "pools": [102, 103] },
-  { "id": 123, "baseId": "spear", "name": "史诗长矛", "quality": 3, "shapeId": "v2", "icon": "spear", "iconAssetKey": "weapon_spear_icon", "skillId": 223, "mergeToId": 0, "weight": 2, "pools": [103] },
-  { "id": 131, "baseId": "shield", "name": "盾帽", "quality": 1, "shapeId": "single", "icon": "shield", "iconAssetKey": "weapon_shield_icon", "skillId": 231, "mergeToId": 132, "weight": 18, "pools": [101, 102, 103] },
-  { "id": 132, "baseId": "shield", "name": "精良盾帽", "quality": 2, "shapeId": "single", "icon": "shield", "iconAssetKey": "weapon_shield_icon", "skillId": 232, "mergeToId": 133, "weight": 6, "pools": [102, 103] },
-  { "id": 133, "baseId": "shield", "name": "史诗盾帽", "quality": 3, "shapeId": "single", "icon": "shield", "iconAssetKey": "weapon_shield_icon", "skillId": 233, "mergeToId": 0, "weight": 2, "pools": [103] },
-  { "id": 141, "baseId": "bomb", "name": "爆裂桶", "quality": 1, "shapeId": "l3", "icon": "bomb", "iconAssetKey": "weapon_bomb_icon", "skillId": 241, "mergeToId": 142, "weight": 18, "pools": [102, 103] },
-  { "id": 142, "baseId": "bomb", "name": "精良爆裂桶", "quality": 2, "shapeId": "l3", "icon": "bomb", "iconAssetKey": "weapon_bomb_icon", "skillId": 242, "mergeToId": 143, "weight": 6, "pools": [103] },
-  { "id": 143, "baseId": "bomb", "name": "史诗爆裂桶", "quality": 3, "shapeId": "l3", "icon": "bomb", "iconAssetKey": "weapon_bomb_icon", "skillId": 243, "mergeToId": 0, "weight": 2, "pools": [103] },
-  { "id": 151, "baseId": "staff", "name": "毒晶杖", "quality": 2, "shapeId": "t4", "icon": "staff", "iconAssetKey": "weapon_staff_icon", "skillId": 251, "mergeToId": 152, "weight": 5, "pools": [103] },
-  { "id": 152, "baseId": "staff", "name": "史诗毒晶杖", "quality": 3, "shapeId": "t4", "icon": "staff", "iconAssetKey": "weapon_staff_icon", "skillId": 252, "mergeToId": 0, "weight": 2, "pools": [103] }
+  {
+    "id": 101,
+    "baseId": "ball",
+    "name": "番茄",
+    "quality": 1,
+    "shapeId": "single",
+    "icon": "ball",
+    "iconAssetKey": "weapon_tomato_lv1_icon",
+    "skillId": 201,
+    "mergeToId": 102,
+    "weight": 34,
+    "pools": [
+      101,
+      102,
+      103
+    ]
+  },
+  {
+    "id": 102,
+    "baseId": "ball",
+    "name": "精良番茄",
+    "quality": 2,
+    "shapeId": "single",
+    "icon": "ball",
+    "iconAssetKey": "weapon_tomato_lv2_icon",
+    "skillId": 202,
+    "mergeToId": 103,
+    "weight": 8,
+    "pools": [
+      102,
+      103
+    ]
+  },
+  {
+    "id": 103,
+    "baseId": "ball",
+    "name": "史诗番茄",
+    "quality": 3,
+    "shapeId": "single",
+    "icon": "ball",
+    "iconAssetKey": "weapon_tomato_lv3_icon",
+    "skillId": 203,
+    "mergeToId": 0,
+    "weight": 2,
+    "pools": [
+      103
+    ]
+  },
+  {
+    "id": 111,
+    "baseId": "bat",
+    "name": "胡萝卜",
+    "quality": 1,
+    "shapeId": "h2",
+    "icon": "bat",
+    "iconAssetKey": "weapon_bat_icon",
+    "skillId": 211,
+    "mergeToId": 112,
+    "weight": 28,
+    "pools": [
+      101,
+      102,
+      103
+    ]
+  },
+  {
+    "id": 112,
+    "baseId": "bat",
+    "name": "精良胡萝卜",
+    "quality": 2,
+    "shapeId": "h2",
+    "icon": "bat",
+    "iconAssetKey": "weapon_bat_icon",
+    "skillId": 212,
+    "mergeToId": 113,
+    "weight": 7,
+    "pools": [
+      102,
+      103
+    ]
+  },
+  {
+    "id": 113,
+    "baseId": "bat",
+    "name": "史诗胡萝卜",
+    "quality": 3,
+    "shapeId": "h2",
+    "icon": "bat",
+    "iconAssetKey": "weapon_bat_icon",
+    "skillId": 213,
+    "mergeToId": 0,
+    "weight": 2,
+    "pools": [
+      103
+    ]
+  },
+  {
+    "id": 121,
+    "baseId": "spear",
+    "name": "小麦",
+    "quality": 1,
+    "shapeId": "v2",
+    "icon": "spear",
+    "iconAssetKey": "weapon_spear_icon",
+    "skillId": 221,
+    "mergeToId": 122,
+    "weight": 26,
+    "pools": [
+      101,
+      102,
+      103
+    ]
+  },
+  {
+    "id": 122,
+    "baseId": "spear",
+    "name": "精良小麦",
+    "quality": 2,
+    "shapeId": "v2",
+    "icon": "spear",
+    "iconAssetKey": "weapon_spear_icon",
+    "skillId": 222,
+    "mergeToId": 123,
+    "weight": 7,
+    "pools": [
+      102,
+      103
+    ]
+  },
+  {
+    "id": 123,
+    "baseId": "spear",
+    "name": "史诗小麦",
+    "quality": 3,
+    "shapeId": "v2",
+    "icon": "spear",
+    "iconAssetKey": "weapon_spear_icon",
+    "skillId": 223,
+    "mergeToId": 0,
+    "weight": 2,
+    "pools": [
+      103
+    ]
+  },
+  {
+    "id": 131,
+    "baseId": "shield",
+    "name": "蓝莓",
+    "quality": 1,
+    "shapeId": "single",
+    "icon": "shield",
+    "iconAssetKey": "weapon_blueberry_lv1_icon",
+    "skillId": 231,
+    "mergeToId": 132,
+    "weight": 18,
+    "pools": [
+      101,
+      102,
+      103
+    ]
+  },
+  {
+    "id": 132,
+    "baseId": "shield",
+    "name": "精良蓝莓",
+    "quality": 2,
+    "shapeId": "single",
+    "icon": "shield",
+    "iconAssetKey": "weapon_blueberry_lv2_icon",
+    "skillId": 232,
+    "mergeToId": 133,
+    "weight": 6,
+    "pools": [
+      102,
+      103
+    ]
+  },
+  {
+    "id": 133,
+    "baseId": "shield",
+    "name": "史诗蓝莓",
+    "quality": 3,
+    "shapeId": "single",
+    "icon": "shield",
+    "iconAssetKey": "weapon_blueberry_lv3_icon",
+    "skillId": 233,
+    "mergeToId": 0,
+    "weight": 2,
+    "pools": [
+      103
+    ]
+  },
+  {
+    "id": 141,
+    "baseId": "bomb",
+    "name": "辣椒",
+    "quality": 1,
+    "shapeId": "l3",
+    "icon": "bomb",
+    "iconAssetKey": "weapon_bomb_icon",
+    "skillId": 241,
+    "mergeToId": 142,
+    "weight": 18,
+    "pools": [
+      102,
+      103
+    ]
+  },
+  {
+    "id": 142,
+    "baseId": "bomb",
+    "name": "精良辣椒",
+    "quality": 2,
+    "shapeId": "l3",
+    "icon": "bomb",
+    "iconAssetKey": "weapon_bomb_icon",
+    "skillId": 242,
+    "mergeToId": 143,
+    "weight": 6,
+    "pools": [
+      103
+    ]
+  },
+  {
+    "id": 143,
+    "baseId": "bomb",
+    "name": "史诗辣椒",
+    "quality": 3,
+    "shapeId": "l3",
+    "icon": "bomb",
+    "iconAssetKey": "weapon_bomb_icon",
+    "skillId": 243,
+    "mergeToId": 0,
+    "weight": 2,
+    "pools": [
+      103
+    ]
+  },
+  {
+    "id": 151,
+    "baseId": "staff",
+    "name": "卷心菜",
+    "quality": 2,
+    "shapeId": "t4",
+    "icon": "staff",
+    "iconAssetKey": "weapon_staff_icon",
+    "skillId": 251,
+    "mergeToId": 152,
+    "weight": 5,
+    "pools": [
+      103
+    ]
+  },
+  {
+    "id": 152,
+    "baseId": "staff",
+    "name": "史诗卷心菜",
+    "quality": 3,
+    "shapeId": "t4",
+    "icon": "staff",
+    "iconAssetKey": "weapon_staff_icon",
+    "skillId": 252,
+    "mergeToId": 0,
+    "weight": 2,
+    "pools": [
+      103
+    ]
+  }
 ]

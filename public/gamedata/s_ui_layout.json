@@ -22,7 +22,7 @@
   { "scene": "bag", "key": "title", "anchor": "topCenter", "x": 0, "y": 38, "width": 320, "height": 34, "fontSize": 24, "visible": true, "desc": "背包界面关卡标题" },
   { "scene": "bag", "key": "gold", "anchor": "topLeft", "x": 24, "y": 78, "width": 150, "height": 28, "fontSize": 18, "visible": true, "desc": "背包界面金币文本" },
   { "scene": "bag", "key": "bag_size", "anchor": "topRight", "x": -24, "y": 78, "width": 150, "height": 28, "fontSize": 16, "visible": true, "desc": "背包行列文本" },
-  { "scene": "bag", "key": "board", "anchor": "topCenter", "x": 0, "y": 164, "width": 338, "height": 338, "scale": 66, "visible": true, "desc": "背包棋盘顶部中心点，scale 为最大格子尺寸" },
+  { "scene": "bag", "key": "board", "anchor": "topCenter", "x": 0, "y": 164, "width": 644, "height": 644, "scale": 120, "visible": true, "desc": "背包棋盘，scale 为单格目标尺寸，位置由代码按水平居中、垂直中心上移 20% 适配" },
   { "scene": "bag", "key": "hint", "anchor": "topCenter", "x": 0, "y": 42, "width": 340, "height": 28, "fontSize": 14, "visible": true, "desc": "背包棋盘下方提示，y 相对棋盘底部" },
   { "scene": "bag", "key": "candidates", "anchor": "bottomCenter", "x": 0, "y": -142, "width": 74, "height": 74, "gap": 16, "fontSize": 12, "visible": true, "desc": "背包候选区，width/height 为单个槽尺寸" },
   { "scene": "bag", "key": "action_refresh", "anchor": "bottomLeft", "x": 20, "y": -58, "width": 122, "height": 42, "fontSize": 16, "visible": true, "desc": "背包底部刷新按钮" },

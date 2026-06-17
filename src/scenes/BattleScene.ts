@@ -3,7 +3,7 @@ import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, Monster
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showMain } from "../core/navigation";
-import { color, createWeaponIcon, drawGradientBg, text, button, weightedPick } from "../utils/display";
+import { color, createWeaponIcon, drawGrassBg, text, button, weightedPick } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
@@ -100,7 +100,7 @@ export class BattleScene extends BaseScene {
     const w = app.screen.width;
     const h = app.screen.height;
     if (this.battleLayer.children.length === 0) {
-      drawGradientBg(this.battleLayer, this.level.theme);
+      drawGrassBg(this.battleLayer, this.level.theme);
     }
 
     const pauseLayout = this.layout("pause_button", {
