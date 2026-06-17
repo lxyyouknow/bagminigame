@@ -18,7 +18,7 @@
     "mapAssetKey": "level_map_1",
     "lockedMapAssetKey": "level_map_1",
     "entryCostResource": "dynamite",
-    "entryCostAmount": 6,
+    "entryCostAmount": 0,
     "firstPassRewardCoin": 80,
     "repeatWinRewardCoin": 30,
     "loseRewardCoin": 10
