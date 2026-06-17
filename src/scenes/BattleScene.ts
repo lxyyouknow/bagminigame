@@ -2,7 +2,7 @@ import { AnimatedSprite, Container, Graphics, type DestroyOptions } from "pixi.j
 import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, ProjectileRuntime, RogueOptionDef, SkillDef } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
-import { showMain } from "../core/navigation";
+import { showBag, showMain } from "../core/navigation";
 import { color, createWeaponIcon, drawGrassBg, text, button, weightedPick } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
@@ -10,6 +10,8 @@ import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
+import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue } from "./battleWaveRules";
+import { stepMonsterContact } from "./monsterContactRules";
 import { BaseScene } from "./BaseScene";
 
 export class BattleScene extends BaseScene {
@@ -24,6 +26,8 @@ export class BattleScene extends BaseScene {
   private levelNo = 1;
   private kills = 0;
   private currentWave = 1;
+  private waveDuration = 1;
+  private ending = false;
   private paused = false;
   private buffs: CombatBuffs = {
     attackMul: 1,
@@ -48,10 +52,13 @@ export class BattleScene extends BaseScene {
     super();
     audio.preloadGroups(["battle"]);
     audio.playMusicEvent("music_battle");
-    this.baseHp = level.baseHp;
+    bag.currentWave ??= 1;
+    bag.baseHp ??= level.baseHp;
+    this.currentWave = bag.currentWave;
+    this.baseHp = bag.baseHp;
     this.armor = level.baseArmor;
     this.buildSpawnQueue();
-    analytics.track("battle_start", { levelId: level.id, weaponCount: bag.placed.length, startGold: bag.gold });
+    analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
     this.container.addChild(this.battleLayer, this.uiLayer, this.projectileLayer);
     this.drawStatic();
   }
@@ -66,10 +73,12 @@ export class BattleScene extends BaseScene {
     this.updateFloating(dt);
     this.updateHero(dt);
     this.drawStatic();
+    if (this.ending) return;
     if (this.baseHp <= 0) {
       this.showResult(false);
     } else if (this.spawnQueue.length === 0 && this.monsters.every((monster) => monster.dead)) {
-      this.showResult(true);
+      if (this.currentWave >= this.level.winWave) this.showResult(true);
+      else this.showWaveCheckpoint();
     }
   }
 
@@ -86,13 +95,8 @@ export class BattleScene extends BaseScene {
   }
 
   private buildSpawnQueue(): void {
-    const waves = data.getWaves(this.level.waveGroupId);
-    for (const wave of waves) {
-      for (let i = 0; i < wave.count; i += 1) {
-        this.spawnQueue.push({ time: wave.time + i * wave.interval, monsterId: wave.monsterId, wave: wave.wave });
-      }
-    }
-    this.spawnQueue.sort((a, b) => a.time - b.time);
+    this.spawnQueue = buildSingleWaveSpawnQueue(data.getWaves(this.level.waveGroupId), this.currentWave);
+    this.waveDuration = Math.max(1, (this.spawnQueue.at(-1)?.time ?? 0.2) + 2.8);
   }
 
   private drawStatic(): void {
@@ -148,7 +152,7 @@ export class BattleScene extends BaseScene {
     });
     const waveRect = resolveUiLayoutRect(waveLayout, w, h);
     const waveBar = new Graphics();
-    const progress = Math.min(1, this.time / Math.max(8, this.spawnQueue.at(-1)?.time ?? this.time + 1));
+    const progress = Math.min(1, this.time / this.waveDuration);
     waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width, waveRect.height, 8).fill({ color: 0x10151c, alpha: 0.9 });
     waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width * progress, waveRect.height, 8).fill({ color: 0x4ed5ff });
     waveBar.stroke({ color: 0xffffff, width: 1, alpha: 0.35 });
@@ -299,7 +303,7 @@ export class BattleScene extends BaseScene {
     const view = this.createMonsterView(def);
     view.position.set(x, y);
     this.battleLayer.addChild(view);
-    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, dead: false });
+    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, attackCooldown: 0, dead: false });
   }
 
   private createMonsterView(def: MonsterDef): Container {
@@ -392,21 +396,65 @@ export class BattleScene extends BaseScene {
   }
 
   private updateMonsters(dt: number): void {
-    const baseY = app.screen.height - 190;
     for (const monster of this.monsters) {
       if (monster.dead) continue;
       monster.slowTimer = Math.max(0, monster.slowTimer - dt);
-      const speedMul = monster.slowTimer > 0 ? 0.55 : 1;
-      monster.y += monster.def.speed * speedMul * dt;
+      const contact = stepMonsterContact({
+        y: monster.y,
+        speed: monster.def.speed,
+        slowTimer: monster.slowTimer,
+        attackCooldown: monster.attackCooldown,
+        dt,
+        contactY: this.baseContactY(monster),
+        attack: monster.def.attack,
+        attackInterval: monster.def.attackInterval,
+        armor: this.armor,
+        armorBonus: this.buffs.armorBonus,
+      });
+      monster.y = contact.y;
+      monster.attackCooldown = contact.attackCooldown;
       monster.view.position.set(monster.x, monster.y + Math.sin(this.time * 8 + monster.uid) * 2);
       monster.view.scale.set(1 + Math.sin(this.time * 9 + monster.uid) * 0.035, 1 - Math.sin(this.time * 9 + monster.uid) * 0.025);
-      if (monster.y >= baseY) {
-        const dmg = Math.max(1, monster.def.attack - (this.armor + this.buffs.armorBonus) * 0.45);
-        this.baseHp -= dmg;
-        this.addFloating(monster.x, monster.y, `-${Math.round(dmg)}`, 0xff5b5b);
-        this.killMonster(monster, false);
+      if (contact.damage > 0) {
+        this.baseHp -= contact.damage;
+        this.bag.baseHp = Math.max(0, this.baseHp);
+        this.addFloating(monster.x, monster.y - 24, `-${Math.round(contact.damage)}`, 0xff5b5b);
       }
     }
+  }
+
+  private baseContactY(monster: MonsterRuntime): number {
+    const w = app.screen.width;
+    const h = app.screen.height;
+    const equipLayout = this.layout("equip_bar", {
+      scene: "battle",
+      key: "equip_bar",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -18,
+      width: Math.min(w - 28, 366),
+      height: 112,
+      gap: 8,
+      iconSize: 42,
+      visible: true,
+      desc: "战斗底部横向武器槽面板",
+    });
+    const equipList = computeBattleEquipListLayout(Math.min(this.bag.placed.length, 10), equipLayout.width - 24, 50, equipLayout.gap ?? 8);
+    const equipPanelHeight = Math.max(equipLayout.height, equipList.panelHeight + 18);
+    const baseLayout = this.layout("base_panel", {
+      scene: "battle",
+      key: "base_panel",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -132,
+      width: Math.min(w - 40, 360),
+      height: 128,
+      fontSize: 16,
+      visible: true,
+      desc: "战斗底部基地区域",
+    });
+    const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipLayout.width, equipPanelHeight, equipLayout.y);
+    return hud.base.y + 34 - monster.def.radius * 0.18;
   }
 
   private updateProjectiles(dt: number): void {
@@ -600,9 +648,52 @@ export class BattleScene extends BaseScene {
     return getUiLayout(data, "battle", key, defaults);
   }
 
+  private showWaveCheckpoint(): void {
+    if (this.ending) return;
+    this.ending = true;
+    this.paused = true;
+    this.bag.baseHp = Math.max(0, this.baseHp);
+    const result = applyWaveCheckpointToBag(this.bag, this.level, data.getWaves(this.level.waveGroupId));
+    audio.playSfxEvent("result_win");
+    analytics.track("battle_wave_clear", {
+      levelId: this.level.id,
+      wave: this.currentWave,
+      rewardGold: result.rewardGold,
+      expandedCells: result.expandedCells,
+      nextWave: result.nextWave,
+    });
+    const label = result.expandedCells > 0 ? `+${result.rewardGold}金币\n背包扩展 +${result.expandedCells}格` : `+${result.rewardGold}金币`;
+    this.addRewardBanner(label);
+    window.setTimeout(() => {
+      const expandText = result.expandedCells > 0 ? `，背包扩展 ${result.expandedCells} 格` : "";
+      showBag(this.level, `第${this.currentWave}波完成：+${result.rewardGold}金币${expandText}`, this.bag);
+    }, 950);
+  }
+
+  private addRewardBanner(label: string): void {
+    const w = app.screen.width;
+    const h = app.screen.height;
+    const banner = new Container();
+    const bg = new Graphics();
+    bg.roundRect(-150, -42, 300, 84, 24).fill({ color: 0x1f2b2b, alpha: 0.92 });
+    bg.stroke({ color: 0xffdf59, width: 3, alpha: 0.86 });
+    const coin = new Graphics();
+    coin.circle(-96, -2, 22).fill({ color: 0xf3c63e }).stroke({ color: 0x7a5a0d, width: 3 });
+    coin.roundRect(-108, -7, 24, 10, 4).fill({ color: 0xffec8a, alpha: 0.75 });
+    const labelText = text(label, 21, "#ffffff", "700");
+    labelText.anchor.set(0.5);
+    labelText.position.set(28, 0);
+    banner.addChild(bg, coin, labelText);
+    banner.position.set(w / 2, h * 0.34);
+    this.uiLayer.addChild(banner);
+    this.floating.push({ view: banner, ttl: 0.95, vy: -10 });
+  }
+
   private showResult(win: boolean): void {
+    this.ending = true;
     this.paused = true;
     if (this.modalWindow) return;
+    this.bag.baseHp = Math.max(0, this.baseHp);
     audio.playSfxEvent(win ? "result_win" : "result_lose");
     const reward = save.applyBattleResult(this.level.id, {
       win,

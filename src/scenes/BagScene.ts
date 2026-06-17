@@ -1,11 +1,34 @@
-import { Container, Graphics, type DestroyOptions } from "pixi.js";
+import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, LevelDef, PlacedItem } from "../types";
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
-import { addImageOrFallback, createItemShapeView, createWeaponIcon, drawGrassBg, screenPoint, text, button, weightedPick, color, spriteFromAsset } from "../utils/display";
+import { addImageOrFallback, createItemShapeView, drawGrassBg, screenPoint, text, button, weightedPick, color, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
-import { shouldShowInvalidDropHint, shouldToastInvalidDrop } from "./bagDragUi";
+import { shouldDetachPlacedOnRelease, shouldShowInvalidDropHint, shouldToastInvalidDrop } from "./bagDragUi";
 import { BaseScene } from "./BaseScene";
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface CandidateMotion {
+  view: Container;
+  label?: Container;
+  from: Point;
+  to: Point;
+  labelOffsetY: number;
+  elapsed: number;
+  duration: number;
+}
+
+interface CandidateLayoutTarget {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  labelOffsetY: number;
+}
 
 export class BagScene extends BaseScene {
   private state: BagState;
@@ -20,6 +43,13 @@ export class BagScene extends BaseScene {
   private hintLayer: Container | undefined;
   private draggingItemId = 0;
   private draggingSource: DragSource | undefined;
+  private dragOffset: Point = { x: 0, y: 0 };
+  private sourceRemovedForDrag = false;
+  private dragRestorePlaced: PlacedItem | undefined;
+  private dragRestoreCandidateIndex = -1;
+  private candidateViews = new Map<string, { view: Container; label?: Container }>();
+  private candidateMotions: CandidateMotion[] = [];
+  private pendingCandidateStarts = new Map<string, Point>();
 
   constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string) {
     super();
@@ -30,7 +60,11 @@ export class BagScene extends BaseScene {
       refreshFree: data.getEconomy("bag_refresh_free_count"),
       candidates: [this.rollItem(), this.rollItem(), this.rollItem()],
       placed: [],
+      currentWave: 1,
+      baseHp: level.baseHp,
     };
+    this.state.currentWave ??= 1;
+    this.state.baseHp ??= level.baseHp;
     for (const placed of this.state.placed) {
       placed.cdLeft = 0;
     }
@@ -42,6 +76,7 @@ export class BagScene extends BaseScene {
   }
 
   override update(dt: number): void {
+    this.updateCandidateMotions(dt);
     if (this.toastTimer > 0) {
       this.toastTimer -= dt;
       if (this.toastTimer <= 0) {
@@ -51,11 +86,15 @@ export class BagScene extends BaseScene {
     }
   }
 
-  private rollItem(): number {
-    return weightedPick(data.getShopItems(this.level.shopPoolId)).id;
+  private rollItem(quality?: number): number {
+    const pool = data.getShopItems(this.level.shopPoolId);
+    const qualityPool = quality ? data.items.filter((item) => item.quality === quality) : pool;
+    return weightedPick(qualityPool.length > 0 ? qualityPool : pool).id;
   }
 
   private draw(): void {
+    this.candidateViews.clear();
+    this.candidateMotions = [];
     this.container.removeChildren();
     drawGrassBg(this.container);
     const w = app.screen.width;
@@ -196,7 +235,7 @@ export class BagScene extends BaseScene {
     hint.position.set(hintPos.x, hintPos.y);
     if (hintLayout.visible) this.container.addChild(hint);
 
-    this.drawCandidateArea(h);
+    this.drawCandidateArea();
     this.drawActions(w, h);
 
     if (this.toast) {
@@ -226,61 +265,67 @@ export class BagScene extends BaseScene {
     if (this.dragView) this.container.addChild(this.dragView);
   }
 
-  private drawCandidateArea(h: number): void {
+  private drawCandidateArea(): void {
     const layout = this.layout("candidates", {
       scene: "bag",
       key: "candidates",
       anchor: "bottomCenter",
       x: 0,
-      y: -142,
-      width: 74,
-      height: 74,
-      gap: 16,
-      fontSize: 12,
+      y: -405,
+      width: 120,
+      height: 120,
+      gap: 24,
+      fontSize: 16,
       visible: true,
-      desc: "背包候选区，width/height 为单个槽尺寸",
+      desc: "背包备战区，width/height 为单格尺寸，武器按自身占格大小显示",
     });
     if (!layout.visible) return;
-    const slotSize = layout.width;
-    const gap = layout.gap ?? 16;
-    const totalWidth = this.state.candidates.length * slotSize + (this.state.candidates.length - 1) * gap;
-    const pos = resolveUiLayoutPosition(layout, app.screen.width, h);
-    const startX = pos.x - totalWidth / 2;
-    const y = pos.y;
+    const targets = this.candidateLayoutTargets(layout);
+    const keys = this.candidateKeysFor();
     this.state.candidates.forEach((itemId, index) => {
-      const slotX = startX + index * (slotSize + gap);
-      const slotBg = new Graphics();
-      slotBg.roundRect(slotX, y, slotSize, slotSize, 12).fill({ color: 0x233140, alpha: itemId ? 0.55 : 0.28 });
-      slotBg.stroke({ color: itemId ? 0xc9f2ff : 0x7d8a96, width: 3, alpha: itemId ? 0.9 : 0.45 });
-      this.container.addChild(slotBg);
-
-      if (!itemId) {
-        const empty = text("空", 15, "#9fb2c2", "700");
-        empty.anchor.set(0.5);
-        empty.position.set(slotX + slotSize / 2, y + slotSize / 2);
-        this.container.addChild(empty);
-        return;
-      }
-
       const item = data.getItem(itemId);
-      const quality = data.getQuality(item.quality);
-      const c = createWeaponIcon(item, quality, 64);
-      c.position.set(slotX + slotSize / 2, y + slotSize / 2);
-      c.eventMode = "static";
-      c.cursor = "grab";
-      c.on("pointerdown", (event) => {
+      const shape = data.getShape(item.shapeId);
+      const target = targets[index];
+      const group = new Container();
+      group.hitArea = new Rectangle(-target.width / 2, -target.height / 2, target.width, target.height);
+      const hit = new Graphics();
+      hit.roundRect(-target.width / 2, -target.height / 2, target.width, target.height, 14).fill({ color: 0xffffff, alpha: 0 });
+      const shadow = new Graphics();
+      shadow.ellipse(0, target.height * 0.42, Math.min(target.width * 0.42, 54), this.cellSize * 0.1).fill({ color: 0x163024, alpha: 0.24 });
+      const icon = createItemShapeView(item, shape, data.getQuality(item.quality), this.cellSize, this.cellGap, 0.9);
+      const visualOffset = this.dragVisualCenterOffset(shape, this.cellSize);
+      icon.position.set(-visualOffset.x, -visualOffset.y);
+      group.eventMode = "static";
+      group.cursor = "grab";
+      group.on("pointerdown", (event) => {
         event.stopPropagation();
         this.startDrag(itemId, { type: "candidate", index }, event.global.x, event.global.y);
       });
       const label = text(item.name, layout.fontSize ?? 12, "#ffffff", "700");
       label.anchor.set(0.5);
-      label.position.set(slotX + slotSize / 2, y + 86);
-      this.container.addChild(c, label);
+      label.position.set(0, target.labelOffsetY);
+      group.addChild(hit, shadow, icon);
+      group.position.set(target.x, target.y);
+
+      const key = keys[index];
+      const start = this.pendingCandidateStarts.get(key);
+      if (start && (Math.abs(start.x - target.x) > 1 || Math.abs(start.y - target.y) > 1)) {
+        group.position.set(start.x, start.y);
+        label.position.set(start.x, start.y + target.labelOffsetY);
+        this.candidateMotions.push({ view: group, label, from: start, to: target, labelOffsetY: target.labelOffsetY, elapsed: 0, duration: 0.18 });
+      } else {
+        label.position.set(target.x, target.y + target.labelOffsetY);
+      }
+
+      this.candidateViews.set(key, { view: group, label });
+      this.container.addChild(group, label);
     });
+    this.pendingCandidateStarts.clear();
   }
 
   private drawActions(w: number, h: number): void {
-    const refreshLabel = this.state.refreshFree > 0 ? `刷新 免费(${this.state.refreshFree})` : `刷新 ${data.getEconomy("bag_refresh_gold_cost")}`;
+    const adRefreshLabel = "广告刷新\n必出2级";
+    const goldRefreshLabel = `刷新\n金币 ${data.getEconomy("bag_refresh_gold_cost")}`;
     const refreshLayout = this.layout("action_refresh", {
       scene: "bag",
       key: "action_refresh",
@@ -291,7 +336,7 @@ export class BagScene extends BaseScene {
       height: 42,
       fontSize: 16,
       visible: true,
-      desc: "背包底部刷新按钮",
+      desc: "背包底部广告刷新按钮，必出 2 级装备",
     });
     const expandLayout = this.layout("action_expand", {
       scene: "bag",
@@ -303,7 +348,7 @@ export class BagScene extends BaseScene {
       height: 42,
       fontSize: 16,
       visible: true,
-      desc: "背包底部扩格按钮",
+      desc: "背包底部金币刷新按钮",
     });
     const startLayout = this.layout("action_start", {
       scene: "bag",
@@ -317,9 +362,9 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "背包底部开始战斗按钮",
     });
-    const refresh = button(refreshLabel, refreshLayout.width, refreshLayout.height, 0x28c9b0, () => void this.refreshCandidates());
-    const expand = button("扩格 30/广告", expandLayout.width, expandLayout.height, 0x32a0e6, () => void this.expandBag());
-    const start = button("开始战斗", startLayout.width, startLayout.height, 0xffb33d, () => this.tryStartBattle());
+    const refresh = button(adRefreshLabel, refreshLayout.width, refreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2());
+    const expand = button(goldRefreshLabel, expandLayout.width, expandLayout.height, 0x32a0e6, () => this.refreshCandidatesByGold());
+    const start = button(`开始第${this.state.currentWave ?? 1}波`, startLayout.width, startLayout.height, 0xffb33d, () => this.tryStartBattle());
     const refreshPos = resolveUiLayoutPosition(refreshLayout, w, h);
     const expandRect = resolveUiLayoutRect(expandLayout, w, h);
     const startPos = resolveUiLayoutPosition(startLayout, w, h);
@@ -333,9 +378,31 @@ export class BagScene extends BaseScene {
 
   private startDrag(itemId: number, source: DragSource, x: number, y: number): void {
     const item = data.getItem(itemId);
-    const view = createItemShapeView(item, data.getShape(item.shapeId), data.getQuality(item.quality), this.cellSize, this.cellGap);
+    const shape = data.getShape(item.shapeId);
+    const previousCandidates = this.captureCandidatePositions();
+    this.sourceRemovedForDrag = false;
+    this.dragRestorePlaced = undefined;
+    this.dragRestoreCandidateIndex = -1;
+    if (source.type === "candidate") {
+      this.dragRestoreCandidateIndex = source.index;
+      this.state.candidates.splice(source.index, 1);
+      this.sourceRemovedForDrag = true;
+      this.animateCandidatesFrom(previousCandidates);
+      this.draw();
+    } else {
+      const placed = this.state.placed.find((entry) => entry.uid === source.uid);
+      if (placed) {
+        this.dragRestorePlaced = { ...placed };
+        this.state.placed = this.state.placed.filter((entry) => entry.uid !== source.uid);
+        this.sourceRemovedForDrag = true;
+        this.draw();
+      }
+    }
+
+    const view = createItemShapeView(item, shape, data.getQuality(item.quality), this.cellSize, this.cellGap);
     view.alpha = 0.88;
-    view.position.set(x, y);
+    this.dragOffset = this.dragVisualCenterOffset(shape);
+    view.position.set(x - this.dragOffset.x, y - this.dragOffset.y);
     view.scale.set(0.9);
     this.dragView = view;
     this.hintLayer = new Container();
@@ -346,7 +413,7 @@ export class BagScene extends BaseScene {
 
     const move = (event: PointerEvent) => {
       const p = screenPoint(event);
-      view.position.set(p.x - this.cellSize * 0.5, p.y - this.cellSize * 0.5);
+      view.position.set(p.x - this.dragOffset.x, p.y - this.dragOffset.y);
       this.updateDragHint(p.x, p.y);
     };
     const up = (event: PointerEvent) => {
@@ -367,6 +434,8 @@ export class BagScene extends BaseScene {
     this.dragView = undefined;
     this.hintLayer = undefined;
 
+    const previousCandidates = this.captureCandidatePositions();
+
     if (result.kind === "mergePlaced") {
       this.mergeIntoPlaced(result.targetUid);
     } else if (result.kind === "mergeCandidate") {
@@ -377,15 +446,42 @@ export class BagScene extends BaseScene {
       audio.playSfxEvent("bag_place");
       this.toast = "放置成功";
       this.toastTimer = 0.9;
+    } else if (result.kind === "replace") {
+      const replaced = this.state.placed.filter((placed) => result.targetUids.includes(placed.uid));
+      this.state.placed = this.state.placed.filter((placed) => !result.targetUids.includes(placed.uid));
+      this.removeDragSource();
+      this.state.placed.push({ uid: nextUid(), itemId: this.draggingItemId, x: result.x, y: result.y, cdLeft: 0 });
+      const starts = new Map<string, Point>();
+      for (const placed of replaced) {
+        this.appendCandidateWithStart(placed.itemId, this.placedVisualCenter(placed));
+        const keys = this.candidateKeysFor();
+        starts.set(keys[keys.length - 1], this.placedVisualCenter(placed));
+      }
+      this.animateCandidatesFrom(previousCandidates, starts);
+      audio.playSfxEvent("bag_place");
+      this.toast = "已替换到背包";
+      this.toastTimer = 0.9;
+    } else if (this.draggingSource?.type === "placed" && shouldDetachPlacedOnRelease(x, y, this.gridRect())) {
+      this.toast = "";
+      this.toastTimer = 0;
+      this.appendCandidateWithStart(this.draggingItemId, { x, y });
+      const keys = this.candidateKeysFor();
+      this.animateCandidatesFrom(previousCandidates, new Map([[keys[keys.length - 1], { x, y }]]));
+      audio.playSfxEvent("bag_place");
     } else if (shouldToastInvalid) {
       audio.playSfxEvent("bag_invalid");
       this.toast = "这里放不下";
       this.toastTimer = 0.9;
+      this.restoreDragSourceToOrigin({ x, y });
     } else {
       this.toast = "";
       this.toastTimer = 0;
+      this.restoreDragSourceToOrigin({ x, y });
     }
     this.draggingSource = undefined;
+    this.sourceRemovedForDrag = false;
+    this.dragRestorePlaced = undefined;
+    this.dragRestoreCandidateIndex = -1;
     this.draw();
   }
 
@@ -396,8 +492,8 @@ export class BagScene extends BaseScene {
     const item = data.getItem(this.draggingItemId);
     const shape = data.getShape(item.shapeId);
     const quality = data.getQuality(item.quality);
-    const label = result.kind === "mergePlaced" || result.kind === "mergeCandidate" ? "可合成" : result.kind === "place" ? "可放置" : "不可放置";
-    const tint = result.kind === "mergePlaced" || result.kind === "mergeCandidate" ? 0xb66dff : result.kind === "place" ? 0x43f184 : 0xff4d5d;
+    const label = result.kind === "mergePlaced" || result.kind === "mergeCandidate" ? "可合成" : result.kind === "replace" ? "替换" : result.kind === "place" ? "可放置" : "不可放置";
+    const tint = result.kind === "mergePlaced" || result.kind === "mergeCandidate" ? 0xb66dff : result.kind === "replace" ? 0xffc247 : result.kind === "place" ? 0x43f184 : 0xff4d5d;
     const alpha = result.kind === "invalid" ? 0.22 : 0.36;
 
     if (result.kind === "mergeCandidate") {
@@ -419,6 +515,18 @@ export class BagScene extends BaseScene {
         const pitch = this.cellSize + this.cellGap;
         this.addHintText(this.gridLeft + target.x * pitch + this.cellSize / 2, this.gridTop + target.y * pitch - 18, label, tint);
       }
+      return;
+    }
+
+    if (result.kind === "replace") {
+      for (const uid of result.targetUids) {
+        const target = this.state.placed.find((placed) => placed.uid === uid);
+        if (!target) continue;
+        const targetItem = data.getItem(target.itemId);
+        this.drawShapeHint(target.x, target.y, data.getShape(targetItem.shapeId), tint, 0.26);
+      }
+      this.drawShapeHint(result.x, result.y, shape, 0x43f184, 0.28);
+      this.addHintText(x, y - 50, label, tint);
       return;
     }
 
@@ -476,6 +584,10 @@ export class BagScene extends BaseScene {
     if (this.canPlace(this.draggingItemId, gridX, gridY, this.draggingSource?.type === "placed" ? [this.draggingSource.uid] : [])) {
       return { kind: "place", x: gridX, y: gridY };
     }
+    const targetUids = this.conflictingPlacedUids(this.draggingItemId, gridX, gridY);
+    if (targetUids.length > 0) {
+      return { kind: "replace", x: gridX, y: gridY, targetUids };
+    }
     return { kind: "invalid", x: gridX, y: gridY };
   }
 
@@ -499,26 +611,39 @@ export class BagScene extends BaseScene {
     });
   }
 
+  private conflictingPlacedUids(itemId: number, x: number, y: number): number[] {
+    const shape = data.getShape(data.getItem(itemId).shapeId);
+    const uids = new Set<number>();
+    for (const [dx, dy] of shape.cells) {
+      const gx = x + dx;
+      const gy = y + dy;
+      if (gx < 0 || gy < 0 || gx >= this.state.cols || gy >= this.state.rows) return [];
+      const placed = this.findPlacedAt(gx, gy);
+      if (placed) uids.add(placed.uid);
+    }
+    return [...uids];
+  }
+
+  private placedVisualCenter(placed: PlacedItem): Point {
+    const item = data.getItem(placed.itemId);
+    const shape = data.getShape(item.shapeId);
+    const offset = this.dragVisualCenterOffset(shape);
+    const pitch = this.cellSize + this.cellGap;
+    return {
+      x: this.gridLeft + placed.x * pitch + offset.x,
+      y: this.gridTop + placed.y * pitch + offset.y,
+    };
+  }
+
   private candidateRect(index: number): { x: number; y: number; w: number; h: number } {
-    const layout = this.layout("candidates", {
-      scene: "bag",
-      key: "candidates",
-      anchor: "bottomCenter",
-      x: 0,
-      y: -142,
-      width: 74,
-      height: 74,
-      gap: 16,
-      fontSize: 12,
-      visible: true,
-      desc: "背包候选区，width/height 为单个槽尺寸",
-    });
-    const slotSize = layout.width;
-    const gap = layout.gap ?? 16;
-    const totalWidth = this.state.candidates.length * slotSize + (this.state.candidates.length - 1) * gap;
-    const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
-    const startX = pos.x - totalWidth / 2;
-    return { x: startX + index * (slotSize + gap), y: pos.y, w: slotSize, h: slotSize };
+    const target = this.candidateLayoutTargets()[index];
+    if (!target) return { x: 0, y: 0, w: 0, h: 0 };
+    return {
+      x: target.x - target.width / 2,
+      y: target.y - target.height / 2,
+      w: target.width,
+      h: target.height,
+    };
   }
 
   private candidateRects(): { x: number; y: number; width: number; height: number }[] {
@@ -526,6 +651,166 @@ export class BagScene extends BaseScene {
       const rect = this.candidateRect(index);
       return { x: rect.x, y: rect.y, width: rect.w, height: rect.h };
     });
+  }
+
+  private candidateKeysFor(items = this.state.candidates): string[] {
+    const seen = new Map<number, number>();
+    return items.map((itemId) => {
+      const count = seen.get(itemId) ?? 0;
+      seen.set(itemId, count + 1);
+      return `${itemId}:${count}`;
+    });
+  }
+
+  private captureCandidatePositions(): Map<string, Point> {
+    const positions = new Map<string, Point>();
+    const keys = this.candidateKeysFor();
+    const targets = this.candidateLayoutTargets();
+    keys.forEach((key, index) => {
+      const view = this.candidateViews.get(key);
+      if (view) {
+        positions.set(key, { x: view.view.position.x, y: view.view.position.y });
+        return;
+      }
+      const target = targets[index];
+      if (target) positions.set(key, { x: target.x, y: target.y });
+    });
+    return positions;
+  }
+
+  private animateCandidatesFrom(previous: Map<string, Point>, overrides = new Map<string, Point>()): void {
+    this.pendingCandidateStarts.clear();
+    for (const key of this.candidateKeysFor()) {
+      const start = overrides.get(key) ?? previous.get(key);
+      if (start) this.pendingCandidateStarts.set(key, start);
+    }
+  }
+
+  private updateCandidateMotions(dt: number): void {
+    if (this.candidateMotions.length === 0) return;
+    this.candidateMotions = this.candidateMotions.filter((motion) => {
+      motion.elapsed = Math.min(motion.duration, motion.elapsed + dt);
+      const raw = motion.duration <= 0 ? 1 : motion.elapsed / motion.duration;
+      const t = 1 - Math.pow(1 - raw, 3);
+      const x = motion.from.x + (motion.to.x - motion.from.x) * t;
+      const y = motion.from.y + (motion.to.y - motion.from.y) * t;
+      motion.view.position.set(x, y);
+      if (motion.label) motion.label.position.set(x, y + motion.labelOffsetY);
+      return raw < 1;
+    });
+  }
+
+  private appendCandidateWithStart(itemId: number, _start: Point): void {
+    this.state.candidates.push(itemId);
+  }
+
+  private restoreDragSourceToOrigin(point: Point): void {
+    if (!this.sourceRemovedForDrag) return;
+    const previous = this.captureCandidatePositions();
+    if (this.draggingSource?.type === "candidate") {
+      const index = Math.max(0, Math.min(this.dragRestoreCandidateIndex, this.state.candidates.length));
+      this.state.candidates.splice(index, 0, this.draggingItemId);
+      const key = this.candidateKeysFor()[index];
+      this.animateCandidatesFrom(previous, new Map([[key, point]]));
+      return;
+    }
+    if (this.dragRestorePlaced) {
+      this.state.placed.push(this.dragRestorePlaced);
+    }
+  }
+
+  private dragVisualCenterOffset(shape: { cells: [number, number][] }, cellSize = this.cellSize): Point {
+    const pitch = cellSize + this.cellGap;
+    const maxX = Math.max(...shape.cells.map(([x]) => x));
+    const maxY = Math.max(...shape.cells.map(([, y]) => y));
+    return {
+      x: (maxX + 1) * pitch / 2 - this.cellGap / 2,
+      y: (maxY + 1) * pitch / 2 - this.cellGap / 2 - 25,
+    };
+  }
+
+  private itemShapePixelSize(itemId: number, cellSize = this.cellSize): { width: number; height: number } {
+    const shape = data.getShape(data.getItem(itemId).shapeId);
+    const maxX = Math.max(...shape.cells.map(([x]) => x));
+    const maxY = Math.max(...shape.cells.map(([, y]) => y));
+    return {
+      width: (maxX + 1) * cellSize + maxX * this.cellGap,
+      height: (maxY + 1) * cellSize + maxY * this.cellGap,
+    };
+  }
+
+  private candidateLayoutTargets(layout?: ReturnType<BagScene["layout"]>): CandidateLayoutTarget[] {
+    const resolvedLayout =
+      layout ??
+      this.layout("candidates", {
+        scene: "bag",
+        key: "candidates",
+        anchor: "bottomCenter",
+        x: 0,
+        y: -405,
+        width: 120,
+        height: 120,
+        gap: 24,
+        fontSize: 16,
+        visible: true,
+        desc: "背包备战区，width/height 为单格尺寸，武器按自身占格大小显示",
+      });
+    const pos = resolveUiLayoutPosition(resolvedLayout, app.screen.width, app.screen.height);
+    const sizes = this.state.candidates.map((itemId) => this.itemShapePixelSize(itemId, this.cellSize));
+    if (sizes.length === 0) return [];
+
+    const maxWidth = app.screen.width - 56;
+    const baseGap = resolvedLayout.gap ?? 24;
+    const oneRowNaturalWidth = sizes.reduce((sum, size) => sum + size.width, 0) + baseGap * Math.max(0, sizes.length - 1);
+    const oneRowNaturallyFits = oneRowNaturalWidth <= maxWidth;
+    const rows = this.splitCandidateRows(sizes, maxWidth, baseGap);
+    const centerLines =
+      rows.length === 1
+        ? [pos.y + this.cellSize]
+        : [pos.y + this.cellSize * 0.56, pos.y + this.cellSize * 1.64];
+    const targets: CandidateLayoutTarget[] = [];
+    const jitterX = [0, -18, 16, -9, 20, -24, 10, -14, 24, -6];
+    const jitterY = [0, 8, -6, 10, -8, 5, -10, 12, -5, 6];
+
+    rows.forEach((row, rowIndex) => {
+      const rowSizes = row.map((index) => sizes[index]);
+      const gap = this.compressedGap(rowSizes, maxWidth, baseGap);
+      const rowWidth = rowSizes.reduce((sum, size) => sum + size.width, 0) + gap * Math.max(0, rowSizes.length - 1);
+      const crowded = rows.length > 1 || !oneRowNaturallyFits;
+      let cursorX = pos.x - rowWidth / 2 + (rowIndex === 0 && rows.length > 1 ? -18 : rows.length > 1 ? 18 : 0);
+      row.forEach((candidateIndex, localIndex) => {
+        const size = sizes[candidateIndex];
+        const x = cursorX + size.width / 2 + (crowded ? jitterX[candidateIndex % jitterX.length] : 0);
+        const y = centerLines[rowIndex] + (crowded ? jitterY[candidateIndex % jitterY.length] : 0);
+        targets[candidateIndex] = {
+          x,
+          y,
+          width: size.width,
+          height: size.height,
+          labelOffsetY: size.height / 2 + 24,
+        };
+        cursorX += size.width + gap;
+      });
+    });
+
+    return targets;
+  }
+
+  private splitCandidateRows(sizes: Array<{ width: number; height: number }>, maxWidth: number, baseGap: number): number[][] {
+    const oneRowWidth = sizes.reduce((sum, size) => sum + size.width, 0) + baseGap * Math.max(0, sizes.length - 1);
+    if (oneRowWidth <= maxWidth || sizes.length <= 3) {
+      return [sizes.map((_, index) => index)];
+    }
+    const split = Math.ceil(sizes.length / 2);
+    return [sizes.slice(0, split).map((_, index) => index), sizes.slice(split).map((_, index) => index + split)];
+  }
+
+  private compressedGap(sizes: Array<{ width: number; height: number }>, maxWidth: number, baseGap: number): number {
+    if (sizes.length <= 1) return 0;
+    const totalItemWidth = sizes.reduce((sum, size) => sum + size.width, 0);
+    const naturalWidth = totalItemWidth + baseGap * (sizes.length - 1);
+    if (naturalWidth <= maxWidth) return baseGap;
+    return Math.max(-this.cellSize * 0.52, Math.floor((maxWidth - totalItemWidth) / (sizes.length - 1)));
   }
 
   private gridRect(): { x: number; y: number; width: number; height: number } {
@@ -564,8 +849,9 @@ export class BagScene extends BaseScene {
 
   private removeDragSource(): void {
     if (!this.draggingSource) return;
+    if (this.sourceRemovedForDrag) return;
     if (this.draggingSource.type === "candidate") {
-      this.state.candidates[this.draggingSource.index] = 0;
+      this.state.candidates.splice(this.draggingSource.index, 1);
       return;
     }
     this.state.placed = this.state.placed.filter((placed) => placed.uid !== this.draggingSource?.uid);
@@ -582,7 +868,7 @@ export class BagScene extends BaseScene {
     if (this.canPlace(sourceItem.mergeToId, x, y)) {
       this.state.placed.push({ uid: nextUid(), itemId: sourceItem.mergeToId, x, y, cdLeft: 0 });
     } else {
-      this.state.candidates[this.firstEmptyCandidateIndex()] = sourceItem.mergeToId;
+      this.state.candidates.push(sourceItem.mergeToId);
     }
     this.toast = `合成 ${data.getItem(sourceItem.mergeToId).name}`;
     audio.playSfxEvent("bag_merge");
@@ -597,11 +883,6 @@ export class BagScene extends BaseScene {
     this.toast = `合成 ${data.getItem(sourceItem.mergeToId).name}`;
     audio.playSfxEvent("bag_merge");
     this.toastTimer = 1.2;
-  }
-
-  private firstEmptyCandidateIndex(): number {
-    const emptyIndex = this.state.candidates.findIndex((itemId) => !itemId);
-    return emptyIndex >= 0 ? emptyIndex : 0;
   }
 
   private occupiedMap(ignoring: number[] = []): Set<string> {
@@ -635,7 +916,7 @@ export class BagScene extends BaseScene {
         if (this.canPlace(firstItem.mergeToId, a.x, a.y)) {
           this.state.placed.push({ uid: nextUid(), itemId: firstItem.mergeToId, x: a.x, y: a.y, cdLeft: 0 });
         } else {
-          this.state.candidates[0] = firstItem.mergeToId;
+          this.state.candidates.push(firstItem.mergeToId);
         }
         this.toast = `合成 ${data.getItem(firstItem.mergeToId).name}`;
         audio.playSfxEvent("bag_merge");
@@ -646,52 +927,34 @@ export class BagScene extends BaseScene {
     }
   }
 
-  private async refreshCandidates(): Promise<void> {
-    const cost = data.getEconomy("bag_refresh_gold_cost");
-    if (this.state.refreshFree > 0) {
-      this.state.refreshFree -= 1;
-    } else if (this.state.gold >= cost) {
-      this.state.gold -= cost;
-    } else {
-      const result = await ads.showRewardedAd(data.getEconomyAdPlacement("bag_refresh_gold_cost") || "bag_refresh");
-      if (!result.ok) {
-        this.toast = result.message;
-        this.toastTimer = 1;
-        this.draw();
-        return;
-      }
-    }
-    this.state.candidates = [this.rollItem(), this.rollItem(), this.rollItem()];
-    audio.playSfxEvent("bag_refresh");
-    this.toast = "候选武器已刷新";
-    this.toastTimer = 0.8;
-    this.draw();
-  }
-
-  private async expandBag(): Promise<void> {
-    if (this.state.cols >= this.level.maxCols && this.state.rows >= this.level.maxRows) {
-      this.toast = "背包已经扩到上限";
+  private async refreshCandidatesByAdQuality2(): Promise<void> {
+    const result = await ads.showRewardedAd(data.getEconomyAdPlacement("bag_refresh_quality2_ad") || "bag_refresh_quality2");
+    if (!result.ok) {
+      this.toast = result.message;
       this.toastTimer = 1;
       this.draw();
       return;
     }
-    const cost = data.getEconomy("bag_expand_gold_cost");
-    if (this.state.gold >= cost) {
-      this.state.gold -= cost;
-    } else {
-      const result = await ads.showRewardedAd(data.getEconomyAdPlacement("bag_expand_gold_cost") || "bag_expand");
-      if (!result.ok) {
-        this.toast = result.message;
-        this.toastTimer = 1;
-        this.draw();
-        return;
-      }
+    this.state.candidates = [this.rollItem(2), this.rollItem(2), this.rollItem(2)];
+    audio.playSfxEvent("bag_refresh");
+    this.toast = "广告刷新：已出现 2 级装备";
+    this.toastTimer = 0.9;
+    this.draw();
+  }
+
+  private refreshCandidatesByGold(): void {
+    const cost = data.getEconomy("bag_refresh_gold_cost");
+    if (this.state.gold < cost) {
+      this.toast = `金币不足：需要 ${cost}`;
+      this.toastTimer = 1;
+      this.draw();
+      return;
     }
-    if (this.state.cols < this.level.maxCols) this.state.cols += 1;
-    else this.state.rows += 1;
-    audio.playSfxEvent("bag_expand");
-    this.toast = "背包扩展成功";
-    this.toastTimer = 1;
+    this.state.gold -= cost;
+    this.state.candidates = [this.rollItem(), this.rollItem(), this.rollItem()];
+    audio.playSfxEvent("bag_refresh");
+    this.toast = "金币刷新成功";
+    this.toastTimer = 0.8;
     this.draw();
   }
 

@@ -175,6 +175,12 @@ public/gamedata/s_ui_layout.json
 
 ## 武器图标
 
+背包武器的精确占格尺寸、单格/多格图片规范、当前种菜皮肤和后续完整武器图换皮方式，见：
+
+```text
+WEAPON_IMAGE_SIZE_GUIDE.md
+```
+
 武器图标在 `s_item.json` 里配置：
 
 - `icon`：代码占位绘制类型。

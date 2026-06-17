@@ -1,5 +1,6 @@
 [
   { "key": "bag_refresh_free_count", "value": 3, "adPlacement": "", "desc": "每关免费刷新次数" },
+  { "key": "bag_refresh_quality2_ad", "value": 0, "adPlacement": "bag_refresh_quality2", "desc": "背包广告刷新点位，成功后候选区必出 2 级装备" },
   { "key": "bag_refresh_gold_cost", "value": 15, "adPlacement": "bag_refresh", "desc": "金币刷新价格" },
   { "key": "bag_expand_gold_cost", "value": 30, "adPlacement": "bag_expand", "desc": "扩展一格/一列价格" },
   { "key": "rogue_refresh_free_count", "value": 1, "adPlacement": "rogue_refresh", "desc": "升级选项免费刷新次数" },

@@ -8,6 +8,9 @@ import { LifecycleService, type LifecycleReason } from "../services/LifecycleSer
 import { SaveService } from "../services/SaveService";
 import { createDefaultStorageAdapter } from "../services/StorageAdapter";
 
+export const DESIGN_WIDTH = 720;
+export const DESIGN_HEIGHT = 1440;
+
 const root = document.querySelector<HTMLDivElement>("#game-root");
 
 if (!root) {
@@ -18,7 +21,8 @@ export const app = new Application();
 
 await app.init({
   background: "#172433",
-  resizeTo: window,
+  width: DESIGN_WIDTH,
+  height: DESIGN_HEIGHT,
   antialias: true,
   resolution: Math.min(window.devicePixelRatio || 1, 2),
   autoDensity: true,

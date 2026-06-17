@@ -86,6 +86,7 @@ export interface MonsterDef {
   armor: number;
   speed: number;
   attack: number;
+  attackInterval: number;
   gold: number;
   exp: number;
   radius: number;
@@ -102,6 +103,8 @@ export interface WaveDef {
   interval: number;
   spawn: string;
   rewardGold: number;
+  expandRows?: number;
+  expandCols?: number;
 }
 
 export interface RogueOptionDef {
@@ -234,12 +237,15 @@ export interface BagState {
   refreshFree: number;
   candidates: number[];
   placed: PlacedItem[];
+  currentWave?: number;
+  baseHp?: number;
 }
 
 export type DragSource = { type: "candidate"; index: number } | { type: "placed"; uid: number };
 
 export type DropResult =
   | { kind: "place"; x: number; y: number }
+  | { kind: "replace"; x: number; y: number; targetUids: number[] }
   | { kind: "mergePlaced"; targetUid: number }
   | { kind: "mergeCandidate"; targetIndex: number }
   | { kind: "invalid"; x: number; y: number };
@@ -262,6 +268,7 @@ export interface MonsterRuntime {
   x: number;
   y: number;
   slowTimer: number;
+  attackCooldown: number;
   dead: boolean;
 }
 

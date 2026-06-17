@@ -10,6 +10,14 @@ body,
   user-select: none;
 }
 
+#game-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 canvas {
   display: block;
+  width: min(100vw, 50vh);
+  height: min(100vh, 200vw);
 }

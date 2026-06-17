@@ -1,4 +1,4 @@
-import { shouldShowInvalidDropHint, shouldToastInvalidDrop, type Rect } from "../src/scenes/bagDragUi.js";
+import { shouldDetachPlacedOnRelease, shouldShowInvalidDropHint, shouldToastInvalidDrop, type Rect } from "../src/scenes/bagDragUi.js";
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) {
@@ -28,8 +28,8 @@ function run(): void {
 
   assertEqual(
     shouldShowInvalidDropHint(130, 440, gridRect, candidateRects),
-    true,
-    "指针在候选槽区域内时应显示不可放置提示",
+    false,
+    "指针在备战区物品上但不能合成时不应显示红色不可放置提示",
   );
 
   assertEqual(
@@ -42,6 +42,24 @@ function run(): void {
     shouldToastInvalidDrop(130, 130, gridRect, candidateRects),
     true,
     "在背包区域内释放且不可放置时应弹出提示",
+  );
+
+  assertEqual(
+    shouldToastInvalidDrop(130, 440, gridRect, candidateRects),
+    false,
+    "在备战区物品上释放且不能合成时不应弹出放不下提示",
+  );
+
+  assertEqual(
+    shouldDetachPlacedOnRelease(130, 130, gridRect),
+    false,
+    "从背包拖起的物品释放点仍在背包区域内时不应卸下",
+  );
+
+  assertEqual(
+    shouldDetachPlacedOnRelease(130, 440, gridRect),
+    true,
+    "从背包拖起的物品只要释放点离开背包区域就应卸下",
   );
 }
 

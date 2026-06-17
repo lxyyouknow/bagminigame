@@ -2,6 +2,8 @@
 
 本文档给后续数据向 agent 或策划使用。目标是让关卡、难度、武器、怪物、经济、肉鸽强化尽量通过 `public/gamedata/` 修改，不直接改玩法代码。
 
+波次中继、每波奖励、波后扩格、贴脸攻击和背包刷新按钮的详细规则见：`BATTLE_WAVE_CHECKPOINT_CONFIG.md`。
+
 ## 当前数据目录
 
 所有运行时配置表放在：
@@ -87,7 +89,8 @@ public/gamedata/s_ui_layout.json
 
 - 教学关。
 - 初始背包 `3x3`。
-- `winWave = 3`。
+- `winWave = 10`。
+- 当前采用“每波战斗后回背包备战”的中继流程，前几波会按 `s_wave.expandRows/expandCols` 扩充背包。
 - 武器池偏基础：弹力球、短棍、长矛、盾帽。
 - 目标是让玩家理解拖拽、放置、开始战斗、基础合成。
 
@@ -146,7 +149,9 @@ public/gamedata/s_ui_layout.json
 - `count`：本组刷怪数量。
 - `interval`：每只怪之间的间隔。
 - `spawn`：出生点策略，目前为预留。
-- `rewardGold`：波次奖励预留。
+- `rewardGold`：当前波清完后的额外本局金币奖励。
+- `expandRows`：当前波清完后扩几行，受关卡 `maxRows` 限制。
+- `expandCols`：当前波清完后扩几列，受关卡 `maxCols` 限制。
 
 建议：
 
@@ -162,7 +167,8 @@ public/gamedata/s_ui_layout.json
 - `hp`：生命。
 - `armor`：护甲，直接降低伤害。
 - `speed`：移动速度。
-- `attack`：撞到基地时造成的伤害。
+- `attack`：贴脸攻击基础伤害。
+- `attackInterval`：怪物抵达基地接触线后，每隔多少秒攻击一次。
 - `gold`：击杀金币。
 - `exp`：击杀经验。
 - `radius`：碰撞和占位体积。

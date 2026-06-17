@@ -10,7 +10,7 @@ import { WndMain } from "./scenes/WndMain";
 
 registerNavigation({
   showMain: () => setScene(new WndMain()),
-  showBag: (level, entryToast) => setScene(new BagScene(level, undefined, entryToast)),
+  showBag: (level, entryToast, initialState) => setScene(new BagScene(level, initialState, entryToast)),
   showBattle: (level, bag) => setScene(new BattleScene(level, bag)),
 });
 

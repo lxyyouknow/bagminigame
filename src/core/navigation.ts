@@ -2,7 +2,7 @@ import type { BagState, LevelDef } from "../types";
 
 type NavigationHandlers = {
   showMain: () => void;
-  showBag: (level: LevelDef, entryToast?: string) => void;
+  showBag: (level: LevelDef, entryToast?: string, initialState?: BagState) => void;
   showBattle: (level: LevelDef, bag: BagState) => void;
 };
 
@@ -20,8 +20,8 @@ export function showMain(): void {
   handlers.showMain();
 }
 
-export function showBag(level: LevelDef, entryToast?: string): void {
-  handlers.showBag(level, entryToast);
+export function showBag(level: LevelDef, entryToast?: string, initialState?: BagState): void {
+  handlers.showBag(level, entryToast, initialState);
 }
 
 export function showBattle(level: LevelDef, bag: BagState): void {
