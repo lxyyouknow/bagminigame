@@ -1,7 +1,7 @@
-import { Container, Graphics, type DestroyOptions } from "pixi.js";
+import { AnimatedSprite, Container, Graphics, type DestroyOptions } from "pixi.js";
 import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, ProjectileRuntime, RogueOptionDef, SkillDef } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
-import { analytics, app, audio, data, nextUid, save } from "../core/runtime";
+import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showMain } from "../core/navigation";
 import { color, createWeaponIcon, drawGradientBg, text, button, weightedPick } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
@@ -34,8 +34,15 @@ export class BattleScene extends BaseScene {
     qualityAttack: {},
   };
   private battleLayer = new Container();
+  private projectileLayer = new Container();
+  private heroLayer = new Container();
   private uiLayer = new Container();
   private modalWindow: GameWindow | undefined;
+  private hero?: AnimatedSprite;
+  private heroAttackTimer = 0;
+  private heroCastX = 0;
+  private heroCastY = 0;
+  private readonly heroAnimKey = "wizard_attack_up";
 
   constructor(private readonly level: LevelDef, private readonly bag: BagState) {
     super();
@@ -45,7 +52,7 @@ export class BattleScene extends BaseScene {
     this.armor = level.baseArmor;
     this.buildSpawnQueue();
     analytics.track("battle_start", { levelId: level.id, weaponCount: bag.placed.length, startGold: bag.gold });
-    this.container.addChild(this.battleLayer, this.uiLayer);
+    this.container.addChild(this.battleLayer, this.uiLayer, this.projectileLayer);
     this.drawStatic();
   }
 
@@ -57,6 +64,7 @@ export class BattleScene extends BaseScene {
     this.updateMonsters(dt);
     this.updateProjectiles(dt);
     this.updateFloating(dt);
+    this.updateHero(dt);
     this.drawStatic();
     if (this.baseHp <= 0) {
       this.showResult(false);
@@ -207,11 +215,8 @@ export class BattleScene extends BaseScene {
     base.stroke({ color: 0x2b2114, width: 4, alpha: 0.86 });
     base.roundRect(baseRect.x + 28, baseTop + 34, baseRect.width - 56, 48, 16).fill({ color: 0x8b7548, alpha: 0.9 });
     base.roundRect(baseRect.x + 42, baseTop + 56, baseRect.width - 84, 18, 8).fill({ color: 0x3a3328, alpha: 0.8 });
-    base.roundRect(turretX - 34, baseTop + 44, 68, 34, 12).fill({ color: 0x3e382f, alpha: 0.98 });
-    base.roundRect(turretX - 22, baseTop + 24, 44, 44, 12).fill({ color: 0x8d7a51, alpha: 0.98 });
-    base.roundRect(turretX - 7, baseTop + 2, 14, 38, 7).fill({ color: 0x75694d, alpha: 0.98 });
-    base.roundRect(turretX - 28, baseTop + 51, 56, 13, 6).fill({ color: 0x252c30, alpha: 0.95 });
     base.roundRect(baseRect.x + 24, baseTop + 72, baseRect.width - 48, 10, 5).fill({ color: 0x2a2115, alpha: 0.48 });
+    this.positionHero(turretX, baseTop + 24);
 
     const guardLabel = text("守卫基地", baseLayout.fontSize ?? 16, "#ffdf83", "700");
     guardLabel.anchor.set(0, 0.5);
@@ -252,7 +257,7 @@ export class BattleScene extends BaseScene {
     if (titleLayout.visible) this.uiLayer.addChild(title);
     if (waveLayout.visible) this.uiLayer.addChild(waveBar);
     if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon, goldText, killText);
-    if (baseLayout.visible) this.uiLayer.addChild(base, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
+    if (baseLayout.visible) this.uiLayer.addChild(base, this.heroLayer, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
     if (equipLayout.visible) this.uiLayer.addChild(equipBg);
 
     this.bag.placed.slice(0, 10).forEach((placed, index) => {
@@ -342,15 +347,17 @@ export class BattleScene extends BaseScene {
   }
 
   private fireSkill(placed: PlacedItem, item: ItemDef, skill: SkillDef, target?: MonsterRuntime): void {
+    this.playHeroAttack();
     const qMul = this.buffs.qualityAttack[item.quality] ?? 1;
     const damage = skill.attack * data.getQuality(item.quality).attackMul * this.buffs.attackMul * qMul * (skill.type === "dot" ? this.buffs.dotMul : 1);
-    const startX = app.screen.width / 2 - 80 + (placed.uid % 5) * 38;
-    const startY = app.screen.height - 170;
+      const start = this.getHeroCastPoint(placed.uid);
+      const startX = start.x;
+      const startY = start.y;
     if (skill.type === "projectile" && target) {
       audio.playSfxEvent("battle_shoot");
-      const view = new Graphics().circle(0, 0, 8).fill({ color: color(skill.color) }).stroke({ color: 0xffffff, width: 2, alpha: 0.45 });
+      const view = this.createProjectileView(color(skill.color));
       view.position.set(startX, startY);
-      this.battleLayer.addChild(view);
+      this.projectileLayer.addChild(view);
       this.projectiles.push({ view, target, x: startX, y: startY, speed: skill.speed, damage, radius: skill.radius, color: color(skill.color) });
     } else if ((skill.type === "aoe" || skill.type === "dot") && target) {
       audio.playSfxEvent("battle_cast");
@@ -415,6 +422,7 @@ export class BattleScene extends BaseScene {
       projectile.x += (dx / dist) * move;
       projectile.y += (dy / dist) * move;
       projectile.view.position.set(projectile.x, projectile.y);
+      projectile.view.rotation = Math.atan2(dy, dx);
       if (dist <= projectile.radius || move >= dist) {
         this.damageMonster(projectile.target, projectile.damage);
         this.removeProjectile(projectile);
@@ -516,6 +524,66 @@ export class BattleScene extends BaseScene {
       if (item.ttl <= 0) {
         item.view.destroy({ children: true } as DestroyOptions);
         this.floating = this.floating.filter((f) => f !== item);
+      }
+    }
+  }
+
+  private ensureHero(): AnimatedSprite | undefined {
+    if (this.hero) return this.hero;
+    const hero = assetManager.animation(this.heroAnimKey);
+    if (!hero) return undefined;
+    const anim = data.getAnimation(this.heroAnimKey);
+    hero.loop = false;
+    hero.animationSpeed = (anim?.fps ?? 12) / 60;
+    hero.scale.set((anim?.scale ?? 1) * 1.65);
+    hero.gotoAndStop(0);
+    this.hero = hero;
+    this.heroLayer.addChild(hero);
+    return hero;
+  }
+
+  private positionHero(x: number, y: number): void {
+    const hero = this.ensureHero();
+    this.heroCastX = x + 34;
+    this.heroCastY = y - 96;
+    if (!hero) return;
+    hero.position.set(x, y);
+  }
+
+  private getHeroCastPoint(seed: number): { x: number; y: number } {
+    const spread = ((seed % 5) - 2) * 5;
+    return {
+      x: this.heroCastX + spread,
+      y: this.heroCastY,
+    };
+  }
+
+  private createProjectileView(fill: number): Container {
+    const c = new Container();
+    const trail = new Graphics();
+    trail.moveTo(-34, 0).lineTo(-8, 0).stroke({ color: fill, width: 8, alpha: 0.34 });
+    trail.moveTo(-26, 0).lineTo(-6, 0).stroke({ color: 0xffffff, width: 3, alpha: 0.38 });
+    const orb = new Graphics();
+    orb.circle(0, 0, 12).fill({ color: fill, alpha: 0.95 }).stroke({ color: 0xffffff, width: 3, alpha: 0.72 });
+    orb.circle(0, 0, 20).fill({ color: fill, alpha: 0.18 });
+    c.addChild(trail, orb);
+    return c;
+  }
+
+  private playHeroAttack(): void {
+    const hero = this.ensureHero();
+    if (!hero) return;
+    const anim = data.getAnimation(this.heroAnimKey);
+    this.heroAttackTimer = (anim?.frames.length ?? 8) / Math.max(1, anim?.fps ?? 12);
+    hero.gotoAndPlay(0);
+  }
+
+  private updateHero(dt: number): void {
+    if (!this.hero) return;
+    if (this.heroAttackTimer > 0) {
+      this.heroAttackTimer -= dt;
+      if (this.heroAttackTimer <= 0) {
+        this.hero.gotoAndStop(0);
       }
     }
   }

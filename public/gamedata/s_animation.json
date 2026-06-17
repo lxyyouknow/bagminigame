@@ -1,5 +1,7 @@
 [
   { "key": "monster_idle", "assetKey": "placeholder_enemy", "frames": ["a", "b", "c", "b"], "fps": 8, "loop": true, "anchorX": 0.5, "anchorY": 0.7, "scale": 1 },
   { "key": "fx_merge", "assetKey": "atlas_battle_main", "frames": ["a", "b", "c"], "fps": 12, "loop": false, "anchorX": 0.5, "anchorY": 0.5, "scale": 1 },
-  { "key": "fx_explosion", "assetKey": "atlas_battle_main", "frames": ["a", "b", "c", "d"], "fps": 16, "loop": false, "anchorX": 0.5, "anchorY": 0.5, "scale": 1 }
+  { "key": "fx_explosion", "assetKey": "atlas_battle_main", "frames": ["a", "b", "c", "d"], "fps": 16, "loop": false, "anchorX": 0.5, "anchorY": 0.5, "scale": 1 },
+  { "key": "fx_merge_test", "assetKey": "loose_frames", "frames": ["fx_merge_test_00", "fx_merge_test_01", "fx_merge_test_02", "fx_merge_test_03", "fx_merge_test_04", "fx_merge_test_05", "fx_merge_test_06", "fx_merge_test_07"], "fps": 14, "loop": true, "anchorX": 0.5, "anchorY": 0.5, "scale": 1.45, "soundKey": "sfx_merge" },
+  { "key": "wizard_attack_up", "assetKey": "loose_frames", "frames": ["wizard_attack_up_00", "wizard_attack_up_01", "wizard_attack_up_02", "wizard_attack_up_03", "wizard_attack_up_04", "wizard_attack_up_05", "wizard_attack_up_06", "wizard_attack_up_07"], "fps": 12, "loop": true, "anchorX": 0.5, "anchorY": 0.78, "scale": 1.12, "hitFrame": 4, "soundKey": "sfx_magic_cast" }
 ]

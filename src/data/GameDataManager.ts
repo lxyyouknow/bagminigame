@@ -1,4 +1,4 @@
-import type { AssetDef, AudioDef, AudioEventDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
+import type { AnimationDef, AssetDef, AudioDef, AudioEventDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
 
 export class GameDataManager {
   levels: LevelDef[] = [];
@@ -13,6 +13,7 @@ export class GameDataManager {
   economy: EconomyDef[] = [];
   comStr: ComStrDef[] = [];
   assets: AssetDef[] = [];
+  animations: AnimationDef[] = [];
   uiSkins: UiSkinDef[] = [];
   uiLayouts: UiLayoutDef[] = [];
   audio: AudioDef[] = [];
@@ -36,6 +37,7 @@ export class GameDataManager {
       uiLayouts,
       audio,
       audioEvents,
+      animations,
     ] = await Promise.all([
       this.fetchTable<LevelDef>("s_level"),
       this.fetchTable<ItemShapeDef>("s_item_shape"),
@@ -53,7 +55,7 @@ export class GameDataManager {
       this.fetchTable<UiLayoutDef>("s_ui_layout"),
       this.fetchTable<AudioDef>("s_audio"),
       this.fetchTable<AudioEventDef>("s_audio_event"),
-      this.fetchTable<unknown>("s_animation"),
+      this.fetchTable<AnimationDef>("s_animation"),
     ]);
 
     this.levels = levels;
@@ -68,6 +70,7 @@ export class GameDataManager {
     this.economy = economy;
     this.comStr = comStr;
     this.assets = assets;
+    this.animations = animations;
     this.uiSkins = uiSkins;
     this.uiLayouts = uiLayouts;
     this.audio = audio;
@@ -116,6 +119,10 @@ export class GameDataManager {
 
   getAsset(key: string): AssetDef | undefined {
     return this.assets.find((row) => row.key === key);
+  }
+
+  getAnimation(key: string): AnimationDef | undefined {
+    return this.animations.find((row) => row.key === key);
   }
 
   getUiSkin(key: string): UiSkinDef | undefined {

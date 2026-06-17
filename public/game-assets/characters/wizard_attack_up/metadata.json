@@ -1,0 +1,13 @@
+{
+  "name": "wizard_attack_up",
+  "source": "public/game-assets/source/wizard-attack-up-ai-green-sheet.png",
+  "frameWidth": 160,
+  "frameHeight": 160,
+  "frames": 8,
+  "fps": 12,
+  "direction": "up",
+  "view": "top_down_from_bottom",
+  "anchorX": 0.5,
+  "anchorY": 0.78,
+  "usage": "由绿底 AI sprite sheet 导入，竖屏战斗中放在基地前方，朝屏幕上方释放魔法攻击"
+}

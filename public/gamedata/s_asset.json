@@ -31,6 +31,24 @@
   { "key": "weapon_bomb_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
   { "key": "weapon_staff_icon", "type": "image", "url": "", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
 
+  { "key": "fx_merge_test_00", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-00.svg", "preloadGroup": "battle", "fallbackKey": "" },
+  { "key": "fx_merge_test_01", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-01.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_00" },
+  { "key": "fx_merge_test_02", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-02.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_01" },
+  { "key": "fx_merge_test_03", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-03.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_02" },
+  { "key": "fx_merge_test_04", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-04.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_03" },
+  { "key": "fx_merge_test_05", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-05.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_04" },
+  { "key": "fx_merge_test_06", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-06.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_05" },
+  { "key": "fx_merge_test_07", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-07.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_06" },
+
+  { "key": "wizard_attack_up_00", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-00.png", "preloadGroup": "battle", "fallbackKey": "" },
+  { "key": "wizard_attack_up_01", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-01.png", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_00" },
+  { "key": "wizard_attack_up_02", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-02.png", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_01" },
+  { "key": "wizard_attack_up_03", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-03.png", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_02" },
+  { "key": "wizard_attack_up_04", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-04.png", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_03" },
+  { "key": "wizard_attack_up_05", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-05.png", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_04" },
+  { "key": "wizard_attack_up_06", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-06.png", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_05" },
+  { "key": "wizard_attack_up_07", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-07.png", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_06" },
+
   { "key": "placeholder_enemy", "type": "generated", "url": "", "preloadGroup": "battle", "fallbackKey": "" },
   { "key": "placeholder_icon", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" }
 ]

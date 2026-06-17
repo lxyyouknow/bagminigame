@@ -133,6 +133,19 @@ export interface ComStrDef {
   confirmText: string;
 }
 
+export interface AnimationDef {
+  key: string;
+  assetKey: string;
+  frames: string[];
+  fps: number;
+  loop: boolean;
+  anchorX: number;
+  anchorY: number;
+  scale: number;
+  hitFrame?: number;
+  soundKey?: string;
+}
+
 export interface AssetDef {
   key: string;
   type: "image" | "spritesheet" | "audio" | "generated";

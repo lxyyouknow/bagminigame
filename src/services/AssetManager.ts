@@ -1,4 +1,4 @@
-import { Assets, Sprite, Texture } from "pixi.js";
+import { AnimatedSprite, Assets, Sprite, Texture } from "pixi.js";
 import { GameDataManager } from "../data/GameDataManager";
 
 export class AssetManager {
@@ -31,6 +31,19 @@ export class AssetManager {
     }
     if (asset?.fallbackKey) return this.texture(asset.fallbackKey);
     return undefined;
+  }
+
+  animation(animKey: string): AnimatedSprite | undefined {
+    const anim = this.data.getAnimation(animKey);
+    if (!anim) return undefined;
+    const textures = anim.frames.map((frameKey) => this.texture(frameKey)).filter((texture): texture is Texture => Boolean(texture));
+    if (textures.length === 0) return undefined;
+    const sprite = new AnimatedSprite(textures);
+    sprite.animationSpeed = anim.fps / 60;
+    sprite.loop = anim.loop;
+    sprite.anchor.set(anim.anchorX, anim.anchorY);
+    sprite.scale.set(anim.scale);
+    return sprite;
   }
 
   sprite(assetKey: string | undefined, width: number, height: number): Sprite | undefined {
