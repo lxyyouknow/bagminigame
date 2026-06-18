@@ -3,7 +3,7 @@ import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, Monster
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
-import { color, createWeaponIcon, drawGrassBg, text, button, weightedPick } from "../utils/display";
+import { color, createWeaponIcon, drawGrassBg, text, button, weightedPick, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
@@ -299,7 +299,7 @@ export class BattleScene extends BaseScene {
       slotBg.stroke({ color: 0xcfd8e3, width: 2, alpha: 0.7 });
       slotBg.roundRect(equipRect.x + 16 + slot.x, equipRect.y + 13 + slot.y, slot.width - 8, slot.height - 8, 8).fill({ color: 0x202b34, alpha: 0.95 });
       const iconSize = equipLayout.iconSize ?? 46;
-      const icon = createWeaponIcon(item, quality, iconSize);
+      const icon = createWeaponIcon(item, quality, iconSize, item.battleIconAssetKey);
       icon.position.set(equipRect.x + 12 + slot.x + slot.width / 2, equipRect.y + 9 + slot.y + slot.height / 2);
       const skill = data.getSkill(item.skillId);
       const cdRate = Math.max(0, Math.min(1, placed.cdLeft / Math.max(0.1, skill.cd * this.buffs.cdMul)));
@@ -384,7 +384,7 @@ export class BattleScene extends BaseScene {
       const startY = start.y;
     if (skill.type === "projectile" && target) {
       audio.playSfxEvent("battle_shoot");
-      const view = this.createProjectileView(color(skill.color));
+      const view = this.createProjectileView(color(skill.color), item.projectileAssetKey);
       view.position.set(startX, startY);
       this.projectileLayer.addChild(view);
       this.projectiles.push({ view, target, x: startX, y: startY, speed: skill.speed, damage, radius: skill.radius, color: color(skill.color) });
@@ -636,11 +636,17 @@ export class BattleScene extends BaseScene {
     };
   }
 
-  private createProjectileView(fill: number): Container {
+  private createProjectileView(fill: number, assetKey?: string): Container {
     const c = new Container();
     const trail = new Graphics();
     trail.moveTo(-34, 0).lineTo(-8, 0).stroke({ color: fill, width: 8, alpha: 0.34 });
     trail.moveTo(-26, 0).lineTo(-6, 0).stroke({ color: 0xffffff, width: 3, alpha: 0.38 });
+    const art = spriteFromAsset(assetKey, 42, 42);
+    if (art) {
+      art.anchor.set(0.5);
+      c.addChild(trail, art);
+      return c;
+    }
     const orb = new Graphics();
     orb.circle(0, 0, 12).fill({ color: fill, alpha: 0.95 }).stroke({ color: 0xffffff, width: 3, alpha: 0.72 });
     orb.circle(0, 0, 20).fill({ color: fill, alpha: 0.18 });

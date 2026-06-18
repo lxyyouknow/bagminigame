@@ -196,7 +196,7 @@ export function drawStageDiorama(level: LevelDef, scale = 1, locked = false): Co
   }
   return c;
 }
-export function createWeaponIcon(item: ItemDef, quality: QualityDef, size: number): Container {
+export function createWeaponIcon(item: ItemDef, quality: QualityDef, size: number, assetKeyOverride?: string): Container {
   const c = new Container();
   const qColor = color(quality.color);
   const bg = new Graphics();
@@ -204,7 +204,7 @@ export function createWeaponIcon(item: ItemDef, quality: QualityDef, size: numbe
   bg.stroke({ color: qColor, width: 4, alpha: 0.95 });
   c.addChild(bg);
 
-  const art = spriteFromAsset(item.iconAssetKey || `weapon_${item.icon}_icon`, size * 0.72, size * 0.72);
+  const art = spriteFromAsset(assetKeyOverride || item.iconAssetKey || `weapon_${item.icon}_icon`, size * 0.72, size * 0.72);
   if (art) {
     art.anchor.set(0.5);
     c.addChild(art);

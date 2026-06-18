@@ -52,6 +52,8 @@ export interface ItemDef {
   shapeId: string;
   icon: string;
   iconAssetKey?: string;
+  battleIconAssetKey?: string;
+  projectileAssetKey?: string;
   skillId: number;
   mergeToId: number;
   weight: number;
