@@ -3,6 +3,9 @@
   { "key": "bg_grass_cartoon", "type": "image", "url": "/game-assets/backgrounds/grass-cartoon-base.png", "preloadGroup": "boot", "fallbackKey": "" },
   { "key": "atlas_ui_main", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" },
   { "key": "atlas_battle_main", "type": "generated", "url": "", "preloadGroup": "battle", "fallbackKey": "" },
+  { "key": "battle_friendly_area_skin", "type": "image", "url": "/game-assets/battle/ui/battle-friendly-area-skin.png", "preloadGroup": "battle", "fallbackKey": "" },
+  { "key": "battle_divider_line", "type": "image", "url": "/game-assets/battle/ui/battle-divider-line.png", "preloadGroup": "battle", "fallbackKey": "" },
+  { "key": "battle_weapon_slot_box", "type": "image", "url": "/game-assets/battle/ui/battle-weapon-slot-box.png", "preloadGroup": "battle", "fallbackKey": "" },
 
   { "key": "ui_button_basic", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "" },
   { "key": "ui_button_yellow", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },

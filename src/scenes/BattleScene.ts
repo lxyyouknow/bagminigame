@@ -3,7 +3,7 @@ import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, Monster
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
-import { color, createWeaponIcon, drawGrassBg, text, button, weightedPick, spriteFromAsset } from "../utils/display";
+import { color, drawGrassBg, text, button, weightedPick, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
@@ -123,6 +123,7 @@ export class BattleScene extends BaseScene {
     const h = app.screen.height;
     if (this.battleLayer.children.length === 0) {
       drawGrassBg(this.battleLayer, this.level.theme);
+      this.drawBattleMapDecor();
     }
 
     const pauseLayout = this.layout("pause_button", {
@@ -293,25 +294,75 @@ export class BattleScene extends BaseScene {
 
     this.bag.placed.slice(0, 10).forEach((placed, index) => {
       const item = data.getItem(placed.itemId);
-      const quality = data.getQuality(item.quality);
       const slot = equipList.slots[index];
       if (!slot) return;
-      const slotBg = new Graphics();
-      slotBg.roundRect(equipRect.x + 12 + slot.x, equipRect.y + 9 + slot.y, slot.width, slot.height, 10).fill({ color: 0x46525a, alpha: 0.92 });
-      slotBg.stroke({ color: 0xcfd8e3, width: 2, alpha: 0.7 });
-      slotBg.roundRect(equipRect.x + 16 + slot.x, equipRect.y + 13 + slot.y, slot.width - 8, slot.height - 8, 8).fill({ color: 0x202b34, alpha: 0.95 });
       const iconSize = equipLayout.iconSize ?? 46;
-      const icon = createWeaponIcon(item, quality, iconSize, item.battleIconAssetKey);
+      const slotSize = Math.min(slot.width, slot.height);
+      const icon = this.createBattleWeaponSlot(item, iconSize, slotSize);
       icon.position.set(equipRect.x + 12 + slot.x + slot.width / 2, equipRect.y + 9 + slot.y + slot.height / 2);
       const skill = data.getSkill(item.skillId);
       const cdRate = Math.max(0, Math.min(1, placed.cdLeft / Math.max(0.1, skill.cd * this.buffs.cdMul)));
       if (cdRate > 0) {
         const mask = new Graphics();
-        mask.roundRect(-iconSize / 2, -iconSize / 2, iconSize, iconSize * cdRate, 8).fill({ color: 0x000000, alpha: 0.52 });
+        mask.roundRect(-slotSize / 2, -slotSize / 2, slotSize, slotSize * cdRate, 8).fill({ color: 0x000000, alpha: 0.46 });
         icon.addChild(mask);
       }
-      if (equipLayout.visible) this.uiLayer.addChild(slotBg, icon);
+      if (equipLayout.visible) this.uiLayer.addChild(icon);
     });
+  }
+
+  private drawBattleMapDecor(): void {
+    const w = app.screen.width;
+    const h = app.screen.height;
+    const skinTexture = assetManager.texture("battle_friendly_area_skin");
+    if (!skinTexture) return;
+
+    const skinScale = w / skinTexture.width;
+    const skinW = skinTexture.width * skinScale;
+    const skinH = skinTexture.height * skinScale;
+    const skin = spriteFromAsset("battle_friendly_area_skin", skinW, skinH);
+    if (!skin) return;
+    skin.position.set((w - skinW) / 2, h - skinH);
+    this.battleLayer.addChild(skin);
+
+    const lineTexture = assetManager.texture("battle_divider_line");
+    if (!lineTexture) return;
+    const lineScale = w / lineTexture.width;
+    const lineW = lineTexture.width * lineScale;
+    const lineH = lineTexture.height * lineScale;
+    const line = spriteFromAsset("battle_divider_line", lineW, lineH);
+    if (!line) return;
+    line.position.set((w - lineW) / 2, skin.y - lineH);
+    this.battleLayer.addChild(line);
+  }
+
+  private createBattleWeaponSlot(item: ItemDef, iconSize: number, slotSize: number): Container {
+    const c = new Container();
+    const box = spriteFromAsset("battle_weapon_slot_box", slotSize, slotSize);
+    if (box) {
+      box.anchor.set(0.5);
+      c.addChild(box);
+    } else {
+      const fallback = new Graphics();
+      fallback.roundRect(-slotSize / 2, -slotSize / 2, slotSize, slotSize, 10).fill({ color: 0xb46f2e, alpha: 0.95 });
+      fallback.stroke({ color: 0x5b3518, width: 3, alpha: 0.9 });
+      c.addChild(fallback);
+    }
+
+    const artSize = iconSize * 0.82;
+    const art = spriteFromAsset(item.battleIconAssetKey || item.iconAssetKey || `weapon_${item.icon}_icon`, artSize, artSize);
+    if (art) {
+      art.anchor.set(0.5);
+      art.position.set(0, -slotSize * 0.04);
+      c.addChild(art);
+      return c;
+    }
+
+    const fallbackIcon = new Graphics();
+    fallbackIcon.circle(0, -slotSize * 0.04, artSize * 0.32).fill({ color: 0x78c95b, alpha: 0.96 });
+    fallbackIcon.stroke({ color: 0x315b25, width: 3, alpha: 0.9 });
+    c.addChild(fallbackIcon);
+    return c;
   }
 
   private spawnDue(): void {
