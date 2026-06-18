@@ -27,6 +27,10 @@
 
   { "key": "bag_farm_frame", "type": "image", "url": "/game-assets/bag/farm/bag-farm-frame.png", "preloadGroup": "bag", "fallbackKey": "" },
   { "key": "bag_farm_cell", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell.png", "preloadGroup": "bag", "fallbackKey": "" },
+  { "key": "bag_farm_cell_1x2", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-1x2.png", "preloadGroup": "bag", "fallbackKey": "" },
+  { "key": "bag_farm_cell_2x1", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-2x1.png", "preloadGroup": "bag", "fallbackKey": "" },
+  { "key": "bag_farm_cell_2x2", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-2x2.png", "preloadGroup": "bag", "fallbackKey": "" },
+  { "key": "bag_farm_cell_l3", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-l3.png", "preloadGroup": "bag", "fallbackKey": "" },
 
   { "key": "weapon_tomato_lv1_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv1-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
   { "key": "weapon_tomato_lv2_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv2-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_tomato_lv1_icon" },

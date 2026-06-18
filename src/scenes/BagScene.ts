@@ -30,6 +30,15 @@ interface CandidateLayoutTarget {
   labelOffsetY: number;
 }
 
+interface FarmPlot {
+  x: number;
+  y: number;
+  widthCells: number;
+  heightCells: number;
+  assetKey: string;
+  cells: [number, number][];
+}
+
 export class BagScene extends BaseScene {
   private state: BagState;
   private toast = "";
@@ -186,8 +195,10 @@ export class BagScene extends BaseScene {
     if (sizeLayout.visible) this.container.addChild(hp);
     if (boardLayout.visible) this.container.addChild(boardBg);
 
+    const mergedFarmPlots = this.mergedFarmPlots();
     for (let y = 0; y < this.state.rows; y += 1) {
       for (let x = 0; x < this.state.cols; x += 1) {
+        if (mergedFarmPlots.skipCells.has(this.gridCellKey(x, y))) continue;
         const cell = new Container();
         cell.position.set(this.gridLeft + x * pitch, this.gridTop + y * pitch);
         const fallbackCell = new Container();
@@ -200,6 +211,15 @@ export class BagScene extends BaseScene {
         addImageOrFallback(cell, spriteFromAsset("bag_farm_cell", this.cellSize, this.cellSize), fallbackCell);
         this.container.addChild(cell);
       }
+    }
+    for (const plot of mergedFarmPlots.plots) {
+      const cell = new Container();
+      const plotW = plot.widthCells * this.cellSize + Math.max(0, plot.widthCells - 1) * this.cellGap;
+      const plotH = plot.heightCells * this.cellSize + Math.max(0, plot.heightCells - 1) * this.cellGap;
+      cell.position.set(this.gridLeft + plot.x * pitch, this.gridTop + plot.y * pitch);
+      const fallbackCell = this.createMergedFarmFallback(plot);
+      addImageOrFallback(cell, spriteFromAsset(plot.assetKey, plotW, plotH), fallbackCell);
+      this.container.addChild(cell);
     }
 
     for (const placed of this.state.placed) {
@@ -551,6 +571,60 @@ export class BagScene extends BaseScene {
       g.stroke({ color: tint, width: 4, alpha: 0.92 });
       this.hintLayer.addChild(g);
     }
+  }
+
+  private mergedFarmPlots(): { plots: FarmPlot[]; skipCells: Set<string> } {
+    const plots: FarmPlot[] = [];
+    const skipCells = new Set<string>();
+    for (const placed of this.state.placed) {
+      const item = data.getItem(placed.itemId);
+      const shape = data.getShape(item.shapeId);
+      const farmPlot = this.farmPlotForShape(shape);
+      if (!farmPlot) continue;
+      if (placed.x < 0 || placed.y < 0 || placed.x + farmPlot.widthCells > this.state.cols || placed.y + farmPlot.heightCells > this.state.rows) continue;
+      plots.push({ ...farmPlot, x: placed.x, y: placed.y });
+      for (const [dx, dy] of farmPlot.cells) {
+        skipCells.add(this.gridCellKey(placed.x + dx, placed.y + dy));
+      }
+    }
+    return { plots, skipCells };
+  }
+
+  private farmPlotForShape(shape: ItemShapeDef): Omit<FarmPlot, "x" | "y"> | undefined {
+    const shapeKey = this.shapeCellKey(shape);
+    if (shapeKey === "0,0|0,1") {
+      return { assetKey: "bag_farm_cell_1x2", widthCells: 1, heightCells: 2, cells: shape.cells };
+    }
+    if (shapeKey === "0,0|1,0") {
+      return { assetKey: "bag_farm_cell_2x1", widthCells: 2, heightCells: 1, cells: shape.cells };
+    }
+    if (shapeKey === "0,0|0,1|1,0|1,1") {
+      return { assetKey: "bag_farm_cell_2x2", widthCells: 2, heightCells: 2, cells: shape.cells };
+    }
+    if (shapeKey === "0,0|0,1|1,1") {
+      return { assetKey: "bag_farm_cell_l3", widthCells: 2, heightCells: 2, cells: shape.cells };
+    }
+    return undefined;
+  }
+
+  private shapeCellKey(shape: ItemShapeDef): string {
+    return shape.cells.map(([x, y]) => `${x},${y}`).sort().join("|");
+  }
+
+  private gridCellKey(x: number, y: number): string {
+    return `${x},${y}`;
+  }
+
+  private createMergedFarmFallback(plot: FarmPlot): Container {
+    const fallback = new Container();
+    const pitch = this.cellSize + this.cellGap;
+    const g = new Graphics();
+    for (const [dx, dy] of plot.cells) {
+      g.roundRect(dx * pitch, dy * pitch, this.cellSize, this.cellSize, 8).fill({ color: 0xb47a47 });
+      g.roundRect(dx * pitch, dy * pitch, this.cellSize, this.cellSize, 8).stroke({ color: 0x2d241d, width: 2, alpha: 0.75 });
+    }
+    fallback.addChild(g);
+    return fallback;
   }
 
   private addHintText(x: number, y: number, label: string, tint: number): void {
