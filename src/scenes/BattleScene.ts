@@ -1,5 +1,5 @@
 import { AnimatedSprite, Container, Graphics, type DestroyOptions } from "pixi.js";
-import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef } from "../types";
+import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
@@ -23,6 +23,7 @@ export interface BattleSceneOptions {
 export class BattleScene extends BaseScene {
   private monsters: MonsterRuntime[] = [];
   private projectiles: ProjectileRuntime[] = [];
+  private spinZones: SpinDamageRuntime[] = [];
   private floating: FloatingRuntime[] = [];
   private spawnQueue: Array<{ time: number; monsterId: number; wave: number }> = [];
   private time = 0;
@@ -86,6 +87,7 @@ export class BattleScene extends BaseScene {
     this.updateWeapons(dt);
     this.updateMonsters(dt);
     this.updateProjectiles(dt);
+    this.updateSpinZones(dt);
     this.updateFloating(dt);
     this.updateHero(dt);
     this.drawStatic();
@@ -392,6 +394,24 @@ export class BattleScene extends BaseScene {
       audio.playSfxEvent("battle_cast");
       const radius = skill.radius * this.buffs.radiusMul;
       this.areaDamage(target.x, target.y, radius, damage, skill);
+    } else if (skill.type === "melee" && target && item.baseId === "bat") {
+      audio.playSfxEvent("battle_shoot");
+      const view = this.createProjectileView(color(skill.color), item.projectileAssetKey);
+      view.position.set(startX, startY);
+      this.projectileLayer.addChild(view);
+      this.projectiles.push({
+        view,
+        target,
+        x: startX,
+        y: startY,
+        speed: 720,
+        damage,
+        radius: Math.max(18, skill.radius * 0.28),
+        color: color(skill.color),
+        spinSpeed: 14,
+        impactType: "carrotSpin",
+        impactAssetKey: item.projectileAssetKey,
+      });
     } else if (skill.type === "melee" && target) {
       audio.playSfxEvent("battle_hit");
       this.areaDamage(target.x, target.y, skill.radius, damage, skill);
@@ -498,8 +518,13 @@ export class BattleScene extends BaseScene {
       projectile.y += (dy / dist) * move;
       projectile.view.position.set(projectile.x, projectile.y);
       projectile.view.rotation = Math.atan2(dy, dx);
+      if (projectile.spinSpeed) projectile.view.rotation += this.time * projectile.spinSpeed;
       if (dist <= projectile.radius || move >= dist) {
-        this.damageMonster(projectile.target, projectile.damage);
+        if (projectile.impactType === "carrotSpin") {
+          this.createSpinZone(projectile.target.x, projectile.target.y, projectile.radius / 0.28, projectile.damage, projectile.color, projectile.impactAssetKey);
+        } else {
+          this.damageMonster(projectile.target, projectile.damage);
+        }
         this.removeProjectile(projectile);
       }
     }
@@ -508,6 +533,46 @@ export class BattleScene extends BaseScene {
   private removeProjectile(projectile: ProjectileRuntime): void {
     projectile.view.destroy({ children: true } as DestroyOptions);
     this.projectiles = this.projectiles.filter((item) => item !== projectile);
+  }
+
+  private createSpinZone(x: number, y: number, radius: number, damage: number, fill: number, assetKey?: string): void {
+    const zone = new Container();
+    const range = new Graphics();
+    range.circle(0, 0, radius).fill({ color: fill, alpha: 0.13 });
+    range.circle(0, 0, radius * 0.62).stroke({ color: fill, width: 4, alpha: 0.72 });
+    zone.addChild(range);
+
+    const blade = spriteFromAsset(assetKey, 54, 54);
+    if (blade) {
+      blade.anchor.set(0.5);
+      zone.addChild(blade);
+    } else {
+      const fallback = new Graphics();
+      fallback.roundRect(-24, -8, 48, 16, 8).fill({ color: fill, alpha: 0.95 }).stroke({ color: 0xffffff, width: 3, alpha: 0.72 });
+      zone.addChild(fallback);
+    }
+    zone.position.set(x, y);
+    this.projectileLayer.addChild(zone);
+    this.spinZones.push({ view: zone, x, y, radius, damage, ttl: 1, hitUids: new Set(), spinSpeed: 18 });
+  }
+
+  private updateSpinZones(dt: number): void {
+    for (const zone of [...this.spinZones]) {
+      zone.ttl -= dt;
+      zone.view.rotation += zone.spinSpeed * dt;
+      zone.view.alpha = Math.max(0, Math.min(1, zone.ttl / 0.25));
+      for (const monster of this.monsters) {
+        if (monster.dead || zone.hitUids.has(monster.uid)) continue;
+        if (Math.hypot(monster.x - zone.x, monster.y - zone.y) <= zone.radius + monster.def.radius * 0.35) {
+          zone.hitUids.add(monster.uid);
+          this.damageMonster(monster, zone.damage);
+        }
+      }
+      if (zone.ttl <= 0) {
+        zone.view.destroy({ children: true } as DestroyOptions);
+        this.spinZones = this.spinZones.filter((item) => item !== zone);
+      }
+    }
   }
 
   private damageMonster(monster: MonsterRuntime, amount: number, skill?: SkillDef): void {

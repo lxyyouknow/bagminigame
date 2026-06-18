@@ -283,10 +283,24 @@ export interface ProjectileRuntime {
   damage: number;
   radius: number;
   color: number;
+  spinSpeed?: number;
+  impactType?: "carrotSpin";
+  impactAssetKey?: string;
 }
 
 export interface FloatingRuntime {
   view: Container;
   ttl: number;
   vy: number;
+}
+
+export interface SpinDamageRuntime {
+  view: Container;
+  x: number;
+  y: number;
+  radius: number;
+  damage: number;
+  ttl: number;
+  hitUids: Set<number>;
+  spinSpeed: number;
 }
