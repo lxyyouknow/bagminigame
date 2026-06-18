@@ -1,4 +1,12 @@
-import { shouldDetachPlacedOnRelease, shouldShowInvalidDropHint, shouldToastInvalidDrop, type Rect } from "../src/scenes/bagDragUi.js";
+import {
+  findNearestDragTarget,
+  isSameDragSource,
+  shapeOriginFromPointer,
+  shouldDetachPlacedOnRelease,
+  shouldShowInvalidDropHint,
+  shouldToastInvalidDrop,
+  type Rect,
+} from "../src/scenes/bagDragUi.js";
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) {
@@ -60,6 +68,45 @@ function run(): void {
     shouldDetachPlacedOnRelease(130, 440, gridRect),
     true,
     "从背包拖起的物品只要释放点离开背包区域就应卸下",
+  );
+
+  const lShapeOrigin = shapeOriginFromPointer({
+    pointerX: 462,
+    pointerY: 381,
+    gridLeft: 100,
+    gridTop: 200,
+    pitch: 104,
+    visualCenterX: 154,
+    visualCenterY: 77,
+  });
+  assertEqual(lShapeOrigin.x, 2, "多格形状应按拖拽图视觉中心反推左上角列");
+  assertEqual(lShapeOrigin.y, 1, "多格形状应按拖拽图视觉中心反推左上角行");
+
+  const nearest = findNearestDragTarget(300, 500, [
+    { key: "far", centerX: 430, centerY: 500 },
+    { key: "near", centerX: 345, centerY: 510 },
+  ], 180);
+  assertEqual(nearest?.target.key, "near", "合成吸附应优先选择距离手指最近的可合成目标");
+
+  const guideOnly = findNearestDragTarget(300, 500, [
+    { key: "merge", centerX: 470, centerY: 500 },
+  ], 220);
+  assertEqual(guideOnly?.target.key, "merge", "较远的可合成目标仍应进入连线提示范围");
+
+  const outsideGuide = findNearestDragTarget(300, 500, [
+    { key: "merge", centerX: 560, centerY: 500 },
+  ], 220);
+  assertEqual(outsideGuide, undefined, "超出提示半径后不应继续显示合成吸附线");
+
+  assertEqual(
+    isSameDragSource({ type: "candidate", index: 0 }, { type: "candidate", index: 0 }, true),
+    false,
+    "候选武器拖起后已从数组移除，前移后的相同索引不能再被误判为拖拽物自身",
+  );
+  assertEqual(
+    isSameDragSource({ type: "candidate", index: 0 }, { type: "candidate", index: 0 }, false),
+    true,
+    "拖拽源尚未移除时仍应阻止与自身合成",
   );
 }
 

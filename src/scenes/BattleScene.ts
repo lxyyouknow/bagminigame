@@ -1,5 +1,5 @@
 import { AnimatedSprite, Container, Graphics, type DestroyOptions } from "pixi.js";
-import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, ProjectileRuntime, RogueOptionDef, SkillDef } from "../types";
+import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
@@ -13,6 +13,12 @@ import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEq
 import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue } from "./battleWaveRules";
 import { stepMonsterContact } from "./monsterContactRules";
 import { BaseScene } from "./BaseScene";
+import type { RunSessionState } from "./runSessionState";
+
+export interface BattleSceneOptions {
+  session?: RunSessionState;
+  onWaveClear?: (message: string) => void;
+}
 
 export class BattleScene extends BaseScene {
   private monsters: MonsterRuntime[] = [];
@@ -48,15 +54,24 @@ export class BattleScene extends BaseScene {
   private heroCastY = 0;
   private readonly heroAnimKey = "wizard_attack_up";
 
-  constructor(private readonly level: LevelDef, private readonly bag: BagState) {
+  private waveClearTimer: number | undefined;
+
+  constructor(private readonly level: LevelDef, private readonly bag: BagState, private readonly options: BattleSceneOptions = {}) {
     super();
     audio.preloadGroups(["battle"]);
     audio.playMusicEvent("music_battle");
-    bag.currentWave ??= 1;
-    bag.baseHp ??= level.baseHp;
-    this.currentWave = bag.currentWave;
-    this.baseHp = bag.baseHp;
+    const session = options.session;
+    bag.currentWave ??= session?.currentWave ?? 1;
+    bag.baseHp ??= session?.baseHp ?? level.baseHp;
+    this.currentWave = session?.currentWave ?? bag.currentWave;
+    this.baseHp = session?.baseHp ?? bag.baseHp;
     this.armor = level.baseArmor;
+    if (session) {
+      this.exp = session.exp;
+      this.levelNo = session.levelNo;
+      this.kills = session.kills;
+      this.buffs = session.buffs;
+    }
     this.buildSpawnQueue();
     analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
     this.container.addChild(this.battleLayer, this.uiLayer, this.projectileLayer);
@@ -66,6 +81,7 @@ export class BattleScene extends BaseScene {
   override update(dt: number): void {
     if (this.paused) return;
     this.time += dt;
+    if (this.options.session) this.options.session.playSeconds += dt;
     this.spawnDue();
     this.updateWeapons(dt);
     this.updateMonsters(dt);
@@ -152,10 +168,16 @@ export class BattleScene extends BaseScene {
     });
     const waveRect = resolveUiLayoutRect(waveLayout, w, h);
     const waveBar = new Graphics();
-    const progress = Math.min(1, this.time / this.waveDuration);
+    const expNeed = data.getEconomy("exp_need_base") + this.levelNo * 18;
+    const progress = Math.max(0, Math.min(1, this.exp / Math.max(1, expNeed)));
     waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width, waveRect.height, 8).fill({ color: 0x10151c, alpha: 0.9 });
     waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width * progress, waveRect.height, 8).fill({ color: 0x4ed5ff });
     waveBar.stroke({ color: 0xffffff, width: 1, alpha: 0.35 });
+    const levelBadge = new Graphics();
+    levelBadge.circle(waveRect.x + waveRect.width + 18, waveRect.y + waveRect.height / 2, 18).fill({ color: 0x7c4f27 }).stroke({ color: 0xffd36a, width: 3 });
+    const levelText = text(String(this.levelNo), 14, "#ffffff", "700");
+    levelText.anchor.set(0.5);
+    levelText.position.set(waveRect.x + waveRect.width + 18, waveRect.y + waveRect.height / 2);
 
     const statLayout = this.layout("stat", {
       scene: "battle",
@@ -180,6 +202,9 @@ export class BattleScene extends BaseScene {
     const killText = text(`杀敌数:${this.kills}`, statLayout.fontSize ?? 17, "#ffffff", "700");
     killText.anchor.set(0, 0.5);
     killText.position.set(18, statPos.y + 40);
+    const topHp = text(`♥ ${Math.max(0, Math.round(this.baseHp))}`, statLayout.fontSize ?? 17, "#ff6b78", "700");
+    topHp.anchor.set(1, 0.5);
+    topHp.position.set(w - 18, statPos.y + 1);
 
     const equipLayout = this.layout("equip_bar", {
       scene: "battle",
@@ -259,8 +284,8 @@ export class BattleScene extends BaseScene {
     equipBg.roundRect(equipRect.x + 6, equipRect.y + 7, equipRect.width - 12, equipRect.height - 14, 12).stroke({ color: 0x111820, width: 2, alpha: 0.7 });
     if (pauseLayout.visible) this.uiLayer.addChild(pause);
     if (titleLayout.visible) this.uiLayer.addChild(title);
-    if (waveLayout.visible) this.uiLayer.addChild(waveBar);
-    if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon, goldText, killText);
+    if (waveLayout.visible) this.uiLayer.addChild(waveBar, levelBadge, levelText);
+    if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon, goldText, killText, topHp);
     if (baseLayout.visible) this.uiLayer.addChild(base, this.heroLayer, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
     if (equipLayout.visible) this.uiLayer.addChild(equipBg);
 
@@ -377,6 +402,7 @@ export class BattleScene extends BaseScene {
     } else if (skill.type === "heal") {
       const effect = data.getEffect(skill.effectId);
       this.baseHp = Math.min(this.level.baseHp, this.baseHp + (effect?.value ?? 40));
+      this.syncSessionProgress();
       this.addFloating(app.screen.width / 2 + 82, app.screen.height - 156, `+${effect?.value ?? 40}`, 0x45ff99);
     }
   }
@@ -418,6 +444,7 @@ export class BattleScene extends BaseScene {
       if (contact.damage > 0) {
         this.baseHp -= contact.damage;
         this.bag.baseHp = Math.max(0, this.baseHp);
+        this.syncSessionProgress();
         this.addFloating(monster.x, monster.y - 24, `-${Math.round(contact.damage)}`, 0xff5b5b);
       }
     }
@@ -504,6 +531,7 @@ export class BattleScene extends BaseScene {
       this.kills += 1;
       this.bag.gold += monster.def.gold;
       this.exp += monster.def.exp;
+      this.syncSessionProgress();
       this.addFloating(monster.x, monster.y, `+${monster.def.gold}`, 0xffdf59);
       this.checkLevelUp();
     }
@@ -514,6 +542,7 @@ export class BattleScene extends BaseScene {
     if (this.exp >= need) {
       this.exp -= need;
       this.levelNo += 1;
+      this.syncSessionProgress();
       audio.playSfxEvent("battle_level_up");
       this.showRogueOptions();
     }
@@ -561,6 +590,7 @@ export class BattleScene extends BaseScene {
       this.baseHp = Math.min(this.level.baseHp, this.baseHp + option.effectValue);
       this.buffs.armorBonus += 2;
     }
+    this.syncSessionProgress();
     this.addFloating(app.screen.width / 2, app.screen.height * 0.32, option.title, 0xffdf59);
   }
 
@@ -654,6 +684,10 @@ export class BattleScene extends BaseScene {
     this.paused = true;
     this.bag.baseHp = Math.max(0, this.baseHp);
     const result = applyWaveCheckpointToBag(this.bag, this.level, data.getWaves(this.level.waveGroupId));
+    if (this.options.session) {
+      this.options.session.baseHp = this.bag.baseHp;
+      this.options.session.currentWave = result.nextWave;
+    }
     audio.playSfxEvent("result_win");
     analytics.track("battle_wave_clear", {
       levelId: this.level.id,
@@ -664,9 +698,11 @@ export class BattleScene extends BaseScene {
     });
     const label = result.expandedCells > 0 ? `+${result.rewardGold}金币\n背包扩展 +${result.expandedCells}格` : `+${result.rewardGold}金币`;
     this.addRewardBanner(label);
-    window.setTimeout(() => {
+    this.waveClearTimer = window.setTimeout(() => {
       const expandText = result.expandedCells > 0 ? `，背包扩展 ${result.expandedCells} 格` : "";
-      showBag(this.level, `第${this.currentWave}波完成：+${result.rewardGold}金币${expandText}`, this.bag);
+      const message = `第${this.currentWave}波完成：+${result.rewardGold}金币${expandText}`;
+      if (this.options.onWaveClear) this.options.onWaveClear(message);
+      else showBag(this.level, message, this.bag);
     }, 950);
   }
 
@@ -698,20 +734,20 @@ export class BattleScene extends BaseScene {
     const reward = save.applyBattleResult(this.level.id, {
       win,
       wave: this.currentWave,
-      kills: this.kills,
+      kills: this.options.session?.kills ?? this.kills,
       runGold: this.bag.gold,
-      playSeconds: this.time,
+      playSeconds: this.options.session?.playSeconds ?? this.time,
     });
     analytics.track("battle_result", {
       levelId: this.level.id,
       win,
       wave: this.currentWave,
-      kills: this.kills,
+      kills: this.options.session?.kills ?? this.kills,
       runGold: this.bag.gold,
       rewardCoin: reward.coin,
-      playSeconds: Math.round(this.time),
+      playSeconds: Math.round(this.options.session?.playSeconds ?? this.time),
     });
-    this.modalWindow = new WndResult(this.level, win, this.kills, reward.coin, this.currentWave, () => showMain());
+    this.modalWindow = new WndResult(this.level, win, this.options.session?.kills ?? this.kills, reward.coin, this.currentWave, () => showMain());
     this.container.addChild(this.modalWindow.container);
   }
 
@@ -730,5 +766,19 @@ export class BattleScene extends BaseScene {
       () => showMain(),
     );
     this.container.addChild(this.modalWindow.container);
+  }
+
+  private syncSessionProgress(): void {
+    const session = this.options.session;
+    if (!session) return;
+    session.baseHp = Math.max(0, this.baseHp);
+    session.exp = this.exp;
+    session.levelNo = this.levelNo;
+    session.kills = this.kills;
+  }
+
+  override destroy(): void {
+    if (this.waveClearTimer !== undefined) window.clearTimeout(this.waveClearTimer);
+    super.destroy();
   }
 }

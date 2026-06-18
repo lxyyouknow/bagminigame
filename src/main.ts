@@ -5,11 +5,15 @@ import { setScene } from "./core/runtime";
 import { BagScene } from "./scenes/BagScene";
 import { AnimationTestScene } from "./scenes/AnimationTestScene";
 import { BattleScene } from "./scenes/BattleScene";
+import { LevelLoadingScene } from "./scenes/LevelLoadingScene";
 import { LoadingScene } from "./scenes/LoadingScene";
+import { RunScene } from "./scenes/RunScene";
 import { WndMain } from "./scenes/WndMain";
 
 registerNavigation({
   showMain: () => setScene(new WndMain()),
+  showLevelLoading: (level, entryToast) => setScene(new LevelLoadingScene(level, entryToast)),
+  showRun: (level, entryToast, initialState) => setScene(new RunScene(level, initialState, entryToast)),
   showBag: (level, entryToast, initialState) => setScene(new BagScene(level, initialState, entryToast)),
   showBattle: (level, bag) => setScene(new BattleScene(level, bag)),
 });

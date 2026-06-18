@@ -1,11 +1,19 @@
 import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
-import type { BagState, DragSource, DropResult, LevelDef, PlacedItem } from "../types";
+import type { BagState, DragSource, DropResult, ItemShapeDef, LevelDef, PlacedItem } from "../types";
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
 import { addImageOrFallback, createItemShapeView, drawGrassBg, screenPoint, text, button, weightedPick, color, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
-import { shouldDetachPlacedOnRelease, shouldShowInvalidDropHint, shouldToastInvalidDrop } from "./bagDragUi";
+import {
+  findNearestDragTarget,
+  isSameDragSource,
+  shapeOriginFromPointer,
+  shouldDetachPlacedOnRelease,
+  shouldShowInvalidDropHint,
+  shouldToastInvalidDrop,
+} from "./bagDragUi";
 import { BaseScene } from "./BaseScene";
+import type { RunSessionState } from "./runSessionState";
 
 interface Point {
   x: number;
@@ -29,6 +37,10 @@ interface CandidateLayoutTarget {
   height: number;
   labelOffsetY: number;
 }
+
+type MergeDragTarget =
+  | { key: string; kind: "placed"; centerX: number; centerY: number; captureRadius: number; targetUid: number }
+  | { key: string; kind: "candidate"; centerX: number; centerY: number; captureRadius: number; targetIndex: number };
 
 interface FarmPlot {
   x: number;
@@ -59,9 +71,17 @@ export class BagScene extends BaseScene {
   private candidateViews = new Map<string, { view: Container; label?: Container }>();
   private candidateMotions: CandidateMotion[] = [];
   private pendingCandidateStarts = new Map<string, Point>();
+  private runSession?: RunSessionState;
 
-  constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string) {
+  constructor(
+    private readonly level: LevelDef,
+    initialState?: BagState,
+    entryToast?: string,
+    private readonly onStartBattle?: () => void,
+    runSession?: RunSessionState,
+  ) {
     super();
+    this.runSession = runSession;
     this.state = initialState ?? {
       rows: level.initRows,
       cols: level.initCols,
@@ -81,6 +101,23 @@ export class BagScene extends BaseScene {
       this.toast = entryToast;
       this.toastTimer = 1.8;
     }
+    this.draw();
+  }
+
+  getState(): BagState {
+    return this.state;
+  }
+
+  attachRunSession(session: RunSessionState): void {
+    this.runSession = session;
+  }
+
+  refresh(entryToast?: string): void {
+    if (entryToast) {
+      this.toast = entryToast;
+      this.toastTimer = 1.8;
+    }
+    for (const placed of this.state.placed) placed.cdLeft = 0;
     this.draw();
   }
 
@@ -180,6 +217,66 @@ export class BagScene extends BaseScene {
     hp.anchor.set(1, 0.5);
     const sizePos = resolveUiLayoutPosition(sizeLayout, w, h);
     hp.position.set(sizePos.x, sizePos.y);
+    const expLayout = this.layout("exp_bar", {
+      scene: "bag",
+      key: "exp_bar",
+      anchor: "topCenter",
+      x: 0,
+      y: 58,
+      width: 300,
+      height: 16,
+      fontSize: 14,
+      visible: true,
+      desc: "背包局内经验条",
+    });
+    const expRect = resolveUiLayoutRect(expLayout, w, h);
+    const levelNo = this.runSession?.levelNo ?? 1;
+    const exp = this.runSession?.exp ?? 0;
+    const expNeed = data.getEconomy("exp_need_base") + levelNo * 18;
+    const expRate = Math.max(0, Math.min(1, exp / Math.max(1, expNeed)));
+    const expBar = new Graphics();
+    expBar.roundRect(expRect.x, expRect.y, expRect.width, expRect.height, 8).fill({ color: 0x1a2428, alpha: 0.9 });
+    expBar.roundRect(expRect.x + 2, expRect.y + 2, Math.max(0, (expRect.width - 4) * expRate), expRect.height - 4, 6).fill({ color: 0x39e58a });
+    expBar.stroke({ color: 0xffffff, width: 1, alpha: 0.5 });
+    const levelBadge = new Graphics();
+    levelBadge.circle(expRect.x + expRect.width + 18, expRect.y + expRect.height / 2, 18).fill({ color: 0x7c4f27 }).stroke({ color: 0xffd36a, width: 3 });
+    const levelText = text(String(levelNo), expLayout.fontSize ?? 14, "#ffffff", "700");
+    levelText.anchor.set(0.5);
+    levelText.position.set(expRect.x + expRect.width + 18, expRect.y + expRect.height / 2);
+
+    const waveLayout = this.layout("wave", {
+      scene: "bag",
+      key: "wave",
+      anchor: "topCenter",
+      x: 0,
+      y: 94,
+      width: 180,
+      height: 26,
+      fontSize: 18,
+      visible: true,
+      desc: "背包局内波次文本",
+    });
+    const wavePos = resolveUiLayoutPosition(waveLayout, w, h);
+    const waveText = text(`波次 ${this.runSession?.currentWave ?? this.state.currentWave ?? 1}/${this.level.winWave}`, waveLayout.fontSize ?? 18, "#ffffff", "700");
+    waveText.anchor.set(0.5);
+    waveText.position.set(wavePos.x, wavePos.y);
+
+    const hpLayout = this.layout("hp", {
+      scene: "bag",
+      key: "hp",
+      anchor: "topRight",
+      x: -24,
+      y: 94,
+      width: 130,
+      height: 28,
+      fontSize: 18,
+      visible: true,
+      desc: "背包局内基地血量",
+    });
+    const hpPos = resolveUiLayoutPosition(hpLayout, w, h);
+    const hpText = text(`♥ ${Math.round(this.runSession?.baseHp ?? this.state.baseHp ?? this.level.baseHp)}`, hpLayout.fontSize ?? 18, "#ff6b78", "700");
+    hpText.anchor.set(1, 0.5);
+    hpText.position.set(hpPos.x, hpPos.y);
 
     const boardBg = new Container();
     boardBg.position.set(this.gridLeft - this.boardPadding, this.gridTop - this.boardPadding);
@@ -190,9 +287,6 @@ export class BagScene extends BaseScene {
     fallbackBg.stroke({ color: 0x261b16, width: 4 });
     boardFallback.addChild(fallbackBg);
     addImageOrFallback(boardBg, spriteFromAsset("bag_farm_frame", boardFrameW, boardFrameH), boardFallback);
-    if (titleLayout.visible) this.container.addChild(title);
-    if (goldLayout.visible) this.container.addChild(gold);
-    if (sizeLayout.visible) this.container.addChild(hp);
     if (boardLayout.visible) this.container.addChild(boardBg);
 
     const mergedFarmPlots = this.mergedFarmPlots();
@@ -257,6 +351,12 @@ export class BagScene extends BaseScene {
 
     this.drawCandidateArea();
     this.drawActions(w, h);
+    if (titleLayout.visible) this.container.addChild(title);
+    if (goldLayout.visible) this.container.addChild(gold);
+    if (sizeLayout.visible) this.container.addChild(hp);
+    if (expLayout.visible) this.container.addChild(expBar, levelBadge, levelText);
+    if (waveLayout.visible) this.container.addChild(waveText);
+    if (hpLayout.visible) this.container.addChild(hpText);
 
     if (this.toast) {
       const toastLayout = this.layout("toast", {
@@ -384,7 +484,7 @@ export class BagScene extends BaseScene {
     });
     const refresh = button(adRefreshLabel, refreshLayout.width, refreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2());
     const expand = button(goldRefreshLabel, expandLayout.width, expandLayout.height, 0x32a0e6, () => this.refreshCandidatesByGold());
-    const start = button(`开始第${this.state.currentWave ?? 1}波`, startLayout.width, startLayout.height, 0xffb33d, () => this.tryStartBattle());
+    const start = button(`开始第${this.runSession?.currentWave ?? this.state.currentWave ?? 1}波`, startLayout.width, startLayout.height, 0xffb33d, () => this.tryStartBattle());
     const refreshPos = resolveUiLayoutPosition(refreshLayout, w, h);
     const expandRect = resolveUiLayoutRect(expandLayout, w, h);
     const startPos = resolveUiLayoutPosition(startLayout, w, h);
@@ -515,6 +615,8 @@ export class BagScene extends BaseScene {
     const label = result.kind === "mergePlaced" || result.kind === "mergeCandidate" ? "可合成" : result.kind === "replace" ? "替换" : result.kind === "place" ? "可放置" : "不可放置";
     const tint = result.kind === "mergePlaced" || result.kind === "mergeCandidate" ? 0xb66dff : result.kind === "replace" ? 0xffc247 : result.kind === "place" ? 0x43f184 : 0xff4d5d;
     const alpha = result.kind === "invalid" ? 0.22 : 0.36;
+    const mergeGuide = this.nearestMergeTarget(x, y, "guide");
+    if (mergeGuide) this.drawMergeGuide(x, y, mergeGuide.target, mergeGuide.distance);
 
     if (result.kind === "mergeCandidate") {
       const rect = this.candidateRect(result.targetIndex);
@@ -638,6 +740,14 @@ export class BagScene extends BaseScene {
   }
 
   private resolveDrop(x: number, y: number): DropResult {
+    const mergeSnap = this.nearestMergeTarget(x, y, "capture");
+    if (mergeSnap?.target.kind === "placed") {
+      return { kind: "mergePlaced", targetUid: mergeSnap.target.targetUid };
+    }
+    if (mergeSnap?.target.kind === "candidate") {
+      return { kind: "mergeCandidate", targetIndex: mergeSnap.target.targetIndex };
+    }
+
     const candidateIndex = this.candidateIndexAt(x, y);
     if (candidateIndex >= 0) {
       const targetItemId = this.state.candidates[candidateIndex] ?? 0;
@@ -648,8 +758,19 @@ export class BagScene extends BaseScene {
     }
 
     const pitch = this.cellSize + this.cellGap;
-    const gridX = Math.floor((x - this.gridLeft) / pitch);
-    const gridY = Math.floor((y - this.gridTop) / pitch);
+    const shape = data.getShape(data.getItem(this.draggingItemId).shapeId);
+    const visualCenter = this.dragVisualCenterOffset(shape);
+    const origin = shapeOriginFromPointer({
+      pointerX: x,
+      pointerY: y,
+      gridLeft: this.gridLeft,
+      gridTop: this.gridTop,
+      pitch,
+      visualCenterX: visualCenter.x,
+      visualCenterY: visualCenter.y,
+    });
+    const gridX = origin.x;
+    const gridY = origin.y;
     const target = this.findPlacedAt(gridX, gridY);
     if (target && this.canMerge(this.draggingItemId, target.itemId, this.draggingSource, { type: "placed", uid: target.uid })) {
       return { kind: "mergePlaced", targetUid: target.uid };
@@ -913,12 +1034,66 @@ export class BagScene extends BaseScene {
     source: DragSource | undefined,
     target: DragSource,
   ): boolean {
-    if (!source || (source.type === target.type && ("uid" in source ? source.uid === (target as { uid?: number }).uid : source.index === (target as { index?: number }).index))) {
-      return false;
-    }
+    if (!source || isSameDragSource(source, target, this.sourceRemovedForDrag)) return false;
     const sourceItem = data.getItem(sourceItemId);
     const targetItem = data.getItem(targetItemId);
     return sourceItem.baseId === targetItem.baseId && sourceItem.quality === targetItem.quality && Boolean(sourceItem.mergeToId);
+  }
+
+  private mergeDragTargets(): MergeDragTarget[] {
+    const targets: MergeDragTarget[] = [];
+    for (const placed of this.state.placed) {
+      if (!this.canMerge(this.draggingItemId, placed.itemId, this.draggingSource, { type: "placed", uid: placed.uid })) continue;
+      const center = this.placedVisualCenter(placed);
+      const size = this.itemShapePixelSize(placed.itemId);
+      targets.push({
+        key: `placed:${placed.uid}`,
+        kind: "placed",
+        centerX: center.x,
+        centerY: center.y,
+        captureRadius: this.mergeCaptureRadius(size.width, size.height),
+        targetUid: placed.uid,
+      });
+    }
+
+    const candidateTargets = this.candidateLayoutTargets();
+    this.state.candidates.forEach((itemId, index) => {
+      if (!this.canMerge(this.draggingItemId, itemId, this.draggingSource, { type: "candidate", index })) return;
+      const target = candidateTargets[index];
+      if (!target) return;
+      targets.push({
+        key: `candidate:${index}`,
+        kind: "candidate",
+        centerX: target.x,
+        centerY: target.y,
+        captureRadius: this.mergeCaptureRadius(target.width, target.height),
+        targetIndex: index,
+      });
+    });
+    return targets;
+  }
+
+  private nearestMergeTarget(x: number, y: number, mode: "guide" | "capture") {
+    const targets = this.mergeDragTargets();
+    const eligible = mode === "capture"
+      ? targets.filter((target) => Math.hypot(x - target.centerX, y - target.centerY) <= target.captureRadius)
+      : targets;
+    return findNearestDragTarget(x, y, eligible, mode === "guide" ? 300 : Number.POSITIVE_INFINITY);
+  }
+
+  private mergeCaptureRadius(width: number, height: number): number {
+    return Math.min(176, Math.max(108, Math.hypot(width, height) * 0.48 + 38));
+  }
+
+  private drawMergeGuide(x: number, y: number, target: MergeDragTarget, distance: number): void {
+    if (!this.hintLayer) return;
+    const strength = Math.max(0.35, 1 - distance / 360);
+    const line = new Graphics();
+    line.moveTo(x, y).lineTo(target.centerX, target.centerY).stroke({ color: 0x42bfff, width: 11, alpha: 0.16 + strength * 0.12 });
+    line.moveTo(x, y).lineTo(target.centerX, target.centerY).stroke({ color: 0xb9efff, width: 3, alpha: 0.72 + strength * 0.24 });
+    line.circle(target.centerX, target.centerY, 12 + strength * 5).fill({ color: 0x78d8ff, alpha: 0.22 });
+    line.circle(target.centerX, target.centerY, 12 + strength * 5).stroke({ color: 0xd6f7ff, width: 3, alpha: 0.94 });
+    this.hintLayer.addChild(line);
   }
 
   private removeDragSource(): void {
@@ -928,7 +1103,8 @@ export class BagScene extends BaseScene {
       this.state.candidates.splice(this.draggingSource.index, 1);
       return;
     }
-    this.state.placed = this.state.placed.filter((placed) => placed.uid !== this.draggingSource?.uid);
+    const sourceUid = this.draggingSource.uid;
+    this.state.placed = this.state.placed.filter((placed) => placed.uid !== sourceUid);
   }
 
   private mergeIntoPlaced(targetUid: number): void {
@@ -1037,6 +1213,10 @@ export class BagScene extends BaseScene {
       this.toast = "至少放入一件武器";
       this.toastTimer = 1;
       this.draw();
+      return;
+    }
+    if (this.onStartBattle) {
+      this.onStartBattle();
       return;
     }
     showBattle(this.level, this.state);

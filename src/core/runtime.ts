@@ -1,4 +1,4 @@
-import { Application } from "pixi.js";
+import { Application, type Container } from "pixi.js";
 import { GameDataManager } from "../data/GameDataManager";
 import { AdService } from "../services/AdService";
 import { AnalyticsService } from "../services/AnalyticsService";

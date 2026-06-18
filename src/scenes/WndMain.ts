@@ -1,6 +1,6 @@
 import { Container, Graphics } from "pixi.js";
 import { analytics, app, audio, data, save } from "../core/runtime";
-import { showBag } from "../core/navigation";
+import { showLevelLoading } from "../core/navigation";
 import { drawMainBg, drawStageDiorama, drawTopResourceBar, glossyButton, spriteFromUi, text } from "../utils/display";
 import { formatConsumeToast } from "../ui/resourceMeta";
 import type { UiLayoutDef } from "../types";
@@ -224,7 +224,7 @@ export class WndMain extends BaseScene {
     if (result.ok) {
       analytics.track("level_start_success", { levelId: level.id, costResource: cost.resource, costAmount: cost.amount });
       const remaining = save.getResources()[cost.resource];
-      showBag(level, formatConsumeToast(cost.resource, cost.amount, remaining));
+      showLevelLoading(level, formatConsumeToast(cost.resource, cost.amount, remaining));
       return;
     }
     if (result.reason === "locked") {

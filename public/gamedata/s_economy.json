@@ -4,5 +4,6 @@
   { "key": "bag_refresh_gold_cost", "value": 15, "adPlacement": "bag_refresh", "desc": "金币刷新价格" },
   { "key": "bag_expand_gold_cost", "value": 30, "adPlacement": "bag_expand", "desc": "扩展一格/一列价格" },
   { "key": "rogue_refresh_free_count", "value": 1, "adPlacement": "rogue_refresh", "desc": "升级选项免费刷新次数" },
-  { "key": "exp_need_base", "value": 12, "adPlacement": "", "desc": "升级经验基础值" }
+  { "key": "exp_need_base", "value": 12, "adPlacement": "", "desc": "升级经验基础值" },
+  { "key": "run_transition_seconds", "value": 0.42, "adPlacement": "", "desc": "背包与战场双向滑屏时长（秒）" }
 ]

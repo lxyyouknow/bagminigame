@@ -5,6 +5,7 @@ export type AnalyticsEventName =
   | "level_start_success"
   | "level_start_failed"
   | "battle_start"
+  | "battle_wave_clear"
   | "battle_result"
   | "rogue_option_select";
 
