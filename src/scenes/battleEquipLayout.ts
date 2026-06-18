@@ -34,7 +34,7 @@ export function computeBattleEquipListLayout(
 ): BattleEquipLayoutResult {
   const clampedCount = Math.max(0, itemCount);
   const maxColumnsByWidth = Math.max(1, Math.floor((panelWidth + gap) / (itemHeight + gap)));
-  const columns = Math.max(1, Math.min(5, maxColumnsByWidth, clampedCount <= 5 ? clampedCount || 1 : 5));
+  const columns = Math.max(1, Math.min(6, maxColumnsByWidth, clampedCount <= 6 ? clampedCount || 1 : 6));
   const rows = Math.max(1, Math.ceil(clampedCount / columns));
   const slotWidth = Math.min(itemHeight, Math.floor((panelWidth - gap * Math.max(0, columns - 1)) / columns));
   const panelHeight = rows * itemHeight + Math.max(0, rows - 1) * gap;
@@ -89,7 +89,7 @@ export function computeBattleHudLayout(
   const baseSafeWidth = Math.min(baseWidth, screenWidth - 32);
   const baseBottomOverlap = Math.max(24, Math.round(baseSafeHeight * 0.28));
   const baseY = Math.max(Math.round(screenHeight * 0.34), equip.y - baseSafeHeight + baseBottomOverlap);
-  const hpWidth = Math.min(screenWidth - 34, Math.max(260, equip.width - 12));
+  const hpWidth = Math.min(screenWidth - 24, 720);
   const hpY = Math.max(0, equip.y - 20);
 
   return {
@@ -103,7 +103,7 @@ export function computeBattleHudLayout(
       x: Math.round((screenWidth - hpWidth) / 2),
       y: hpY,
       width: hpWidth,
-      height: 14,
+      height: 20,
     },
     equip,
   };

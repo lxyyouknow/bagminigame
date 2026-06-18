@@ -222,7 +222,12 @@ export class BattleScene extends BaseScene {
       visible: true,
       desc: "战斗底部横向武器槽面板",
     });
-    const equipList = computeBattleEquipListLayout(Math.min(this.bag.placed.length, 10), equipLayout.width - 24, 50, equipLayout.gap ?? 8);
+    const equipGap = equipLayout.gap ?? 8;
+    const equipSlotSize = this.assetDisplaySize("battle_weapon_slot_box", 50) * 0.5;
+    const equipCount = Math.min(this.bag.placed.length, 10);
+    const equipColumns = Math.max(1, Math.min(6, equipCount || 1));
+    const equipPanelWidth = Math.min(w - 28, equipColumns * equipSlotSize + Math.max(0, equipColumns - 1) * equipGap + 24);
+    const equipList = computeBattleEquipListLayout(equipCount, equipPanelWidth - 24, equipSlotSize, equipGap);
     const equipPanelHeight = Math.max(equipLayout.height, equipList.panelHeight + 18);
     const baseLayout = this.layout("base_panel", {
       scene: "battle",
@@ -236,19 +241,12 @@ export class BattleScene extends BaseScene {
       visible: true,
       desc: "战斗底部基地区域",
     });
-    const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipLayout.width, equipPanelHeight, equipLayout.y);
+    const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipPanelWidth, equipPanelHeight, equipLayout.y);
     const { base: baseRect, equip: equipRect, hpBar: hpRect } = hud;
 
-    const base = new Graphics();
     const baseTop = baseRect.y + 10;
-    const baseBodyH = baseRect.height - 16;
-    const turretX = baseRect.x + baseRect.width * 0.42;
-    base.roundRect(baseRect.x + 10, baseTop + 16, baseRect.width - 20, baseBodyH - 10, 26).fill({ color: 0x6f5c37, alpha: 0.98 });
-    base.stroke({ color: 0x2b2114, width: 4, alpha: 0.86 });
-    base.roundRect(baseRect.x + 28, baseTop + 34, baseRect.width - 56, 48, 16).fill({ color: 0x8b7548, alpha: 0.9 });
-    base.roundRect(baseRect.x + 42, baseTop + 56, baseRect.width - 84, 18, 8).fill({ color: 0x3a3328, alpha: 0.8 });
-    base.roundRect(baseRect.x + 24, baseTop + 72, baseRect.width - 48, 10, 5).fill({ color: 0x2a2115, alpha: 0.48 });
-    this.positionHero(turretX, baseTop + 24);
+    const turretX = baseRect.x + baseRect.width / 2;
+    this.positionHero(turretX, this.friendlyAreaCenterY(baseTop + 24) - this.friendlyAreaHeight() * 0.2 - 120);
 
     const guardLabel = text("守卫基地", baseLayout.fontSize ?? 16, "#ffdf83", "700");
     guardLabel.anchor.set(0, 0.5);
@@ -281,22 +279,17 @@ export class BattleScene extends BaseScene {
     const hpFill = new Graphics();
     hpFill.roundRect(hpRect.x + 3, hpRect.y + 3, Math.max(0, (hpRect.width - 6) * Math.max(0, this.baseHp / this.level.baseHp)), hpRect.height - 6, 5).fill({ color: 0x2ff16b });
 
-    const equipBg = new Graphics();
-    equipBg.roundRect(equipRect.x, equipRect.y, equipRect.width, equipRect.height, 16).fill({ color: 0x27333d, alpha: 0.97 });
-    equipBg.stroke({ color: 0x9eb3c3, width: 2, alpha: 0.52 });
-    equipBg.roundRect(equipRect.x + 6, equipRect.y + 7, equipRect.width - 12, equipRect.height - 14, 12).stroke({ color: 0x111820, width: 2, alpha: 0.7 });
     if (pauseLayout.visible) this.uiLayer.addChild(pause);
     if (titleLayout.visible) this.uiLayer.addChild(title);
     if (waveLayout.visible) this.uiLayer.addChild(waveBar, levelBadge, levelText);
     if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon, goldText, killText, topHp);
-    if (baseLayout.visible) this.uiLayer.addChild(base, this.heroLayer, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
-    if (equipLayout.visible) this.uiLayer.addChild(equipBg);
+    if (baseLayout.visible) this.uiLayer.addChild(this.heroLayer, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
 
     this.bag.placed.slice(0, 10).forEach((placed, index) => {
       const item = data.getItem(placed.itemId);
       const slot = equipList.slots[index];
       if (!slot) return;
-      const iconSize = equipLayout.iconSize ?? 46;
+      const iconSize = this.assetDisplaySize(item.battleIconAssetKey || item.iconAssetKey || `weapon_${item.icon}_icon`, equipLayout.iconSize ?? 46) * 0.5;
       const slotSize = Math.min(slot.width, slot.height);
       const icon = this.createBattleWeaponSlot(item, iconSize, slotSize);
       icon.position.set(equipRect.x + 12 + slot.x + slot.width / 2, equipRect.y + 9 + slot.y + slot.height / 2);
@@ -336,20 +329,41 @@ export class BattleScene extends BaseScene {
     this.battleLayer.addChild(line);
   }
 
+  private friendlyAreaCenterY(fallbackY: number): number {
+    const skinH = this.friendlyAreaHeight();
+    if (skinH <= 0) return fallbackY;
+    return app.screen.height - skinH / 2;
+  }
+
+  private friendlyAreaHeight(): number {
+    const texture = assetManager.texture("battle_friendly_area_skin");
+    if (!texture) return 0;
+    const skinScale = app.screen.width / texture.width;
+    return texture.height * skinScale;
+  }
+
+  private assetDisplaySize(assetKey: string | undefined, fallback: number): number {
+    const texture = assetManager.texture(assetKey);
+    if (!texture) return fallback;
+    return Math.max(texture.width, texture.height);
+  }
+
   private createBattleWeaponSlot(item: ItemDef, iconSize: number, slotSize: number): Container {
     const c = new Container();
-    const box = spriteFromAsset("battle_weapon_slot_box", slotSize, slotSize);
+    const boxSize = this.assetDisplaySize("battle_weapon_slot_box", slotSize) * 0.5;
+    const boxTexture = assetManager.texture("battle_weapon_slot_box");
+    const box = spriteFromAsset("battle_weapon_slot_box", (boxTexture?.width ?? boxSize) * 0.5, (boxTexture?.height ?? boxSize) * 0.5);
     if (box) {
       box.anchor.set(0.5);
       c.addChild(box);
     } else {
       const fallback = new Graphics();
-      fallback.roundRect(-slotSize / 2, -slotSize / 2, slotSize, slotSize, 10).fill({ color: 0xb46f2e, alpha: 0.95 });
+      fallback.roundRect(-boxSize / 2, -boxSize / 2, boxSize, boxSize, 10).fill({ color: 0xb46f2e, alpha: 0.95 });
       fallback.stroke({ color: 0x5b3518, width: 3, alpha: 0.9 });
       c.addChild(fallback);
     }
 
-    const artSize = iconSize * 0.82;
+    const artSize = iconSize;
     const art = spriteFromAsset(item.battleIconAssetKey || item.iconAssetKey || `weapon_${item.icon}_icon`, artSize, artSize);
     if (art) {
       art.anchor.set(0.5);
@@ -537,7 +551,12 @@ export class BattleScene extends BaseScene {
       visible: true,
       desc: "战斗底部横向武器槽面板",
     });
-    const equipList = computeBattleEquipListLayout(Math.min(this.bag.placed.length, 10), equipLayout.width - 24, 50, equipLayout.gap ?? 8);
+    const equipGap = equipLayout.gap ?? 8;
+    const equipSlotSize = this.assetDisplaySize("battle_weapon_slot_box", 50) * 0.5;
+    const equipCount = Math.min(this.bag.placed.length, 10);
+    const equipColumns = Math.max(1, Math.min(6, equipCount || 1));
+    const equipPanelWidth = Math.min(w - 28, equipColumns * equipSlotSize + Math.max(0, equipColumns - 1) * equipGap + 24);
+    const equipList = computeBattleEquipListLayout(equipCount, equipPanelWidth - 24, equipSlotSize, equipGap);
     const equipPanelHeight = Math.max(equipLayout.height, equipList.panelHeight + 18);
     const baseLayout = this.layout("base_panel", {
       scene: "battle",
@@ -551,7 +570,7 @@ export class BattleScene extends BaseScene {
       visible: true,
       desc: "战斗底部基地区域",
     });
-    const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipLayout.width, equipPanelHeight, equipLayout.y);
+    const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipPanelWidth, equipPanelHeight, equipLayout.y);
     return hud.base.y + 34 - monster.def.radius * 0.18;
   }
 

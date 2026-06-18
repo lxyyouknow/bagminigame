@@ -9,6 +9,7 @@ export class LevelLoadingScene extends BaseScene {
   private progress = 0;
   private elapsed = 0;
   private ready = false;
+  private navigated = false;
   private errorMessage = "";
 
   constructor(private readonly level: LevelDef, private readonly entryToast?: string) {
@@ -27,7 +28,7 @@ export class LevelLoadingScene extends BaseScene {
     if (this.ready && this.elapsed >= 0.65) {
       this.progress = 1;
       this.draw();
-      showRun(this.level, this.entryToast);
+      this.enterRun();
     }
   }
 
@@ -35,7 +36,12 @@ export class LevelLoadingScene extends BaseScene {
     try {
       audio.preloadGroups(["bag", "battle", "ui"]);
       await assetManager.preloadGroups(["bag", "battle", "ui"]);
-      if (!this.disposed) this.ready = true;
+      if (!this.disposed) {
+        this.ready = true;
+        this.progress = 1;
+        this.draw();
+        window.setTimeout(() => this.enterRun(), 250);
+      }
     } catch (error) {
       if (this.disposed) return;
       console.error("关卡 Loading 加载失败", error);
@@ -87,5 +93,11 @@ export class LevelLoadingScene extends BaseScene {
       back.position.set((w - 180) / 2, barY + 105);
       this.container.addChild(back);
     }
+  }
+
+  private enterRun(): void {
+    if (this.disposed || this.navigated) return;
+    this.navigated = true;
+    showRun(this.level, this.entryToast);
   }
 }
