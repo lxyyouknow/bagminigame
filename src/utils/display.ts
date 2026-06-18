@@ -237,11 +237,38 @@ export function createWeaponIcon(item: ItemDef, quality: QualityDef, size: numbe
 
 export function createItemShapeView(item: ItemDef, shape: ItemShapeDef, _quality: QualityDef, cellSize: number, cellGap = 0, iconScale = 1): Container {
   const c = new Container();
+  const assetKey = item.iconAssetKey || `weapon_${item.icon}_icon`;
+  const xs = shape.cells.map(([x]) => x);
+  const ys = shape.cells.map(([, y]) => y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const widthCells = maxX - minX + 1;
+  const heightCells = maxY - minY + 1;
+  const texture = assetManager.texture(assetKey);
+  const textureAspect = texture ? texture.width / texture.height : 1;
+  const shapeAspect = widthCells / heightCells;
+  if (texture && widthCells > 1 && textureAspect > 1.25 && Math.abs(textureAspect - shapeAspect) < 0.35) {
+    const totalW = widthCells * cellSize + (widthCells - 1) * cellGap;
+    const totalH = heightCells * cellSize + (heightCells - 1) * cellGap;
+    const art = spriteFromAsset(assetKey, totalW * 0.96 * iconScale, totalH * 0.96 * iconScale);
+    if (art) {
+      art.anchor.set(0.5);
+      art.position.set(
+        minX * (cellSize + cellGap) + totalW * 0.5,
+        minY * (cellSize + cellGap) + totalH * 0.5 - 18 * iconScale,
+      );
+      c.addChild(art);
+      return c;
+    }
+  }
+
   for (const [x, y] of shape.cells) {
     const iconSize = 150 * iconScale;
     const px = x * (cellSize + cellGap) + cellSize * 0.5;
     const py = y * (cellSize + cellGap) + cellSize * 0.5 - 25;
-    const art = spriteFromAsset(item.iconAssetKey || `weapon_${item.icon}_icon`, iconSize, iconSize);
+    const art = spriteFromAsset(assetKey, iconSize, iconSize);
     if (art) {
       art.anchor.set(0.5);
       art.position.set(px, py);
