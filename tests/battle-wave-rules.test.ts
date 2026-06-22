@@ -1,5 +1,5 @@
 import type { BagState, LevelDef, WaveDef } from "../src/types.js";
-import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, getWaveRewardGold } from "../src/scenes/battleWaveRules.js";
+import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, getWaveRewardGold, refreshWaveCandidates } from "../src/scenes/battleWaveRules.js";
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) {
@@ -61,6 +61,14 @@ function run(): void {
   const capped = applyWaveCheckpointToBag(bag, level, waves);
   assertEqual(capped.expandedCells, 0, "达到关卡最大背包尺寸后不应继续扩格");
   assertEqual(bag.currentWave, 3, "即使不能扩格也应继续推进波次");
+
+  const goldBeforeRefresh = bag.gold;
+  const freeBeforeRefresh = bag.refreshFree;
+  const rolls = [131, 141, 151];
+  refreshWaveCandidates(bag, () => rolls.shift() ?? 101);
+  assertEqual(bag.candidates.join(","), "131,141,151", "清波回背包时应免费刷新 3 个候选武器");
+  assertEqual(bag.gold, goldBeforeRefresh, "清波免费刷新不能消耗金币");
+  assertEqual(bag.refreshFree, freeBeforeRefresh, "清波免费刷新不能消耗商店免费次数");
 }
 
 run();

@@ -329,7 +329,7 @@ AI 生成的 sprite sheet 经常不是严格网格，不能默认按整张图平
 
 ## 怪物动作
 
-当前怪物是代码绘制的圆形占位，并用缩放/上下浮动模拟帧动画。后续建议改成 spritesheet。
+当前数量最多的黄色小怪已经接入小僵尸 `zombie_walk_down` 帧动画；其他怪物仍会回退到代码占位图。
 
 标准动作名：
 
@@ -355,6 +355,11 @@ public/game-assets/enemies/slime-death-sheet.png
 - `hitAnimKey`
 - `deathAnimKey`
 - `shadowAssetKey`
+
+当前已实际支持：
+
+- `runAnimKey`：移动时循环播放。
+- `attackAnimKey`：贴近基地后切换；留空时继续播放移动动作。
 
 怪物替换建议：
 
@@ -388,22 +393,19 @@ public/game-assets/enemies/slime-death-sheet.png
 
 ## 攻击特效
 
-当前攻击表现：
+当前已接入的攻击表现：
 
-- 投射物：代码发光子弹和拖尾。
-- AOE/毒圈：代码圆形范围圈。
+- 所有进攻型武器临时共用 `projectile_tomato_spin` 番茄旋转弹道。
+- 命中怪物时播放 `hit_tomato_burst` 番茄爆炸。
+- 辅助型蓝莓护盾/治疗不发射番茄。
+- 资源缺失时仍可回退到代码发光子弹或范围圈。
 - 伤害数字：Pixi Text。
-- 命中特效：简单 Graphics 闪圈。
 
-后续建议扩展资源 key：
+当前 `s_skill.json` 已支持：
 
-在 `s_skill.json` 增加：
-
-- `projectileAssetKey`：飞行物图片或动画。
-- `castFxAssetKey`：释放特效。
-- `hitFxAssetKey`：命中特效。
-- `areaFxAssetKey`：范围持续特效。
-- `soundKey`：释放或命中音效。
+- `speed`：弹道位移速度，单位为像素/秒。
+- `projectileAnimKey`：循环飞行动画 key。
+- `hitAnimKey`：非循环命中特效 key。
 
 在 `s_animation.json` 增加：
 
@@ -431,6 +433,32 @@ public/game-assets/enemies/slime-death-sheet.png
 - 弹道动画、命中特效、范围特效都走 `s_skill.json` 的资源 key，再查 `s_animation.json`。
 - 释放帧可以用 `hitFrame` 控制。先播放主角攻击动画，到了 `hitFrame` 再生成弹道，效果会更跟手。
 - 弹道层级建议高于基地和主角，低于弹窗；不要被底部 UI 遮住。
+- 飞行动画只负责自身动作，移动轨迹和速度由代码及 `s_skill.json.speed` 控制。
+- 弹道和命中特效播放完必须从场景移除并销毁显示对象；共享纹理由资源管理器复用。
+
+### 当前番茄示例路径
+
+```text
+public/game-assets/effects/projectiles/tomato_spin/
+public/game-assets/effects/hit/tomato_burst/
+scripts/generate-tomato-projectile-sprite.mjs
+scripts/generate-tomato-hit-sprite.mjs
+```
+
+单独预览：
+
+```text
+game.html?animtest=projectile_tomato_spin
+game.html?animtest=hit_tomato_burst
+```
+
+配置检查：
+
+```bash
+npm run test:skill-visual
+```
+
+完整的怪物、弹道、命中动画生成与配置步骤见 `BATTLE_ANIMATION_RESOURCE_DESIGN.md`。
 
 ## UI 动效建议
 

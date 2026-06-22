@@ -72,6 +72,8 @@ export interface SkillDef {
   targetRule: string;
   effectId: number;
   color: string;
+  projectileAnimKey?: string;
+  hitAnimKey?: string;
 }
 
 export interface EffectDef {
@@ -94,6 +96,8 @@ export interface MonsterDef {
   radius: number;
   color: string;
   boss: boolean;
+  runAnimKey?: string;
+  attackAnimKey?: string;
 }
 
 export interface WaveDef {
@@ -272,11 +276,13 @@ export interface MonsterRuntime {
   slowTimer: number;
   attackCooldown: number;
   dead: boolean;
+  animationKey?: string;
 }
 
 export interface ProjectileRuntime {
   view: Container;
   target: MonsterRuntime;
+  skill: SkillDef;
   x: number;
   y: number;
   speed: number;
@@ -286,6 +292,8 @@ export interface ProjectileRuntime {
   spinSpeed?: number;
   impactType?: "carrotSpin";
   impactAssetKey?: string;
+  hitDistance: number;
+  rotateToTarget: boolean;
 }
 
 export interface FloatingRuntime {

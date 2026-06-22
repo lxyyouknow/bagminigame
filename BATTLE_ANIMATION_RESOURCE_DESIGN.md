@@ -192,41 +192,96 @@ hero_mage_attack_up
 - 命中特效：`hit_slash_small`
 - 是否旋转：跟随飞行方向旋转。
 
-## 技能表现字段设计建议
+## 当前技能表现字段
 
-后续可以在 `s_skill.json` 或单独 `s_skill_visual.json` 中扩展这些字段。
-
-建议不要一次性强改当前表；可以先做新表验证。
+当前已经直接在 `s_skill.json` 接入弹道和命中特效字段：
 
 ```json
 {
-  "skillId": 201,
-  "castAnimKey": "hero_mage_attack_up",
-  "castFxAnimKey": "cast_magic_flash",
-  "projectileAnimKey": "projectile_fireball_loop",
-  "projectileRotateToTarget": true,
-  "projectileScale": 1,
-  "hitFxAnimKey": "hit_fire_burst",
-  "groundFxAnimKey": "",
-  "hitShake": 4,
-  "hitFlashColor": "#ffffff",
-  "soundEvent": "battle_fireball"
+  "id": 201,
+  "type": "projectile",
+  "speed": 720,
+  "projectileAnimKey": "projectile_tomato_spin",
+  "hitAnimKey": "hit_tomato_burst"
 }
 ```
 
 字段说明：
 
-- `skillId`：绑定现有技能 id。
-- `castAnimKey`：主角播放哪个攻击动作。
-- `castFxAnimKey`：手部、法杖、炮口释放特效。
-- `projectileAnimKey`：飞行动画。
-- `projectileRotateToTarget`：弹道是否按飞行方向旋转。
-- `projectileScale`：弹道缩放。
-- `hitFxAnimKey`：命中特效。
-- `groundFxAnimKey`：地面持续特效。
-- `hitShake`：命中时怪物抖动强度。
-- `hitFlashColor`：受击闪色。
-- `soundEvent`：音效事件。
+- `speed`：弹道每秒移动像素，决定飞行速度，不由动画帧率决定。
+- `projectileAnimKey`：弹道循环动画 key，对应 `s_animation.json`。
+- `hitAnimKey`：命中时播放的非循环动画 key。
+- 不配置 `projectileAnimKey` 时，运行时回退到原有代码占位表现。
+- `shield`、`heal` 这类辅助技能不配置攻击弹道。
+
+当前测试阶段，所有进攻型技能统一配置为番茄弹道和番茄爆炸。每种武器的速度直接在 `public/gamedata/s_skill.json` 修改：
+
+- 番茄 `201/202/203`：`720/760/820`。
+- 胡萝卜 `211/212/213`：`700/740/780`。
+- 小麦 `221/222/223`：`850/900/960`。
+- 辣椒 `241/242/243`：`680/720/760`。
+- 卷心菜 `251/252`：`700/760`。
+
+## 已验证资源：小僵尸、番茄弹道和命中爆炸
+
+### 小僵尸移动
+
+```text
+原始 AI sheet：public/game-assets/source/zombie-walk-down-ai-magenta-sheet.png
+透明源 sheet：public/game-assets/source/zombie-walk-down-ai-transparent-sheet.png
+运行帧目录：public/game-assets/enemies/zombie_walk_down/frames/
+生成脚本：scripts/generate-zombie-walk-sprite.mjs
+动画 key：zombie_walk_down
+怪物字段：s_monster.json -> runAnimKey
+```
+
+怪物 sheet 建议使用单行等序列，统一脚底锚点。生成时保留最大的角色主体连通区域，避免相邻格碎片混入；每帧放进相同尺寸透明画布，脚底对齐后再写入 `s_animation.json`。
+
+### 番茄旋转弹道
+
+番茄弹道只需要美术或 AI 生成一张独立番茄，不需要画 8 个不同番茄。脚本按固定角度旋转生成序列帧：
+
+```text
+原始单图：public/game-assets/source/projectile-tomato-ai-magenta.png
+透明单图：public/game-assets/source/projectile-tomato-ai-transparent.png
+运行帧目录：public/game-assets/effects/projectiles/tomato_spin/frames/
+生成脚本：scripts/generate-tomato-projectile-sprite.mjs
+动画 key：projectile_tomato_spin
+规格：128x128，8 帧，14 FPS，loop=true，anchor=(0.5, 0.5)
+```
+
+脚本输出角度为 `0/45/90/135/180/225/270/315` 度。序列帧只负责原地旋转；从主角到目标的位移由 `BattleScene` 根据技能 `speed` 计算。
+
+### 番茄命中爆炸
+
+```text
+原始 AI sheet：public/game-assets/source/hit-tomato-burst-ai-magenta-sheet.png
+透明源 sheet：public/game-assets/source/hit-tomato-burst-ai-transparent-sheet.png
+运行帧目录：public/game-assets/effects/hit/tomato_burst/frames/
+生成脚本：scripts/generate-tomato-hit-sprite.mjs
+动画 key：hit_tomato_burst
+规格：256x256，8 帧，18 FPS，loop=false，anchor=(0.5, 0.5)
+```
+
+爆炸 sheet 从左到右依次为挤压、开裂、最大爆发、碎块扩散、消散。切帧时所有帧使用同一缩放系数，不能把后期的小碎屑单独放大，否则爆炸会在结尾突然变大。
+
+## 策划自行制作和配置流程
+
+1. 把 AI 原图或美术源图放入 `public/game-assets/source/` 留档。
+2. 使用纯色洋红 `#FF00FF` 或纯绿背景生成，再抠成透明 PNG。
+3. 编写或复制现有生成脚本，输出统一尺寸的 `frames/*.png`、横排 sheet、GIF、contact sheet 和 `metadata.json`。
+4. 在 `s_asset.json` 为每一帧配置唯一 key、`url`、`preloadGroup: "battle"` 和逐帧 fallback。
+5. 在 `s_animation.json` 配置动画 key、帧 key 数组、`fps`、`loop`、锚点和缩放。
+6. 怪物在 `s_monster.json` 配 `runAnimKey/attackAnimKey`；技能在 `s_skill.json` 配 `projectileAnimKey/hitAnimKey`。
+7. 使用 `game.html?animtest=<动画key>` 单独预览，再进入实战检查轨迹、命中点和层级。
+8. 运行 `npm run test:monster-visual`、`npm run test:skill-visual`、JSON 校验和 `npm run build`。
+
+## 运行时释放规则
+
+- 弹道命中、目标提前死亡或战斗场景销毁时，立即从显示层移除并 `destroy`。
+- 命中爆炸必须 `loop=false`，在 `onComplete` 中移除并 `destroy`。
+- 暂停战斗时，弹道和命中特效也统一暂停；继续后恢复。
+- 单帧纹理由 `AssetManager` 统一缓存和复用，不要每次攻击重新加载，也不要在单个特效结束时卸载共享纹理。
 
 ## 怪物表现字段设计建议
 
@@ -467,4 +522,3 @@ battle-fx.png
 4. 每接入一个资源类型，都保留 `game.html?animtest=<动画key>` 预览入口。
 
 这样后续策划和美术可以逐步替换正式资源，不会因为某个资源缺失导致战斗不可玩。
-

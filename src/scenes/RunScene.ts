@@ -78,7 +78,7 @@ export class RunScene extends BaseScene {
 
   private returnToBag(message: string): void {
     if (!beginBagTransition(this.flow)) return;
-    this.bagScene.refresh(message);
+    this.bagScene.refreshAfterWave(message);
     this.bagScene.container.eventMode = "none";
     if (this.battleScene) this.battleScene.container.eventMode = "none";
     this.applyViewOffsets();

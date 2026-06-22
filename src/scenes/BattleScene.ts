@@ -12,6 +12,10 @@ import { WndRogueOption } from "../windows/WndRogueOption";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
 import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue } from "./battleWaveRules";
 import { stepMonsterContact } from "./monsterContactRules";
+import { getMonsterAnimationKey } from "./monsterVisualRules";
+import { chooseMonsterSpawnPosition } from "./monsterSpawnRules";
+import { AnimationPlaybackController } from "./animationPlaybackController";
+import { shouldUseVisualProjectile, usesAreaImpact } from "./skillVisualRules";
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
 
@@ -46,6 +50,7 @@ export class BattleScene extends BaseScene {
   };
   private battleLayer = new Container();
   private projectileLayer = new Container();
+  private hitFxLayer = new Container();
   private heroLayer = new Container();
   private uiLayer = new Container();
   private modalWindow: GameWindow | undefined;
@@ -54,6 +59,7 @@ export class BattleScene extends BaseScene {
   private heroCastX = 0;
   private heroCastY = 0;
   private readonly heroAnimKey = "wizard_attack_up";
+  private readonly animationPlayback = new AnimationPlaybackController();
 
   private waveClearTimer: number | undefined;
 
@@ -75,7 +81,7 @@ export class BattleScene extends BaseScene {
     }
     this.buildSpawnQueue();
     analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
-    this.container.addChild(this.battleLayer, this.uiLayer, this.projectileLayer);
+    this.container.addChild(this.battleLayer, this.uiLayer, this.projectileLayer, this.hitFxLayer);
     this.drawStatic();
   }
 
@@ -102,7 +108,7 @@ export class BattleScene extends BaseScene {
 
   override onAppPause(_reason: LifecycleReason): void {
     if (this.modalWindow) {
-      this.paused = true;
+      this.setBattlePaused(true);
       return;
     }
     this.openPause();
@@ -390,16 +396,25 @@ export class BattleScene extends BaseScene {
   private spawnMonster(monsterId: number): void {
     const def = data.getMonster(monsterId);
     const w = app.screen.width;
-    const x = 40 + Math.random() * (w - 80);
-    const y = 126 + Math.random() * 30;
-    const view = this.createMonsterView(def);
+    const { x, y } = chooseMonsterSpawnPosition(
+      w,
+      this.monsters.filter((monster) => !monster.dead).map((monster) => ({ x: monster.x, y: monster.y })),
+    );
+    const animationKey = getMonsterAnimationKey(def, false);
+    const view = this.createMonsterView(def, animationKey);
     view.position.set(x, y);
     this.battleLayer.addChild(view);
-    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, attackCooldown: 0, dead: false });
+    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, attackCooldown: 0, dead: false, animationKey });
   }
 
-  private createMonsterView(def: MonsterDef): Container {
+  private createMonsterView(def: MonsterDef, animationKey?: string): Container {
     const c = new Container();
+    const animated = animationKey ? assetManager.animation(animationKey) : undefined;
+    if (animated) {
+      animated.play();
+      c.addChild(animated);
+      return c;
+    }
     const body = new Graphics();
     const r = def.radius;
     body.circle(0, 0, r).fill({ color: color(def.color) }).stroke({ color: 0x1a1f27, width: 3 });
@@ -449,30 +464,48 @@ export class BattleScene extends BaseScene {
       const start = this.getHeroCastPoint(placed.uid);
       const startX = start.x;
       const startY = start.y;
-    if (skill.type === "projectile" && target) {
+    if ((skill.type === "projectile" || shouldUseVisualProjectile(skill)) && target) {
       audio.playSfxEvent("battle_shoot");
-      const view = this.createProjectileView(color(skill.color), item.projectileAssetKey);
+      const view = this.createProjectileView(color(skill.color), skill.projectileAnimKey);
       view.position.set(startX, startY);
       this.projectileLayer.addChild(view);
-      this.projectiles.push({ view, target, x: startX, y: startY, speed: skill.speed, damage, radius: skill.radius, color: color(skill.color) });
+      this.projectiles.push({
+        view,
+        target,
+        skill,
+        x: startX,
+        y: startY,
+        speed: Math.max(1, skill.speed),
+        damage,
+        radius: skill.radius,
+        color: color(skill.color),
+        hitDistance: 24,
+        rotateToTarget: !skill.projectileAnimKey,
+        spinSpeed: 14,
+        impactType: "carrotSpin",
+        impactAssetKey: item.projectileAssetKey,
+      });
     } else if ((skill.type === "aoe" || skill.type === "dot") && target) {
       audio.playSfxEvent("battle_cast");
       const radius = skill.radius * this.buffs.radiusMul;
       this.areaDamage(target.x, target.y, radius, damage, skill);
     } else if (skill.type === "melee" && target && item.baseId === "bat") {
       audio.playSfxEvent("battle_shoot");
-      const view = this.createProjectileView(color(skill.color), item.projectileAssetKey);
+      const view = this.createProjectileView(color(skill.color), undefined, item.projectileAssetKey);
       view.position.set(startX, startY);
       this.projectileLayer.addChild(view);
       this.projectiles.push({
         view,
         target,
+        skill,
         x: startX,
         y: startY,
         speed: 720,
         damage,
         radius: Math.max(18, skill.radius * 0.28),
         color: color(skill.color),
+        hitDistance: 24,
+        rotateToTarget: true,
         spinSpeed: 14,
         impactType: "carrotSpin",
         impactAssetKey: item.projectileAssetKey,
@@ -493,12 +526,14 @@ export class BattleScene extends BaseScene {
   }
 
   private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef): void {
-    const fx = new Graphics();
-    fx.circle(0, 0, radius).fill({ color: color(skill.color), alpha: 0.18 });
-    fx.circle(0, 0, radius * 0.55).stroke({ color: color(skill.color), width: 5, alpha: 0.8 });
-    fx.position.set(x, y);
-    this.battleLayer.addChild(fx);
-    this.floating.push({ view: fx, ttl: 0.35, vy: 0 });
+    if (!this.playHitEffect(skill.hitAnimKey, x, y)) {
+      const fx = new Graphics();
+      fx.circle(0, 0, radius).fill({ color: color(skill.color), alpha: 0.18 });
+      fx.circle(0, 0, radius * 0.55).stroke({ color: color(skill.color), width: 5, alpha: 0.8 });
+      fx.position.set(x, y);
+      this.battleLayer.addChild(fx);
+      this.floating.push({ view: fx, ttl: 0.35, vy: 0 });
+    }
     for (const monster of this.monsters) {
       if (!monster.dead && Math.hypot(monster.x - x, monster.y - y) <= radius) {
         this.damageMonster(monster, damage, skill);
@@ -524,6 +559,7 @@ export class BattleScene extends BaseScene {
       });
       monster.y = contact.y;
       monster.attackCooldown = contact.attackCooldown;
+      this.updateMonsterAnimation(monster, contact.contacted);
       monster.view.position.set(monster.x, monster.y + Math.sin(this.time * 8 + monster.uid) * 2);
       monster.view.scale.set(1 + Math.sin(this.time * 9 + monster.uid) * 0.035, 1 - Math.sin(this.time * 9 + monster.uid) * 0.025);
       if (contact.damage > 0) {
@@ -533,6 +569,17 @@ export class BattleScene extends BaseScene {
         this.addFloating(monster.x, monster.y - 24, `-${Math.round(contact.damage)}`, 0xff5b5b);
       }
     }
+  }
+
+  private updateMonsterAnimation(monster: MonsterRuntime, contacted: boolean): void {
+    const nextKey = getMonsterAnimationKey(monster.def, contacted);
+    if (!nextKey || nextKey === monster.animationKey) return;
+    const animated = assetManager.animation(nextKey);
+    if (!animated) return;
+    for (const child of monster.view.removeChildren()) child.destroy({ children: true });
+    animated.play();
+    monster.view.addChild(animated);
+    monster.animationKey = nextKey;
   }
 
   private baseContactY(monster: MonsterRuntime): number {
@@ -587,21 +634,30 @@ export class BattleScene extends BaseScene {
       projectile.x += (dx / dist) * move;
       projectile.y += (dy / dist) * move;
       projectile.view.position.set(projectile.x, projectile.y);
-      projectile.view.rotation = Math.atan2(dy, dx);
+      if (projectile.rotateToTarget) projectile.view.rotation = Math.atan2(dy, dx);
       if (projectile.spinSpeed) projectile.view.rotation += this.time * projectile.spinSpeed;
-      if (dist <= projectile.radius || move >= dist) {
-        if (projectile.impactType === "carrotSpin") {
-          this.createSpinZone(projectile.target.x, projectile.target.y, projectile.radius / 0.28, projectile.damage, projectile.color, projectile.impactAssetKey);
-        } else {
-          this.damageMonster(projectile.target, projectile.damage);
-        }
+      if (dist <= projectile.hitDistance || move >= dist) {
+        this.resolveProjectileHit(projectile);
         this.removeProjectile(projectile);
       }
     }
   }
 
+  private resolveProjectileHit(projectile: ProjectileRuntime): void {
+    if (projectile.impactType === "carrotSpin") {
+      this.createSpinZone(projectile.target.x, projectile.target.y, projectile.radius / 0.28, projectile.damage, projectile.color, projectile.impactAssetKey);
+      return;
+    }
+    if (usesAreaImpact(projectile.skill)) {
+      this.areaDamage(projectile.target.x, projectile.target.y, projectile.radius, projectile.damage, projectile.skill);
+      return;
+    }
+    this.playHitEffect(projectile.skill.hitAnimKey, projectile.target.x, projectile.target.y);
+    this.damageMonster(projectile.target, projectile.damage, projectile.skill);
+  }
+
   private removeProjectile(projectile: ProjectileRuntime): void {
-    projectile.view.destroy({ children: true } as DestroyOptions);
+    this.releaseCombatVisual(projectile.view);
     this.projectiles = this.projectiles.filter((item) => item !== projectile);
   }
 
@@ -684,14 +740,14 @@ export class BattleScene extends BaseScene {
   }
 
   private showRogueOptions(): void {
-    this.paused = true;
+    this.setBattlePaused(true);
     const options = this.pickRogueOptions();
     this.modalWindow?.destroy();
     this.modalWindow = new WndRogueOption(options, (option) => {
       this.applyRogueOption(option);
       this.modalWindow?.destroy();
       this.modalWindow = undefined;
-      this.paused = false;
+      this.setBattlePaused(false);
     });
     this.container.addChild(this.modalWindow.container);
   }
@@ -771,8 +827,14 @@ export class BattleScene extends BaseScene {
     };
   }
 
-  private createProjectileView(fill: number, assetKey?: string): Container {
+  private createProjectileView(fill: number, animationKey?: string, assetKey?: string): Container {
     const c = new Container();
+    const animated = animationKey ? assetManager.animation(animationKey) : undefined;
+    if (animated) {
+      animated.play();
+      c.addChild(animated);
+      return c;
+    }
     const trail = new Graphics();
     trail.moveTo(-34, 0).lineTo(-8, 0).stroke({ color: fill, width: 8, alpha: 0.34 });
     trail.moveTo(-26, 0).lineTo(-6, 0).stroke({ color: 0xffffff, width: 3, alpha: 0.38 });
@@ -787,6 +849,23 @@ export class BattleScene extends BaseScene {
     orb.circle(0, 0, 20).fill({ color: fill, alpha: 0.18 });
     c.addChild(trail, orb);
     return c;
+  }
+
+  private playHitEffect(animationKey: string | undefined, x: number, y: number): boolean {
+    const animated = animationKey ? assetManager.animation(animationKey) : undefined;
+    if (!animated) return false;
+    animated.loop = false;
+    animated.position.set(x, y);
+    animated.onComplete = () => this.releaseCombatVisual(animated);
+    this.hitFxLayer.addChild(animated);
+    animated.play();
+    return true;
+  }
+
+  private releaseCombatVisual(view: Container): void {
+    if (view.destroyed) return;
+    view.removeFromParent();
+    view.destroy({ children: true } as DestroyOptions);
   }
 
   private playHeroAttack(): void {
@@ -822,7 +901,7 @@ export class BattleScene extends BaseScene {
   private showWaveCheckpoint(): void {
     if (this.ending) return;
     this.ending = true;
-    this.paused = true;
+    this.setBattlePaused(true);
     this.bag.baseHp = Math.max(0, this.baseHp);
     const result = applyWaveCheckpointToBag(this.bag, this.level, data.getWaves(this.level.waveGroupId));
     if (this.options.session) {
@@ -868,7 +947,7 @@ export class BattleScene extends BaseScene {
 
   private showResult(win: boolean): void {
     this.ending = true;
-    this.paused = true;
+    this.setBattlePaused(true);
     if (this.modalWindow) return;
     this.bag.baseHp = Math.max(0, this.baseHp);
     audio.playSfxEvent(win ? "result_win" : "result_lose");
@@ -894,7 +973,7 @@ export class BattleScene extends BaseScene {
 
   private openPause(): void {
     if (this.modalWindow) return;
-    this.paused = true;
+    this.setBattlePaused(true);
     this.modalWindow = new WndPause(
       this.level,
       this.kills,
@@ -902,7 +981,7 @@ export class BattleScene extends BaseScene {
       () => {
         this.modalWindow?.destroy();
         this.modalWindow = undefined;
-        this.paused = false;
+        this.setBattlePaused(false);
       },
       () => showMain(),
     );
@@ -918,8 +997,20 @@ export class BattleScene extends BaseScene {
     session.kills = this.kills;
   }
 
+  private setBattlePaused(paused: boolean): void {
+    this.paused = paused;
+    if (paused) {
+      this.animationPlayback.pause([this.battleLayer, this.projectileLayer, this.hitFxLayer, this.heroLayer]);
+    } else {
+      this.animationPlayback.resume();
+    }
+  }
+
   override destroy(): void {
     if (this.waveClearTimer !== undefined) window.clearTimeout(this.waveClearTimer);
+    this.animationPlayback.clear();
+    for (const projectile of [...this.projectiles]) this.releaseCombatVisual(projectile.view);
+    this.projectiles = [];
     super.destroy();
   }
 }

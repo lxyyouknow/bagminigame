@@ -1,0 +1,14 @@
+{
+  "name": "hit_tomato_burst",
+  "source": "public/game-assets/source/hit-tomato-burst-ai-transparent-sheet.png",
+  "rawSource": "public/game-assets/source/hit-tomato-burst-ai-magenta-sheet.png",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 8,
+  "fps": 18,
+  "loop": false,
+  "anchorX": 0.5,
+  "anchorY": 0.5,
+  "scale": 0.5,
+  "usage": "番茄弹道命中怪物时在命中点播放，播完自动销毁"
+}

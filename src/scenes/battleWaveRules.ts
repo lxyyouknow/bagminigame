@@ -1,4 +1,4 @@
-import type { BagState, LevelDef, WaveDef } from "../types";
+import type { BagState, LevelDef, WaveDef } from "../types.js";
 
 export interface WaveSpawnEvent {
   time: number;
@@ -54,6 +54,10 @@ export function applyWaveCheckpointToBag(bag: BagState, level: LevelDef, waves: 
     expandedCells: bag.rows * bag.cols - beforeCells,
     nextWave: bag.currentWave,
   };
+}
+
+export function refreshWaveCandidates(bag: BagState, rollItem: () => number, count = 3): void {
+  bag.candidates = Array.from({ length: Math.max(0, count) }, () => rollItem());
 }
 
 function roundTime(value: number): number {

@@ -1,0 +1,14 @@
+{
+  "name": "projectile_tomato_spin",
+  "source": "public/game-assets/source/projectile-tomato-ai-transparent.png",
+  "rawSource": "public/game-assets/source/projectile-tomato-ai-magenta.png",
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "frames": 8,
+  "fps": 14,
+  "loop": true,
+  "anchorX": 0.5,
+  "anchorY": 0.5,
+  "scale": 0.5,
+  "generation": "单张独立番茄原图，脚本按 45 度递增旋转生成 8 帧；位移由战斗代码实现"
+}

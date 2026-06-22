@@ -14,6 +14,7 @@ import {
 } from "./bagDragUi";
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
+import { refreshWaveCandidates } from "./battleWaveRules";
 
 interface Point {
   x: number;
@@ -119,6 +120,12 @@ export class BagScene extends BaseScene {
     }
     for (const placed of this.state.placed) placed.cdLeft = 0;
     this.draw();
+  }
+
+  refreshAfterWave(entryToast: string): void {
+    refreshWaveCandidates(this.state, () => this.rollItem());
+    audio.playSfxEvent("bag_refresh");
+    this.refresh(entryToast);
   }
 
   override update(dt: number): void {

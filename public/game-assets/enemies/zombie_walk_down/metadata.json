@@ -1,0 +1,16 @@
+{
+  "name": "zombie_walk_down",
+  "source": "public/game-assets/source/zombie-walk-down-ai-transparent-sheet.png",
+  "rawSource": "public/game-assets/source/zombie-walk-down-ai-magenta-sheet.png",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 8,
+  "fps": 9,
+  "direction": "down",
+  "view": "top_down_three_quarter_front",
+  "anchorX": 0.5,
+  "anchorY": 0.92,
+  "scale": 0.26,
+  "attackAnimationReserved": "zombie_attack_down",
+  "usage": "蔬菜种植防守主题的小僵尸，向屏幕下方行走；接触基地后暂时继续播放 walk，后续替换 attack 动画"
+}
