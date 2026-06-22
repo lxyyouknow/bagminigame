@@ -623,7 +623,8 @@ export class BagScene extends BaseScene {
     const tint = result.kind === "mergePlaced" || result.kind === "mergeCandidate" ? 0xb66dff : result.kind === "replace" ? 0xffc247 : result.kind === "place" ? 0x43f184 : 0xff4d5d;
     const alpha = result.kind === "invalid" ? 0.22 : 0.36;
     const mergeGuide = this.nearestMergeTarget(x, y, "guide");
-    if (mergeGuide) this.drawMergeGuide(x, y, mergeGuide.target, mergeGuide.distance);
+    const isCapturedMerge = result.kind === "mergePlaced" || result.kind === "mergeCandidate";
+    if (mergeGuide) this.drawMergeGuide(x, y, mergeGuide.target, mergeGuide.distance, isCapturedMerge);
 
     if (result.kind === "mergeCandidate") {
       const rect = this.candidateRect(result.targetIndex);
@@ -1085,22 +1086,42 @@ export class BagScene extends BaseScene {
     const eligible = mode === "capture"
       ? targets.filter((target) => Math.hypot(x - target.centerX, y - target.centerY) <= target.captureRadius)
       : targets;
-    return findNearestDragTarget(x, y, eligible, mode === "guide" ? 300 : Number.POSITIVE_INFINITY);
+    return mode === "guide"
+      ? findNearestDragTarget(x, y, eligible)
+      : findNearestDragTarget(x, y, eligible, Number.POSITIVE_INFINITY);
   }
 
   private mergeCaptureRadius(width: number, height: number): number {
     return Math.min(176, Math.max(108, Math.hypot(width, height) * 0.48 + 38));
   }
 
-  private drawMergeGuide(x: number, y: number, target: MergeDragTarget, distance: number): void {
+  private drawMergeGuide(x: number, y: number, target: MergeDragTarget, distance: number, captured: boolean): void {
     if (!this.hintLayer) return;
     const strength = Math.max(0.35, 1 - distance / 360);
     const line = new Graphics();
-    line.moveTo(x, y).lineTo(target.centerX, target.centerY).stroke({ color: 0x42bfff, width: 11, alpha: 0.16 + strength * 0.12 });
-    line.moveTo(x, y).lineTo(target.centerX, target.centerY).stroke({ color: 0xb9efff, width: 3, alpha: 0.72 + strength * 0.24 });
-    line.circle(target.centerX, target.centerY, 12 + strength * 5).fill({ color: 0x78d8ff, alpha: 0.22 });
-    line.circle(target.centerX, target.centerY, 12 + strength * 5).stroke({ color: 0xd6f7ff, width: 3, alpha: 0.94 });
+    line.moveTo(x, y).lineTo(target.centerX, target.centerY).stroke({ color: 0x42bfff, width: 15, alpha: 0.18 + strength * 0.14 });
+    line.moveTo(x, y).lineTo(target.centerX, target.centerY).stroke({ color: 0xcaf5ff, width: 4, alpha: 0.76 + strength * 0.22 });
+    line.circle(target.centerX, target.centerY, 17 + strength * 7).fill({ color: 0x78d8ff, alpha: 0.25 });
+    line.circle(target.centerX, target.centerY, 17 + strength * 7).stroke({ color: 0xe1faff, width: 4, alpha: 0.96 });
     this.hintLayer.addChild(line);
+    if (captured) return;
+
+    if (target.kind === "candidate") {
+      const rect = this.candidateRect(target.targetIndex);
+      const outline = new Graphics();
+      outline.roundRect(rect.x - 7, rect.y - 7, rect.w + 14, rect.h + 14, 16).fill({ color: 0x42bfff, alpha: 0.18 });
+      outline.stroke({ color: 0xb9efff, width: 5, alpha: 0.94 });
+      this.hintLayer.addChild(outline);
+      this.addHintText(rect.x + rect.w / 2, rect.y - 20, "可合成", 0x42bfff);
+      return;
+    }
+
+    const placed = this.state.placed.find((entry) => entry.uid === target.targetUid);
+    if (!placed) return;
+    const targetShape = data.getShape(data.getItem(placed.itemId).shapeId);
+    this.drawShapeHint(placed.x, placed.y, targetShape, 0x42bfff, 0.24);
+    const pitch = this.cellSize + this.cellGap;
+    this.addHintText(target.centerX, this.gridTop + placed.y * pitch - 20, "可合成", 0x42bfff);
   }
 
   private removeDragSource(): void {

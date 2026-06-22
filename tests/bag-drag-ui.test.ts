@@ -98,6 +98,12 @@ function run(): void {
   ], 220);
   assertEqual(outsideGuide, undefined, "超出提示半径后不应继续显示合成吸附线");
 
+  const globalGuide = findNearestDragTarget(40, 80, [
+    { key: "far", centerX: 680, centerY: 1320 },
+    { key: "nearest", centerX: 500, centerY: 980 },
+  ]);
+  assertEqual(globalGuide?.target.key, "nearest", "拖起武器后应跨屏提示最近的可合成目标");
+
   assertEqual(
     isSameDragSource({ type: "candidate", index: 0 }, { type: "candidate", index: 0 }, true),
     false,

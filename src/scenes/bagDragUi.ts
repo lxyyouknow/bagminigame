@@ -57,7 +57,7 @@ export function findNearestDragTarget<T extends DragTarget>(
   pointerX: number,
   pointerY: number,
   targets: T[],
-  maxDistance: number,
+  maxDistance = Number.POSITIVE_INFINITY,
 ): NearestDragTarget<T> | undefined {
   let nearest: NearestDragTarget<T> | undefined;
   for (const target of targets) {
