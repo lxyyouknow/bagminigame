@@ -25,11 +25,19 @@ export interface BattleSceneOptions {
   onWaveClear?: (message: string) => void;
 }
 
+interface HitHoldRuntime {
+  view: AnimatedSprite;
+  holdDuration: number;
+  fadeDuration: number;
+  elapsed: number;
+}
+
 export class BattleScene extends BaseScene {
   private monsters: MonsterRuntime[] = [];
   private projectiles: ProjectileRuntime[] = [];
   private spinZones: SpinDamageRuntime[] = [];
   private floating: FloatingRuntime[] = [];
+  private hitHolds: HitHoldRuntime[] = [];
   private spawnQueue: Array<{ time: number; monsterId: number; wave: number }> = [];
   private time = 0;
   private baseHp: number;
@@ -96,6 +104,7 @@ export class BattleScene extends BaseScene {
     this.updateMonsters(dt);
     this.updateProjectiles(dt);
     this.updateSpinZones(dt);
+    this.updateHitHolds(dt);
     this.updateFloating(dt);
     this.updateHero(dt);
     this.drawStatic();
@@ -778,6 +787,20 @@ export class BattleScene extends BaseScene {
     }
   }
 
+  private updateHitHolds(dt: number): void {
+    for (const hold of [...this.hitHolds]) {
+      hold.elapsed += dt;
+      if (hold.elapsed > hold.holdDuration) {
+        const fadeElapsed = hold.elapsed - hold.holdDuration;
+        hold.view.alpha = Math.max(0, 1 - fadeElapsed / hold.fadeDuration);
+      }
+      if (hold.elapsed >= hold.holdDuration + hold.fadeDuration) {
+        this.hitHolds = this.hitHolds.filter((item) => item !== hold);
+        this.releaseCombatVisual(hold.view);
+      }
+    }
+  }
+
   private ensureHero(): AnimatedSprite | undefined {
     if (this.hero) return this.hero;
     const hero = assetManager.animation(this.heroAnimKey);
@@ -835,9 +858,30 @@ export class BattleScene extends BaseScene {
   private playHitEffect(animationKey: string | undefined, x: number, y: number): boolean {
     const animated = animationKey ? assetManager.animation(animationKey) : undefined;
     if (!animated) return false;
+    const anim = animationKey ? data.getAnimation(animationKey) : undefined;
     animated.loop = false;
     animated.position.set(x, y);
-    animated.onComplete = () => this.releaseCombatVisual(animated);
+    if (anim?.hitHoldFrame !== undefined) {
+      const holdFrame = Math.max(0, Math.min(animated.totalFrames - 1, anim.hitHoldFrame));
+      const startHold = () => {
+        if (this.hitHolds.some((item) => item.view === animated)) return;
+        animated.onFrameChange = undefined;
+        animated.gotoAndStop(holdFrame);
+        animated.alpha = 1;
+        this.hitHolds.push({
+          view: animated,
+          holdDuration: Math.max(0, anim.hitHoldDuration ?? 1),
+          fadeDuration: Math.max(0.01, anim.hitFadeDuration ?? 0.35),
+          elapsed: 0,
+        });
+      };
+      animated.onFrameChange = (currentFrame) => {
+        if (currentFrame >= holdFrame) startHold();
+      };
+      animated.onComplete = startHold;
+    } else {
+      animated.onComplete = () => this.releaseCombatVisual(animated);
+    }
     this.hitFxLayer.addChild(animated);
     animated.play();
     return true;
@@ -992,6 +1036,8 @@ export class BattleScene extends BaseScene {
     this.animationPlayback.clear();
     for (const projectile of [...this.projectiles]) this.releaseCombatVisual(projectile.view);
     this.projectiles = [];
+    for (const hold of [...this.hitHolds]) this.releaseCombatVisual(hold.view);
+    this.hitHolds = [];
     super.destroy();
   }
 }

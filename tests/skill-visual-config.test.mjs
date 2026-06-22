@@ -21,7 +21,7 @@ for (const skill of skills) {
 
 const expectedAnimations = [
   { key: "projectile_tomato_spin", loop: true, frames: 8, scale: 1 },
-  { key: "hit_tomato_burst", loop: false, frames: 8, scale: 0.5 },
+  { key: "hit_tomato_burst", loop: false, frames: 8, scale: 0.6 },
 ];
 for (const expected of expectedAnimations) {
   const animation = animations.find((row) => row.key === expected.key);

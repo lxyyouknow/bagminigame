@@ -152,6 +152,9 @@ export interface AnimationDef {
   anchorY: number;
   scale: number;
   hitFrame?: number;
+  hitHoldFrame?: number;
+  hitHoldDuration?: number;
+  hitFadeDuration?: number;
   soundKey?: string;
 }
 
