@@ -20,14 +20,15 @@ for (const skill of skills) {
 }
 
 const expectedAnimations = [
-  { key: "projectile_tomato_spin", loop: true, frames: 8 },
-  { key: "hit_tomato_burst", loop: false, frames: 8 },
+  { key: "projectile_tomato_spin", loop: true, frames: 8, scale: 1 },
+  { key: "hit_tomato_burst", loop: false, frames: 8, scale: 0.5 },
 ];
 for (const expected of expectedAnimations) {
   const animation = animations.find((row) => row.key === expected.key);
   if (!animation) throw new Error(`缺少动画配置 ${expected.key}`);
   if (animation.loop !== expected.loop) throw new Error(`动画 ${expected.key} 的 loop 配置错误`);
   if (animation.frames.length !== expected.frames) throw new Error(`动画 ${expected.key} 应配置 ${expected.frames} 帧`);
+  if (animation.scale !== expected.scale) throw new Error(`动画 ${expected.key} 的 scale 应为 ${expected.scale}`);
   for (const frameKey of animation.frames) {
     const asset = assets.find((row) => row.key === frameKey);
     if (!asset?.url) throw new Error(`动画帧 ${frameKey} 未在 s_asset.json 配置路径`);

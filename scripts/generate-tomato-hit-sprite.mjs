@@ -9,6 +9,7 @@ const scriptPath = join(rootDir, "tmp_import_tomato_hit.py");
 const python = String.raw`
 from pathlib import Path
 from PIL import Image, ImageDraw
+from collections import deque
 import json
 
 root = Path(${JSON.stringify(rootDir)})
@@ -20,26 +21,63 @@ frame_dir.mkdir(parents=True, exist_ok=True)
 src = Image.open(source).convert("RGBA")
 frame_count = 8
 frame_size = 256
-cells = []
-boxes = []
+frame_centers_x = [153, 417, 692, 1014, 1343, 1601, 1834, 2050]
+alpha = src.getchannel("A")
+alpha_pixels = alpha.load()
+visited = bytearray(src.width * src.height)
+components_by_frame = [[] for _ in range(frame_count)]
 
-for index in range(frame_count):
-    left = round(index * src.width / frame_count)
-    right = round((index + 1) * src.width / frame_count)
-    cell = src.crop((left, 0, right, src.height))
-    box = cell.getchannel("A").getbbox()
-    if not box:
+# AI sheet 的大爆炸会跨过等分边界。按连通区域质心归属到最近帧中心，
+# 可以保留完整爆炸，同时避免下一帧混入上一帧的半个爆炸。
+for y in range(src.height):
+    for x in range(src.width):
+        offset = y * src.width + x
+        if visited[offset] or alpha_pixels[x, y] < 64:
+            continue
+        queue = deque([(x, y)])
+        visited[offset] = 1
+        component = []
+        sum_x = 0
+        while queue:
+            cx, cy = queue.popleft()
+            component.append((cx, cy))
+            sum_x += cx
+            for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):
+                if nx < 0 or ny < 0 or nx >= src.width or ny >= src.height:
+                    continue
+                next_offset = ny * src.width + nx
+                if visited[next_offset] or alpha_pixels[nx, ny] < 64:
+                    continue
+                visited[next_offset] = 1
+                queue.append((nx, ny))
+        if len(component) < 3:
+            continue
+        center_x = sum_x / len(component)
+        frame_index = min(range(frame_count), key=lambda i: abs(center_x - frame_centers_x[i]))
+        components_by_frame[frame_index].append(component)
+
+subjects = []
+for index, components in enumerate(components_by_frame):
+    points = [point for component in components for point in component]
+    if not points:
         raise ValueError(f"番茄爆炸第 {index} 帧没有有效主体")
-    cells.append(cell)
-    boxes.append(box)
+    min_x = min(x for x, _ in points)
+    max_x = max(x for x, _ in points) + 1
+    min_y = min(y for _, y in points)
+    max_y = max(y for _, y in points) + 1
+    subject = Image.new("RGBA", (max_x - min_x, max_y - min_y), (0, 0, 0, 0))
+    subject_pixels = subject.load()
+    source_pixels = src.load()
+    for x, y in points:
+        subject_pixels[x - min_x, y - min_y] = source_pixels[x, y]
+    subjects.append(subject)
 
-max_width = max(box[2] - box[0] for box in boxes)
-max_height = max(box[3] - box[1] for box in boxes)
+max_width = max(subject.width for subject in subjects)
+max_height = max(subject.height for subject in subjects)
 common_scale = min(224 / max_width, 224 / max_height, 1)
 frames = []
 
-for index, (cell, box) in enumerate(zip(cells, boxes)):
-    subject = cell.crop(box)
+for index, subject in enumerate(subjects):
     resized = subject.resize(
         (max(1, round(subject.width * common_scale)), max(1, round(subject.height * common_scale))),
         Image.Resampling.LANCZOS,
@@ -87,7 +125,8 @@ metadata = {
     "anchorX": 0.5,
     "anchorY": 0.5,
     "scale": 0.5,
-    "usage": "番茄弹道命中怪物时在命中点播放，播完自动销毁"
+    "usage": "番茄弹道命中怪物时在命中点播放，播完自动销毁",
+    "slicing": "按透明连通区域质心归属到 8 个帧中心，避免跨格爆炸被切成两半"
 }
 (out_dir / "metadata.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
 

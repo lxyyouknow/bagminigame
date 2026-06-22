@@ -5,5 +5,6 @@
   { "key": "bag_expand_gold_cost", "value": 30, "adPlacement": "bag_expand", "desc": "扩展一格/一列价格" },
   { "key": "rogue_refresh_free_count", "value": 1, "adPlacement": "rogue_refresh", "desc": "升级选项免费刷新次数" },
   { "key": "exp_need_base", "value": 12, "adPlacement": "", "desc": "升级经验基础值" },
-  { "key": "run_transition_seconds", "value": 0.42, "adPlacement": "", "desc": "背包与战场双向滑屏时长（秒）" }
+  { "key": "run_transition_seconds", "value": 0.42, "adPlacement": "", "desc": "背包与战场双向滑屏时长（秒）" },
+  { "key": "battle_initial_cd_stagger", "value": 0.08, "adPlacement": "", "desc": "开战时不同武器初始 CD 的确定性错峰秒数" }
 ]

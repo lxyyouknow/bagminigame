@@ -16,6 +16,7 @@ import { getMonsterAnimationKey } from "./monsterVisualRules";
 import { chooseMonsterSpawnPosition } from "./monsterSpawnRules";
 import { AnimationPlaybackController } from "./animationPlaybackController";
 import { shouldUseVisualProjectile, usesAreaImpact } from "./skillVisualRules";
+import { chooseBalancedTarget, getInitialWeaponCooldown } from "./weaponAttackRules";
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
 
@@ -79,6 +80,7 @@ export class BattleScene extends BaseScene {
       this.kills = session.kills;
       this.buffs = session.buffs;
     }
+    this.initializeWeaponCooldowns();
     this.buildSpawnQueue();
     analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
     this.container.addChild(this.battleLayer, this.uiLayer, this.projectileLayer, this.hitFxLayer);
@@ -441,16 +443,23 @@ export class BattleScene extends BaseScene {
     }
   }
 
+  private initializeWeaponCooldowns(): void {
+    const staggerSeconds = data.getEconomy("battle_initial_cd_stagger") || 0.08;
+    for (const placed of this.bag.placed) {
+      const item = data.getItem(placed.itemId);
+      const skill = data.getSkill(item.skillId);
+      placed.cdLeft = getInitialWeaponCooldown(skill.cd, this.buffs.cdMul, placed.uid, staggerSeconds);
+    }
+  }
+
   private pickTarget(skill: SkillDef): MonsterRuntime | undefined {
     const alive = this.monsters.filter((monster) => !monster.dead && monster.hp > 0);
-    if (alive.length === 0) return undefined;
-    if (skill.targetRule === "lowestY") {
-      return alive.sort((a, b) => b.y - a.y)[0];
+    const incomingByUid = new Map<number, number>();
+    for (const projectile of this.projectiles) {
+      if (projectile.target.dead) continue;
+      incomingByUid.set(projectile.target.uid, (incomingByUid.get(projectile.target.uid) ?? 0) + 1);
     }
-    if (skill.targetRule === "cluster") {
-      return alive.sort((a, b) => this.countNear(b) - this.countNear(a))[0];
-    }
-    return alive.sort((a, b) => b.y - a.y)[0];
+    return chooseBalancedTarget(alive, skill.targetRule, incomingByUid, (monster) => this.countNear(monster));
   }
 
   private countNear(monster: MonsterRuntime): number {
@@ -481,35 +490,11 @@ export class BattleScene extends BaseScene {
         color: color(skill.color),
         hitDistance: 24,
         rotateToTarget: !skill.projectileAnimKey,
-        spinSpeed: 14,
-        impactType: "carrotSpin",
-        impactAssetKey: item.projectileAssetKey,
       });
     } else if ((skill.type === "aoe" || skill.type === "dot") && target) {
       audio.playSfxEvent("battle_cast");
       const radius = skill.radius * this.buffs.radiusMul;
       this.areaDamage(target.x, target.y, radius, damage, skill);
-    } else if (skill.type === "melee" && target && item.baseId === "bat") {
-      audio.playSfxEvent("battle_shoot");
-      const view = this.createProjectileView(color(skill.color), undefined, item.projectileAssetKey);
-      view.position.set(startX, startY);
-      this.projectileLayer.addChild(view);
-      this.projectiles.push({
-        view,
-        target,
-        skill,
-        x: startX,
-        y: startY,
-        speed: 720,
-        damage,
-        radius: Math.max(18, skill.radius * 0.28),
-        color: color(skill.color),
-        hitDistance: 24,
-        rotateToTarget: true,
-        spinSpeed: 14,
-        impactType: "carrotSpin",
-        impactAssetKey: item.projectileAssetKey,
-      });
     } else if (skill.type === "melee" && target) {
       audio.playSfxEvent("battle_hit");
       this.areaDamage(target.x, target.y, skill.radius, damage, skill);
@@ -644,10 +629,6 @@ export class BattleScene extends BaseScene {
   }
 
   private resolveProjectileHit(projectile: ProjectileRuntime): void {
-    if (projectile.impactType === "carrotSpin") {
-      this.createSpinZone(projectile.target.x, projectile.target.y, projectile.radius / 0.28, projectile.damage, projectile.color, projectile.impactAssetKey);
-      return;
-    }
     if (usesAreaImpact(projectile.skill)) {
       this.areaDamage(projectile.target.x, projectile.target.y, projectile.radius, projectile.damage, projectile.skill);
       return;

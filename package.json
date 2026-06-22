@@ -20,6 +20,7 @@
     "test:save": "node scripts/run-save-tests.mjs",
     "test:skill-visual": "node scripts/run-skill-visual-tests.mjs",
     "test:ui-layout": "node scripts/run-ui-layout-tests.mjs",
+    "test:weapon-attack": "node scripts/run-weapon-attack-tests.mjs",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0"
   },
