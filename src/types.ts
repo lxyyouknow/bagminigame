@@ -74,6 +74,8 @@ export interface SkillDef {
   color: string;
   projectileAnimKey?: string;
   hitAnimKey?: string;
+  projectileRotateToTarget?: boolean;
+  hitUseProjectileRotation?: boolean;
   impactSpinTurns?: number;
   impactSpinDuration?: number;
 }

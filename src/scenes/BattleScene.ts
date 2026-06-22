@@ -513,7 +513,7 @@ export class BattleScene extends BaseScene {
         radius: skill.radius,
         color: color(skill.color),
         hitDistance: 24,
-        rotateToTarget: !skill.projectileAnimKey,
+        rotateToTarget: skill.projectileRotateToTarget ?? !skill.projectileAnimKey,
       });
     } else if ((skill.type === "aoe" || skill.type === "dot") && target) {
       audio.playSfxEvent("battle_cast");
@@ -665,7 +665,12 @@ export class BattleScene extends BaseScene {
       this.areaDamage(projectile.target.x, projectile.target.y, projectile.radius, projectile.damage, projectile.skill);
       return true;
     }
-    this.playHitEffect(projectile.skill.hitAnimKey, projectile.target.x, projectile.target.y);
+    this.playHitEffect(
+      projectile.skill.hitAnimKey,
+      projectile.target.x,
+      projectile.target.y,
+      projectile.skill.hitUseProjectileRotation ? projectile.view.rotation : 0,
+    );
     this.damageMonster(projectile.target, projectile.damage, projectile.skill);
     return true;
   }
@@ -911,12 +916,13 @@ export class BattleScene extends BaseScene {
     return c;
   }
 
-  private playHitEffect(animationKey: string | undefined, x: number, y: number): boolean {
+  private playHitEffect(animationKey: string | undefined, x: number, y: number, rotation = 0): boolean {
     const animated = animationKey ? assetManager.animation(animationKey) : undefined;
     if (!animated) return false;
     const anim = animationKey ? data.getAnimation(animationKey) : undefined;
     animated.loop = false;
     animated.position.set(x, y);
+    animated.rotation = rotation;
     if (anim?.hitHoldFrame !== undefined) {
       const holdFrame = Math.max(0, Math.min(animated.totalFrames - 1, anim.hitHoldFrame));
       const startHold = () => {

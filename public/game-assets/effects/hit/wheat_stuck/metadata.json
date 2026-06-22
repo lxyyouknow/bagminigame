@@ -1,0 +1,9 @@
+{
+  "key": "hit_wheat_stuck",
+  "frames": 8,
+  "fps": 18,
+  "hitHoldFrame": 7,
+  "hitHoldDuration": 1,
+  "hitFadeDuration": 0.35,
+  "style": "current wheat icon head flipped 180 degrees from previous version with tomato-like golden burst"
+}
