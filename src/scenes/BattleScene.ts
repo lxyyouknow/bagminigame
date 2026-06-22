@@ -32,9 +32,23 @@ interface HitHoldRuntime {
   elapsed: number;
 }
 
+interface DelayedImpactRuntime {
+  view: Container;
+  x: number;
+  y: number;
+  radius: number;
+  damage: number;
+  skill: SkillDef;
+  elapsed: number;
+  duration: number;
+  turns: number;
+  startRotation: number;
+}
+
 export class BattleScene extends BaseScene {
   private monsters: MonsterRuntime[] = [];
   private projectiles: ProjectileRuntime[] = [];
+  private delayedImpacts: DelayedImpactRuntime[] = [];
   private spinZones: SpinDamageRuntime[] = [];
   private floating: FloatingRuntime[] = [];
   private hitHolds: HitHoldRuntime[] = [];
@@ -103,6 +117,7 @@ export class BattleScene extends BaseScene {
     this.updateWeapons(dt);
     this.updateMonsters(dt);
     this.updateProjectiles(dt);
+    this.updateDelayedImpacts(dt);
     this.updateSpinZones(dt);
     this.updateHitHolds(dt);
     this.updateFloating(dt);
@@ -631,24 +646,65 @@ export class BattleScene extends BaseScene {
       if (projectile.rotateToTarget) projectile.view.rotation = Math.atan2(dy, dx);
       if (projectile.spinSpeed) projectile.view.rotation += this.time * projectile.spinSpeed;
       if (dist <= projectile.hitDistance || move >= dist) {
-        this.resolveProjectileHit(projectile);
-        this.removeProjectile(projectile);
+        const shouldReleaseView = this.resolveProjectileHit(projectile);
+        if (shouldReleaseView) {
+          this.removeProjectile(projectile);
+        } else {
+          this.projectiles = this.projectiles.filter((item) => item !== projectile);
+        }
       }
     }
   }
 
-  private resolveProjectileHit(projectile: ProjectileRuntime): void {
+  private resolveProjectileHit(projectile: ProjectileRuntime): boolean {
     if (usesAreaImpact(projectile.skill)) {
+      if ((projectile.skill.impactSpinTurns ?? 0) !== 0) {
+        this.startDelayedImpact(projectile);
+        return false;
+      }
       this.areaDamage(projectile.target.x, projectile.target.y, projectile.radius, projectile.damage, projectile.skill);
-      return;
+      return true;
     }
     this.playHitEffect(projectile.skill.hitAnimKey, projectile.target.x, projectile.target.y);
     this.damageMonster(projectile.target, projectile.damage, projectile.skill);
+    return true;
+  }
+
+  private startDelayedImpact(projectile: ProjectileRuntime): void {
+    const x = projectile.target.x;
+    const y = projectile.target.y;
+    projectile.view.position.set(x, y);
+    this.delayedImpacts.push({
+      view: projectile.view,
+      x,
+      y,
+      radius: projectile.radius,
+      damage: projectile.damage,
+      skill: projectile.skill,
+      elapsed: 0,
+      duration: Math.max(0.01, projectile.skill.impactSpinDuration ?? 0.55),
+      turns: projectile.skill.impactSpinTurns ?? 2,
+      startRotation: projectile.view.rotation,
+    });
   }
 
   private removeProjectile(projectile: ProjectileRuntime): void {
     this.releaseCombatVisual(projectile.view);
     this.projectiles = this.projectiles.filter((item) => item !== projectile);
+  }
+
+  private updateDelayedImpacts(dt: number): void {
+    for (const impact of [...this.delayedImpacts]) {
+      impact.elapsed += dt;
+      const progress = Math.min(1, impact.elapsed / impact.duration);
+      impact.view.rotation = impact.startRotation + progress * impact.turns * Math.PI * 2;
+      if (progress >= 1) {
+        this.delayedImpacts = this.delayedImpacts.filter((item) => item !== impact);
+        this.releaseCombatVisual(impact.view);
+        audio.playSfxEvent("battle_cast");
+        this.areaDamage(impact.x, impact.y, impact.radius, impact.damage, impact.skill);
+      }
+    }
   }
 
   private createSpinZone(x: number, y: number, radius: number, damage: number, fill: number, assetKey?: string): void {
@@ -1036,6 +1092,8 @@ export class BattleScene extends BaseScene {
     this.animationPlayback.clear();
     for (const projectile of [...this.projectiles]) this.releaseCombatVisual(projectile.view);
     this.projectiles = [];
+    for (const impact of [...this.delayedImpacts]) this.releaseCombatVisual(impact.view);
+    this.delayedImpacts = [];
     for (const hold of [...this.hitHolds]) this.releaseCombatVisual(hold.view);
     this.hitHolds = [];
     super.destroy();

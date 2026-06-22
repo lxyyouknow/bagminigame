@@ -74,6 +74,8 @@ export interface SkillDef {
   color: string;
   projectileAnimKey?: string;
   hitAnimKey?: string;
+  impactSpinTurns?: number;
+  impactSpinDuration?: number;
 }
 
 export interface EffectDef {

@@ -1,0 +1,14 @@
+{
+  "name": "projectile_carrot_spin",
+  "source": "public\\game-assets\\weapons\\fruits\\weapon-fruit-carrot-lv1-icon.png",
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "frames": 8,
+  "fps": 22,
+  "loop": true,
+  "anchorX": 0.5,
+  "anchorY": 0.5,
+  "scale": 1,
+  "rotation": "counterclockwise",
+  "usage": "???????????????"
+}

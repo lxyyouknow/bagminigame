@@ -1,0 +1,17 @@
+{
+  "name": "hit_carrot_split",
+  "source": "public\\game-assets\\weapons\\fruits\\weapon-fruit-carrot-lv1-icon.png",
+  "styleSource": "public/game-assets/effects/hit/tomato_burst/frames",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 8,
+  "fps": 18,
+  "loop": false,
+  "anchorX": 0.5,
+  "anchorY": 0.5,
+  "scale": 0.68,
+  "hitHoldFrame": 3,
+  "hitHoldDuration": 1,
+  "hitFadeDuration": 0.35,
+  "usage": "???????????60?????????????????"
+}
