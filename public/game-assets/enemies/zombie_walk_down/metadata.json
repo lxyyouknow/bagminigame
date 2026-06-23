@@ -1,16 +1,16 @@
 {
   "name": "zombie_walk_down",
-  "source": "public/game-assets/source/zombie-walk-down-ai-transparent-sheet.png",
-  "rawSource": "public/game-assets/source/zombie-walk-down-ai-magenta-sheet.png",
+  "source": "public/game-assets/source/zombie-walk-down-video-20260623-105208",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "character": "miner_zombie",
   "frameWidth": 256,
   "frameHeight": 256,
-  "frames": 8,
-  "fps": 9,
+  "frames": 17,
+  "fps": 12,
   "direction": "down",
   "view": "top_down_three_quarter_front",
   "anchorX": 0.5,
   "anchorY": 0.92,
-  "scale": 0.26,
-  "attackAnimationReserved": "zombie_attack_down",
-  "usage": "蔬菜种植防守主题的小僵尸，向屏幕下方行走；接触基地后暂时继续播放 walk，后续替换 attack 动画"
+  "scale": 0.5,
+  "usage": "新手关第一种小僵尸，向屏幕下方行走；由 lxy 提供的视频序列帧图集导入"
 }

@@ -222,20 +222,243 @@ hero_mage_attack_up
 - 辣椒 `241/242/243`：`680/720/760`。
 - 卷心菜 `251/252`：`700/760`。
 
-## 已验证资源：小僵尸、番茄弹道和命中爆炸
+## 已验证资源：小僵尸、毒蝠、番茄弹道和命中爆炸
 
 ### 小僵尸移动
 
 ```text
-原始 AI sheet：public/game-assets/source/zombie-walk-down-ai-magenta-sheet.png
-透明源 sheet：public/game-assets/source/zombie-walk-down-ai-transparent-sheet.png
+源图集目录：public/game-assets/source/zombie-walk-down-video-20260623-105208/
 运行帧目录：public/game-assets/enemies/zombie_walk_down/frames/
-生成脚本：scripts/generate-zombie-walk-sprite.mjs
+导入脚本：scripts/import-zombie-walk-video-sheet.py
+生成入口：scripts/generate-zombie-walk-sprite.mjs
 动画 key：zombie_walk_down
 怪物字段：s_monster.json -> runAnimKey
+规格：256x256，17 帧，12 FPS，loop=true，anchor=(0.5, 0.92)，scale=0.5
 ```
 
-怪物 sheet 建议使用单行等序列，统一脚底锚点。生成时保留最大的角色主体连通区域，避免相邻格碎片混入；每帧放进相同尺寸透明画布，脚底对齐后再写入 `s_animation.json`。
+小僵尸来自 lxy 自行导出的 TexturePacker/Cocos 风格图集，不再要求固定 8 帧。导入脚本会读取 `spritesheet_*.json` 的真实帧坐标，按 `001.png`、`002.png` 这类数字帧名排序，重新归一化到 `256x256` 透明画布，再写入运行时散帧。
+
+小僵尸是地面怪，锚点按脚底对齐：
+
+- `anchorX=0.5`
+- `anchorY=0.92`
+- 每帧底部留安全边距，避免脚被裁切。
+- QA 脚本：`tests/check_zombie_walk_frames.py`。
+
+### 毒蝠飞行
+
+```text
+源图集目录：public/game-assets/source/poison-bat-fly-down-video-20260623-112242/
+运行帧目录：public/game-assets/enemies/poison_bat_fly_down/frames/
+导入脚本：scripts/import-poison-bat-fly-sheet.py
+动画 key：poison_bat_fly_down
+怪物字段：s_monster.json -> runAnimKey
+规格：256x256，18 帧，15 FPS，loop=true，anchor=(0.5, 0.55)，scale=0.45
+```
+
+毒蝠同样来自多张 TexturePacker/Cocos 风格图集，源目录包含 `spritesheet_1/2/3.json + .png + .plist`。运行时只依赖 JSON 和 PNG，`.plist` 作为源文件留档。
+
+毒蝠是飞行怪，翼展很宽，处理策略和地面怪不同：
+
+- 画布仍统一 `256x256`，方便 `AnimatedSprite` 加载。
+- 主体居中，而不是脚底对齐。
+- `anchorY` 用 `0.55`，让阴影和碰撞点接近身体中心偏下。
+- `scale` 用 `0.45`，避免翼展在战斗里过大。
+- 帧率用 `15 FPS`，突出小型飞行敌人的速度感。
+- QA 脚本：`tests/check_poison_bat_frames.py`。
+
+## TexturePacker / 视频序列帧图集通用导入规范
+
+以后 lxy 可以继续把不同动作导出成这种图集文件夹，帧数不需要固定。走路 17 帧、飞行 18 帧、攻击 12 帧、死亡 20 帧都可以，`s_animation.json.frames` 按实际帧数配置。
+
+推荐交付目录：
+
+```text
+video-frames-20260623-112242_sheet/
+  spritesheet_1.json
+  spritesheet_1.png
+  spritesheet_1.plist   # 可选，留档用
+  spritesheet_2.json    # 帧多时可以拆多张
+  spritesheet_2.png
+```
+
+导入后整理目录：
+
+```text
+public/game-assets/source/<asset-name>-video-<timestamp>/
+  spritesheet_1.json
+  spritesheet_1.png
+  spritesheet_1.plist
+
+public/game-assets/<category>/<anim-key>/
+  frames/
+    <file-prefix>-00.png
+    <file-prefix>-01.png
+  <file-prefix>-sheet.png
+  <file-prefix>.gif
+  <file-prefix>-contact-sheet.jpg
+  metadata.json
+```
+
+适用类型：
+
+- 主角：`public/game-assets/characters/<hero_action>/`
+- 怪物：`public/game-assets/enemies/<monster_action>/`
+- 武器弹道：`public/game-assets/effects/projectiles/<projectile_action>/`
+- 命中特效：`public/game-assets/effects/hit/<hit_action>/`
+- 地面持续特效：`public/game-assets/effects/ground/<ground_action>/`
+
+### 源图集要求
+
+- 每个文件夹只放一个动作，例如 `zombie_walk_down`、`poison_bat_fly_down`、`hero_guardian_attack_up`。
+- 帧名必须能按数字排序，例如 `001.png`、`002.png`、`003.png`。
+- 优先透明 PNG。黑色预览底没关系，只要 PNG alpha 是透明。
+- `spritesheet_*.json` 必须包含每帧的 `frame.x/y/w/h`。
+- 暂不支持 `rotated=true` 的旋转帧；导出图集时关闭旋转。
+- 不要把多个角色、文字、水印、血条、UI 混进同一个动作图集。
+- 同一个动作允许拆成多张 `spritesheet_1/2/3`，脚本会合并排序。
+
+### 导入脚本职责
+
+导入脚本不要只是复制图片，应完成下面这些工作：
+
+1. 读取 `spritesheet_*.json`。
+2. 按帧名数字排序，得到完整动作帧序列。
+3. 根据 JSON 坐标从对应 PNG 裁出每帧。
+4. 保留最大 alpha 连通主体，避免碎片或相邻帧混入。
+5. 用统一缩放系数归一化到固定透明画布。
+6. 按动作类型决定锚点策略：
+   - 地面角色：脚底对齐，常用 `anchorY=0.88~0.95`。
+   - 飞行角色：身体中心偏下对齐，常用 `anchorY=0.5~0.65`。
+   - 弹道/命中特效：中心对齐，常用 `anchorY=0.5`。
+7. 输出运行时散帧、横排 sheet、GIF、contact sheet 和 `metadata.json`。
+8. 清理低透明噪点或紫边，但不要破坏主体描边。
+
+### 配置表写法
+
+`s_asset.json` 每帧一个稳定 key：
+
+```json
+{
+  "key": "poison_bat_fly_down_00",
+  "type": "image",
+  "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-00.png?v=poison-bat-1",
+  "preloadGroup": "battle",
+  "fallbackKey": "placeholder_enemy"
+}
+```
+
+规则：
+
+- `key` 不写版本号，保持长期稳定。
+- `url` 可以加 `?v=<资源版本>`，防止浏览器继续加载旧图。
+- `preloadGroup` 战斗资源一般用 `battle`。
+- fallback 逐帧链式回退：第 0 帧回 `placeholder_enemy`，后续帧回上一帧。
+
+`s_animation.json` 按实际帧数写完整数组：
+
+```json
+{
+  "key": "poison_bat_fly_down",
+  "assetKey": "loose_frames",
+  "frames": [
+    "poison_bat_fly_down_00",
+    "poison_bat_fly_down_01",
+    "poison_bat_fly_down_02"
+  ],
+  "fps": 15,
+  "loop": true,
+  "anchorX": 0.5,
+  "anchorY": 0.55,
+  "scale": 0.45
+}
+```
+
+字段经验：
+
+- `frames` 不要求固定 8 帧，必须和实际导出帧数一致。
+- `fps` 控制原地动作速度，不控制怪物移动速度。
+- 怪物移动速度仍由 `s_monster.json.speed` 控制。
+- 武器弹道移动速度仍由 `s_skill.json.speed` 控制。
+- `scale` 优先在配置表调，不要为了大小反复改每张 PNG。
+- `anchor` 是碰撞点和显示对齐的关键，地面怪与飞行怪不能一套值硬套。
+
+### 绑定入口
+
+怪物绑定：
+
+```json
+{
+  "id": 2,
+  "name": "毒蝠",
+  "runAnimKey": "poison_bat_fly_down",
+  "attackAnimKey": ""
+}
+```
+
+主角绑定：
+
+```json
+{
+  "key": "hero_guardian",
+  "idleAnimKey": "hero_guardian_idle",
+  "attackAnimKey": "hero_guardian_attack_up"
+}
+```
+
+当前主角还在 `BattleScene` 中使用固定 key，后续如果主角动作继续增多，应迁移到 `s_actor_visual.json` 或 `s_hero_visual.json`。
+
+技能绑定：
+
+```json
+{
+  "id": 201,
+  "projectileAnimKey": "projectile_tomato_spin",
+  "hitAnimKey": "hit_tomato_burst"
+}
+```
+
+### QA 和验收
+
+每个新动画至少保留一个针对性 QA 脚本，检查：
+
+- `metadata.json.frames` 与 `s_animation.json.frames.length` 一致。
+- `s_asset.json` 中每个帧 key 都存在。
+- 每张运行时帧存在且尺寸一致。
+- 每张运行时帧有透明主体，不是空帧。
+- 内容没有贴到边界，避免裁翅膀、裁脚、漏出相邻角色。
+- URL 带资源版本号，避免浏览器缓存旧图。
+
+推荐命令：
+
+```bash
+python3 tests/check_zombie_walk_frames.py
+python3 tests/check_poison_bat_frames.py
+npm run test:monster-config
+npm run test:monster-visual
+node -e "const fs=require('fs'); for (const f of fs.readdirSync('public/gamedata').filter(f=>f.endsWith('.json'))) JSON.parse(fs.readFileSync('public/gamedata/'+f,'utf8')); console.log('json ok')"
+npm run build
+```
+
+浏览器预览：
+
+```text
+http://localhost:<实际端口>/game.html?animtest=<动画key>&verify=<资源版本>
+```
+
+例如：
+
+```text
+game.html?animtest=zombie_walk_down&verify=miner-zombie-1
+game.html?animtest=poison_bat_fly_down&verify=poison-bat-1
+```
+
+预览页要检查：
+
+- 是否显示正确资源，而不是旧缓存或占位图。
+- 帧数、FPS、循环状态是否符合配置。
+- 控制台是否有 error/warn。
+- 主体方向是否符合战斗方向，例如怪物从上往下冲向基地。
 
 ### 番茄旋转弹道
 
@@ -267,14 +490,15 @@ hero_mage_attack_up
 
 ## 策划自行制作和配置流程
 
-1. 把 AI 原图或美术源图放入 `public/game-assets/source/` 留档。
-2. 使用纯色洋红 `#FF00FF` 或纯绿背景生成，再抠成透明 PNG。
-3. 编写或复制现有生成脚本，输出统一尺寸的 `frames/*.png`、横排 sheet、GIF、contact sheet 和 `metadata.json`。
-4. 在 `s_asset.json` 为每一帧配置唯一 key、`url`、`preloadGroup: "battle"` 和逐帧 fallback。
-5. 在 `s_animation.json` 配置动画 key、帧 key 数组、`fps`、`loop`、锚点和缩放。
-6. 怪物在 `s_monster.json` 配 `runAnimKey/attackAnimKey`；技能在 `s_skill.json` 配 `projectileAnimKey/hitAnimKey`。
-7. 使用 `game.html?animtest=<动画key>` 单独预览，再进入实战检查轨迹、命中点和层级。
-8. 运行 `npm run test:monster-visual`、`npm run test:skill-visual`、JSON 校验和 `npm run build`。
+1. 把 AI 原图、美术源图或 TexturePacker 图集文件夹放入 `public/game-assets/source/` 留档。
+2. 如果源图没有透明 alpha，使用纯色洋红 `#FF00FF` 或纯绿背景生成，再抠成透明 PNG。
+3. 编写或复制现有导入脚本，输出统一尺寸的 `frames/*.png`、横排 sheet、GIF、contact sheet 和 `metadata.json`。
+4. 如果是 TexturePacker/Cocos 风格图集，优先读取 JSON 真实坐标，不要按整图等分硬切。
+5. 在 `s_asset.json` 为每一帧配置唯一 key、`url`、`preloadGroup: "battle"` 和逐帧 fallback。
+6. 在 `s_animation.json` 配置动画 key、实际帧 key 数组、`fps`、`loop`、锚点和缩放。
+7. 怪物在 `s_monster.json` 配 `runAnimKey/attackAnimKey`；技能在 `s_skill.json` 配 `projectileAnimKey/hitAnimKey`；主角后续走 `s_actor_visual.json` 或 `s_hero_visual.json`。
+8. 使用 `game.html?animtest=<动画key>` 单独预览，再进入实战检查轨迹、命中点和层级。
+9. 运行对应帧 QA、`npm run test:monster-visual`、`npm run test:skill-visual`、JSON 校验和 `npm run build`。
 
 ## 运行时释放规则
 

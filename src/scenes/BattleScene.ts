@@ -1,5 +1,5 @@
 import { AnimatedSprite, Container, Graphics, type DestroyOptions } from "pixi.js";
-import type { BagState, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
+import type { BagState, BattleTuningDef, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
@@ -10,7 +10,8 @@ import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
-import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue } from "./battleWaveRules";
+import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, type WaveSpawnEvent } from "./battleWaveRules";
+import { createEffectiveMonster, getBaseArmor, getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
 import { stepMonsterContact } from "./monsterContactRules";
 import { getMonsterAnimationKey } from "./monsterVisualRules";
 import { chooseMonsterSpawnPosition } from "./monsterSpawnRules";
@@ -52,9 +53,10 @@ export class BattleScene extends BaseScene {
   private spinZones: SpinDamageRuntime[] = [];
   private floating: FloatingRuntime[] = [];
   private hitHolds: HitHoldRuntime[] = [];
-  private spawnQueue: Array<{ time: number; monsterId: number; wave: number }> = [];
+  private spawnQueue: WaveSpawnEvent[] = [];
   private time = 0;
   private baseHp: number;
+  private baseMaxHp: number;
   private armor: number;
   private exp = 0;
   private levelNo = 1;
@@ -83,6 +85,7 @@ export class BattleScene extends BaseScene {
   private heroCastY = 0;
   private readonly heroAnimKey = "wizard_attack_up";
   private readonly animationPlayback = new AnimationPlaybackController();
+  private readonly tuning: BattleTuningDef;
 
   private waveClearTimer: number | undefined;
 
@@ -90,12 +93,14 @@ export class BattleScene extends BaseScene {
     super();
     audio.preloadGroups(["battle"]);
     audio.playMusicEvent("music_battle");
+    this.tuning = data.getBattleTuning(level.battleTuningId);
+    this.baseMaxHp = getBaseMaxHp(level, this.tuning);
     const session = options.session;
     bag.currentWave ??= session?.currentWave ?? 1;
-    bag.baseHp ??= session?.baseHp ?? level.baseHp;
+    bag.baseHp ??= session?.baseHp ?? this.baseMaxHp;
     this.currentWave = session?.currentWave ?? bag.currentWave;
     this.baseHp = session?.baseHp ?? bag.baseHp;
-    this.armor = level.baseArmor;
+    this.armor = getBaseArmor(level, this.tuning);
     if (session) {
       this.exp = session.exp;
       this.levelNo = session.levelNo;
@@ -145,7 +150,7 @@ export class BattleScene extends BaseScene {
   }
 
   private buildSpawnQueue(): void {
-    this.spawnQueue = buildSingleWaveSpawnQueue(data.getWaves(this.level.waveGroupId), this.currentWave);
+    this.spawnQueue = buildSingleWaveSpawnQueue(data.getWaves(this.level.waveGroupId), this.currentWave, this.tuning);
     this.waveDuration = Math.max(1, (this.spawnQueue.at(-1)?.time ?? 0.2) + 2.8);
   }
 
@@ -203,7 +208,7 @@ export class BattleScene extends BaseScene {
     });
     const waveRect = resolveUiLayoutRect(waveLayout, w, h);
     const waveBar = new Graphics();
-    const expNeed = data.getEconomy("exp_need_base") + this.levelNo * 18;
+    const expNeed = getExpNeed(this.levelNo, this.tuning);
     const progress = Math.max(0, Math.min(1, this.exp / Math.max(1, expNeed)));
     waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width, waveRect.height, 8).fill({ color: 0x10151c, alpha: 0.9 });
     waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width * progress, waveRect.height, 8).fill({ color: 0x4ed5ff });
@@ -309,7 +314,7 @@ export class BattleScene extends BaseScene {
     hpTrack.roundRect(hpRect.x, hpRect.y, hpRect.width, hpRect.height, 7).fill({ color: 0x11181f, alpha: 0.96 });
     hpTrack.stroke({ color: 0x0a0e12, width: 2, alpha: 0.72 });
     const hpFill = new Graphics();
-    hpFill.roundRect(hpRect.x + 3, hpRect.y + 3, Math.max(0, (hpRect.width - 6) * Math.max(0, this.baseHp / this.level.baseHp)), hpRect.height - 6, 5).fill({ color: 0x2ff16b });
+    hpFill.roundRect(hpRect.x + 3, hpRect.y + 3, Math.max(0, (hpRect.width - 6) * Math.max(0, this.baseHp / this.baseMaxHp)), hpRect.height - 6, 5).fill({ color: 0x2ff16b });
 
     if (pauseLayout.visible) this.uiLayer.addChild(pause);
     if (titleLayout.visible) this.uiLayer.addChild(title);
@@ -415,12 +420,12 @@ export class BattleScene extends BaseScene {
     while (this.spawnQueue.length > 0 && this.spawnQueue[0].time <= this.time) {
       const spawn = this.spawnQueue.shift()!;
       this.currentWave = Math.max(this.currentWave, spawn.wave);
-      this.spawnMonster(spawn.monsterId);
+      this.spawnMonster(spawn);
     }
   }
 
-  private spawnMonster(monsterId: number): void {
-    const def = data.getMonster(monsterId);
+  private spawnMonster(spawn: WaveSpawnEvent): void {
+    const def = createEffectiveMonster(data.getMonster(spawn.monsterId), spawn.tuning);
     const w = app.screen.width;
     const { x, y } = chooseMonsterSpawnPosition(
       w,
@@ -528,7 +533,7 @@ export class BattleScene extends BaseScene {
       this.addFloating(app.screen.width / 2 + 82, app.screen.height - 156, `护甲+${effect?.value ?? 1}`, 0x7ee08a);
     } else if (skill.type === "heal") {
       const effect = data.getEffect(skill.effectId);
-      this.baseHp = Math.min(this.level.baseHp, this.baseHp + (effect?.value ?? 40));
+      this.baseHp = Math.min(this.baseMaxHp, this.baseHp + (effect?.value ?? 40));
       this.syncSessionProgress();
       this.addFloating(app.screen.width / 2 + 82, app.screen.height - 156, `+${effect?.value ?? 40}`, 0x45ff99);
     }
@@ -780,7 +785,7 @@ export class BattleScene extends BaseScene {
   }
 
   private checkLevelUp(): void {
-    const need = data.getEconomy("exp_need_base") + this.levelNo * 18;
+    const need = getExpNeed(this.levelNo, this.tuning);
     if (this.exp >= need) {
       this.exp -= need;
       this.levelNo += 1;
@@ -818,7 +823,7 @@ export class BattleScene extends BaseScene {
     analytics.track("rogue_option_select", { levelId: this.level.id, optionId: option.id, effectType: option.effectType });
     if (option.effectType === "attackMul") this.buffs.attackMul *= option.effectValue;
     else if (option.effectType === "cdMul") this.buffs.cdMul *= option.effectValue;
-    else if (option.effectType === "heal") this.baseHp = Math.min(this.level.baseHp, this.baseHp + option.effectValue);
+    else if (option.effectType === "heal") this.baseHp = Math.min(this.baseMaxHp, this.baseHp + option.effectValue);
     else if (option.effectType === "radiusMul") this.buffs.radiusMul *= option.effectValue;
     else if (option.effectType === "dotBoost") {
       this.buffs.dotMul *= option.effectValue;
@@ -829,7 +834,7 @@ export class BattleScene extends BaseScene {
       this.buffs.attackMul *= option.effectValue;
       this.buffs.cdMul *= 0.92;
     } else if (option.effectType === "repair") {
-      this.baseHp = Math.min(this.level.baseHp, this.baseHp + option.effectValue);
+      this.baseHp = Math.min(this.baseMaxHp, this.baseHp + option.effectValue);
       this.buffs.armorBonus += 2;
     }
     this.syncSessionProgress();
@@ -990,7 +995,7 @@ export class BattleScene extends BaseScene {
     this.ending = true;
     this.setBattlePaused(true);
     this.bag.baseHp = Math.max(0, this.baseHp);
-    const result = applyWaveCheckpointToBag(this.bag, this.level, data.getWaves(this.level.waveGroupId));
+    const result = applyWaveCheckpointToBag(this.bag, this.level, data.getWaves(this.level.waveGroupId), this.tuning);
     if (this.options.session) {
       this.options.session.baseHp = this.bag.baseHp;
       this.options.session.currentWave = result.nextWave;

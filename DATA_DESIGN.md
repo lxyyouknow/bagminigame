@@ -17,6 +17,7 @@ public/gamedata/
 - `s_level.json`：关卡主表。
 - `s_wave.json`：波次刷怪表。
 - `s_monster.json`：怪物表。
+- `s_battle_tuning.json`：战斗难度和人物/基地成长表。
 - `s_item.json`：背包武器/物品表。
 - `s_item_shape.json`：背包形状表。
 - `s_quality.json`：品质和合成表。
@@ -83,32 +84,53 @@ public/gamedata/s_ui_layout.json
 - 改点击行为、打开新系统、扣资源、跳转：才改 `src/scenes/WndMain.ts` 等功能代码。
 - 后续策划提示词只要是“界面元素摆放不满意”，默认先查 `s_ui_layout.json` 的 `scene/key/desc`，不要全局搜索代码。
 
-## 当前 3 关定位
+## 当前 6 关定位
 
 第 1 关：`1. 失落荒野`
 
-- 教学关。
+- 教学加压关。
 - 初始背包 `3x3`。
 - `winWave = 10`。
 - 当前采用“每波战斗后回背包备战”的中继流程，前几波会按 `s_wave.expandRows/expandCols` 扩充背包。
 - 武器池偏基础：弹力球、短棍、长矛、盾帽。
-- 目标是让玩家理解拖拽、放置、开始战斗、基础合成。
+- 目标是让玩家理解拖拽、放置、开始战斗、基础合成，同时第一关就有明显怪物压力。
 
 第 2 关：`2. 毒雾裂谷`
 
-- 组合关。
-- 初始背包 `3x3`，最大可扩到 `4x4`。
-- `winWave = 5`。
+- 组合压力关。
+- 初始背包 `3x3`，最大可扩到 `5x5`。
+- `winWave = 10`。
 - 开始引入范围爆炸、更多怪物和更明显的升级三选一。
 - 目标是让玩家感受到空间规划和技能组合。
 
 第 3 关：`3. 钢铁围城`
 
 - 压力关。
-- 初始背包 `4x4`，最大 `4x5`。
-- `winWave = 6`。
+- 初始背包 `4x4`，最大 `5x5`。
+- `winWave = 10`。
 - 加入更复杂形状、史诗品质、小 Boss。
 - 目标是测试背包规划、合成和强化选择的压力。
+
+第 4 关：`4. 荆棘矿道`
+
+- 精英围猎关。
+- 初始背包 `4x4`，最大 `5x6`。
+- `winWave = 10`。
+- 更多混编波和精英波，用于测试中后段合成节奏。
+
+第 5 关：`5. 高压裂隙`
+
+- 高压关。
+- 初始背包 `4x5`，最大 `5x6`。
+- `winWave = 10`。
+- 怪物贴脸伤害明显，要求护甲、治疗和输出强化搭配。
+
+第 6 关：`6. 黑铁终局`
+
+- 终局测试关。
+- 初始背包 `5x5`，最大 `5x6`。
+- `winWave = 10`。
+- 用于广告 demo 后段压力测试，最后一波支持双 Boss。
 
 ## 关卡配置：s_level
 
@@ -123,6 +145,7 @@ public/gamedata/s_ui_layout.json
 - `initGold`：开局金币。
 - `baseHp`：我方基地生命。
 - `baseArmor`：我方护甲。
+- `battleTuningId`：引用 `s_battle_tuning`，决定基地倍率、经验曲线、怪物整体倍率和奖励倍率。
 - `waveGroupId`：引用 `s_wave` 的波次组。
 - `shopPoolId`：引用 `s_item.pools`，决定该关刷新池。
 - `roguePoolId`：决定该关可出现哪些肉鸽选项。
@@ -132,32 +155,113 @@ public/gamedata/s_ui_layout.json
 
 调关卡难度优先顺序：
 
-1. 调 `s_wave` 的怪物数量、间隔和出现时间。
-2. 调 `s_monster` 的血量、速度、护甲、攻击。
-3. 调 `s_level` 的 `baseHp`、`baseArmor`、初始金币、背包大小。
-4. 调 `s_item` 的刷新权重和关卡池。
-5. 调 `s_skill` 的伤害、CD、范围。
+1. 调 `s_battle_tuning` 的关卡整体倍率和升级经验曲线。
+2. 调 `s_wave` 的怪物数量、间隔、单波倍率和出现时间。
+3. 调 `s_monster` 的基础血量、速度、护甲、攻击。
+4. 调 `s_level` 的 `baseHp`、`baseArmor`、初始金币、背包大小。
+5. 调 `s_item` 的刷新权重和关卡池。
+6. 调 `s_skill` 的伤害、CD、范围。
+
+## 战斗难度配置：s_battle_tuning
+
+路径：
+
+```text
+public/gamedata/s_battle_tuning.json
+```
+
+这张表负责“人物/基地数值”和“整关难度曲线”，避免每一波都重复写基础倍率。
+
+字段：
+
+- `id`：难度 id，由 `s_level.battleTuningId` 引用。
+- `baseHpMul`：基地最大生命倍率，实际最大生命 = `s_level.baseHp * baseHpMul`。
+- `baseArmorAdd`：基地护甲附加值，实际护甲 = `s_level.baseArmor + baseArmorAdd`。
+- `expNeedBase`：局内升级经验基础值。
+- `expNeedPerLevel`：每级递增经验，当前公式为 `expNeedBase + levelNo * expNeedPerLevel`。
+- `monsterHpMul`：本关怪物血量整体倍率。
+- `monsterArmorAdd`：本关怪物护甲附加值。
+- `monsterAttackMul`：本关怪物攻击整体倍率。
+- `monsterSpeedMul`：本关怪物速度整体倍率。
+- `monsterGoldMul`：本关怪物击杀金币整体倍率。
+- `monsterExpMul`：本关怪物击杀经验整体倍率。
+- `waveRewardGoldMul`：本关清波奖励金币整体倍率。
+
+建议：
+
+- 想整体提高某一关难度，优先调这张表。
+- 想让某一波突然变难，调 `s_wave` 的单波倍率字段。
+- 想改变怪物基础定位，例如“毒蝠永远是高速低血”，才改 `s_monster`。
 
 ## 波次配置：s_wave
+
+路径：
+
+```text
+public/gamedata/s_wave.json
+```
+
+新版波次表采用“同一波多行”的结构。每一行不是一整波，而是一段刷怪配置；同一个 `waveGroupId + wave` 下可以写多行，让一波里同时包含小僵尸、毒蝠、枪手、赤爪或 Boss 护卫。
+
+当前 1-6 关默认都是 10 波，每波通常 1 到 2 行：
+
+- 第 1 关前期先用小僵尸教学，随后逐步混入毒蝠、枪手、赤爪。
+- 第 2 关开始小僵尸和毒蝠同波混编。
+- 第 3 关以后开始更频繁混入枪手和赤爪。
+- Boss 波可以单独一行 Boss，再加一行小怪或精英护卫。
 
 字段：
 
 - `waveGroupId`：波次组，和 `s_level.waveGroupId` 对应。
 - `wave`：第几波。
-- `time`：从战斗开始后的刷怪时间点，单位秒。
+- `time`：当前这一段在本波内的开始刷怪时间，单位秒。单波战斗会把当前波最早 `time` 归一到约 `0.2` 秒，所以它主要用于控制同一波内不同怪物段的先后顺序。
 - `monsterId`：怪物 id。
-- `count`：本组刷怪数量。
-- `interval`：每只怪之间的间隔。
+- `count`：这一段刷怪数量。
+- `interval`：这一段每只怪之间的刷出间隔，越大则这一段持续越久。
 - `spawn`：出生点策略，目前为预留。
 - `rewardGold`：当前波清完后的额外本局金币奖励。
 - `expandRows`：当前波清完后扩几行，受关卡 `maxRows` 限制。
 - `expandCols`：当前波清完后扩几列，受关卡 `maxCols` 限制。
+- `monsterHpMul`：单波怪物血量倍率，会与 `s_battle_tuning.monsterHpMul` 叠乘。
+- `monsterArmorAdd`：单波怪物护甲附加值，会与整关护甲附加值相加。
+- `monsterAttackMul`：单波怪物攻击倍率，会与整关攻击倍率叠乘。
+- `monsterSpeedMul`：单波怪物速度倍率，会与整关速度倍率叠乘。
+- `monsterGoldMul`：单波怪物击杀金币倍率，会与整关金币倍率叠乘。
+- `monsterExpMul`：单波怪物击杀经验倍率，会与整关经验倍率叠乘。
+- `rewardGoldMul`：单波清波奖励倍率，会与整关清波奖励倍率叠乘。
+- `desc`：策划备注，可选。
+
+刷怪时长计算：
+
+```text
+这一段结束时间 = time + (count - 1) * interval
+这一波持续出怪时间 = 同波所有行的最大结束时间
+```
+
+例如：
+
+```json
+[
+  { "waveGroupId": 101, "wave": 2, "time": 0.2, "monsterId": 1, "count": 8, "interval": 0.84 },
+  { "waveGroupId": 101, "wave": 2, "time": 1.2, "monsterId": 2, "count": 4, "interval": 0.9 }
+]
+```
+
+含义：
+
+- 第 2 波先刷 8 只小僵尸。
+- 约 1.2 秒后插入 4 只毒蝠。
+- 两行会合并成同一波，全部清完后才回背包。
 
 建议：
 
-- 教学关前 3 到 5 秒不要刷太多怪，让玩家看到武器攻击。
+- 如果“每波一下就出完”，优先增加 `count` 或调大 `interval`。
+- 如果“怪太多但战斗太拖”，优先降低 `hp` 或 `monsterHpMul`，再减少 `count`。
+- 如果只想让某一波更长，不要改怪物基础表，优先改该波几行的 `count / interval / time`。
+- 教学关前 1 到 2 波可以少量单怪，后续尽量使用两段混编。
 - 第 2 关开始可以用小怪密集波测试 AOE。
 - Boss 波建议单独一行，`count = 1`，怪物表 `boss = true`。
+- 同一波可以写多行，适合“先小怪压场，再精英进场”。
 - 如果战斗时间太长，优先减少怪物血量或波次间隔，而不是单纯加我方伤害。
 
 ## 怪物配置：s_monster

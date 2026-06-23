@@ -14,6 +14,7 @@ export interface LevelDef {
   initGold: number;
   baseHp: number;
   baseArmor: number;
+  battleTuningId?: number;
   waveGroupId: number;
   shopPoolId: number;
   roguePoolId: number;
@@ -104,6 +105,33 @@ export interface MonsterDef {
   attackAnimKey?: string;
 }
 
+export interface BattleTuningDef {
+  id: number;
+  name: string;
+  desc: string;
+  baseHpMul: number;
+  baseArmorAdd: number;
+  expNeedBase: number;
+  expNeedPerLevel: number;
+  monsterHpMul: number;
+  monsterArmorAdd: number;
+  monsterAttackMul: number;
+  monsterSpeedMul: number;
+  monsterGoldMul: number;
+  monsterExpMul: number;
+  waveRewardGoldMul: number;
+}
+
+export interface ResolvedWaveTuning {
+  monsterHpMul: number;
+  monsterArmorAdd: number;
+  monsterAttackMul: number;
+  monsterSpeedMul: number;
+  monsterGoldMul: number;
+  monsterExpMul: number;
+  rewardGoldMul: number;
+}
+
 export interface WaveDef {
   waveGroupId: number;
   wave: number;
@@ -115,6 +143,14 @@ export interface WaveDef {
   rewardGold: number;
   expandRows?: number;
   expandCols?: number;
+  monsterHpMul?: number;
+  monsterArmorAdd?: number;
+  monsterAttackMul?: number;
+  monsterSpeedMul?: number;
+  monsterGoldMul?: number;
+  monsterExpMul?: number;
+  rewardGoldMul?: number;
+  desc?: string;
 }
 
 export interface RogueOptionDef {

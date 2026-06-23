@@ -1,4 +1,4 @@
-import type { AnimationDef, AssetDef, AudioDef, AudioEventDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
+import type { AnimationDef, AssetDef, AudioDef, AudioEventDef, BattleTuningDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
 
 export class GameDataManager {
   levels: LevelDef[] = [];
@@ -8,6 +8,7 @@ export class GameDataManager {
   skills: SkillDef[] = [];
   effects: EffectDef[] = [];
   monsters: MonsterDef[] = [];
+  battleTunings: BattleTuningDef[] = [];
   waves: WaveDef[] = [];
   rogueOptions: RogueOptionDef[] = [];
   economy: EconomyDef[] = [];
@@ -28,6 +29,7 @@ export class GameDataManager {
       skills,
       effects,
       monsters,
+      battleTunings,
       waves,
       rogueOptions,
       economy,
@@ -46,6 +48,7 @@ export class GameDataManager {
       this.fetchTable<SkillDef>("s_skill"),
       this.fetchTable<EffectDef>("s_effect"),
       this.fetchTable<MonsterDef>("s_monster"),
+      this.fetchTable<BattleTuningDef>("s_battle_tuning"),
       this.fetchTable<WaveDef>("s_wave"),
       this.fetchTable<RogueOptionDef>("s_rogue_option"),
       this.fetchTable<EconomyDef>("s_economy"),
@@ -65,6 +68,7 @@ export class GameDataManager {
     this.skills = skills;
     this.effects = effects;
     this.monsters = monsters;
+    this.battleTunings = battleTunings;
     this.waves = waves;
     this.rogueOptions = rogueOptions;
     this.economy = economy;
@@ -103,6 +107,11 @@ export class GameDataManager {
 
   getMonster(id: number): MonsterDef {
     return this.must(this.monsters.find((row) => row.id === id), `怪物 ${id}`);
+  }
+
+  getBattleTuning(id: number | undefined): BattleTuningDef {
+    const tuningId = id ?? 1;
+    return this.must(this.battleTunings.find((row) => row.id === tuningId), `战斗难度 ${tuningId}`);
   }
 
   getEconomy(key: string): number {

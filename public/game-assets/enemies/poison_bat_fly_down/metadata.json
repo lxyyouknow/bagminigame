@@ -1,0 +1,16 @@
+{
+  "name": "poison_bat_fly_down",
+  "source": "public/game-assets/source/poison-bat-fly-down-video-20260623-112242",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "character": "poison_bat",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 18,
+  "fps": 15,
+  "direction": "down",
+  "view": "top_down_front",
+  "anchorX": 0.5,
+  "anchorY": 0.55,
+  "scale": 0.45,
+  "usage": "第二种小怪毒蝠，向屏幕下方快速飞行；由 lxy 提供的视频序列帧图集导入"
+}

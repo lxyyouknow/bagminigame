@@ -11,6 +11,7 @@
     "test:animation-playback": "node scripts/run-animation-playback-tests.mjs",
     "test:analytics": "node scripts/run-analytics-tests.mjs",
     "test:bag-drag": "node scripts/run-bag-drag-tests.mjs",
+    "test:battle-difficulty": "node scripts/run-battle-difficulty-tests.mjs",
     "test:battle-wave": "node scripts/run-battle-wave-tests.mjs",
     "test:lifecycle": "node scripts/run-lifecycle-tests.mjs",
     "test:monster-visual": "node scripts/run-monster-visual-tests.mjs",

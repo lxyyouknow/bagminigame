@@ -15,6 +15,7 @@ import {
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
 import { refreshWaveCandidates } from "./battleWaveRules";
+import { getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
 
 interface Point {
   x: number;
@@ -83,6 +84,8 @@ export class BagScene extends BaseScene {
   ) {
     super();
     this.runSession = runSession;
+    const tuning = data.getBattleTuning(level.battleTuningId);
+    const baseMaxHp = getBaseMaxHp(level, tuning);
     this.state = initialState ?? {
       rows: level.initRows,
       cols: level.initCols,
@@ -91,10 +94,10 @@ export class BagScene extends BaseScene {
       candidates: [this.rollItem(), this.rollItem(), this.rollItem()],
       placed: [],
       currentWave: 1,
-      baseHp: level.baseHp,
+      baseHp: baseMaxHp,
     };
     this.state.currentWave ??= 1;
-    this.state.baseHp ??= level.baseHp;
+    this.state.baseHp ??= baseMaxHp;
     for (const placed of this.state.placed) {
       placed.cdLeft = 0;
     }
@@ -239,7 +242,7 @@ export class BagScene extends BaseScene {
     const expRect = resolveUiLayoutRect(expLayout, w, h);
     const levelNo = this.runSession?.levelNo ?? 1;
     const exp = this.runSession?.exp ?? 0;
-    const expNeed = data.getEconomy("exp_need_base") + levelNo * 18;
+    const expNeed = getExpNeed(levelNo, data.getBattleTuning(this.level.battleTuningId));
     const expRate = Math.max(0, Math.min(1, exp / Math.max(1, expNeed)));
     const expBar = new Graphics();
     expBar.roundRect(expRect.x, expRect.y, expRect.width, expRect.height, 8).fill({ color: 0x1a2428, alpha: 0.9 });
@@ -281,7 +284,7 @@ export class BagScene extends BaseScene {
       desc: "背包局内基地血量",
     });
     const hpPos = resolveUiLayoutPosition(hpLayout, w, h);
-    const hpText = text(`♥ ${Math.round(this.runSession?.baseHp ?? this.state.baseHp ?? this.level.baseHp)}`, hpLayout.fontSize ?? 18, "#ff6b78", "700");
+    const hpText = text(`♥ ${Math.round(this.runSession?.baseHp ?? this.state.baseHp ?? getBaseMaxHp(this.level, data.getBattleTuning(this.level.battleTuningId)))}`, hpLayout.fontSize ?? 18, "#ff6b78", "700");
     hpText.anchor.set(1, 0.5);
     hpText.position.set(hpPos.x, hpPos.y);
 

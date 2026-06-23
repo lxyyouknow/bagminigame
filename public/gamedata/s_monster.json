@@ -1,7 +1,7 @@
 [
-  { "id": 1, "name": "小僵尸", "hp": 65, "armor": 0, "speed": 72, "attack": 18, "attackInterval": 1.35, "gold": 2, "exp": 8, "radius": 18, "color": "#e5c542", "boss": false, "runAnimKey": "zombie_walk_down", "attackAnimKey": "" },
-  { "id": 2, "name": "毒蝠", "hp": 45, "armor": 0, "speed": 100, "attack": 14, "attackInterval": 1.1, "gold": 2, "exp": 7, "radius": 14, "color": "#51d98b", "boss": false },
-  { "id": 3, "name": "枪手", "hp": 92, "armor": 2, "speed": 50, "attack": 24, "attackInterval": 1.55, "gold": 3, "exp": 11, "radius": 19, "color": "#4ec3cf", "boss": false },
-  { "id": 4, "name": "赤爪", "hp": 130, "armor": 3, "speed": 68, "attack": 34, "attackInterval": 1.45, "gold": 4, "exp": 15, "radius": 21, "color": "#ef4d54", "boss": false },
-  { "id": 5, "name": "钢铁队长", "hp": 650, "armor": 8, "speed": 40, "attack": 85, "attackInterval": 1.8, "gold": 20, "exp": 55, "radius": 34, "color": "#8f9fb3", "boss": true }
+  { "id": 1, "name": "小僵尸", "hp": 80, "armor": 0, "speed": 62, "attack": 18, "attackInterval": 1.35, "gold": 2, "exp": 8, "radius": 18, "color": "#e5c542", "boss": false, "runAnimKey": "zombie_walk_down", "attackAnimKey": "" },
+  { "id": 2, "name": "毒蝠", "hp": 70, "armor": 0, "speed": 92, "attack": 14, "attackInterval": 1.1, "gold": 2, "exp": 7, "radius": 14, "color": "#51d98b", "boss": false, "runAnimKey": "poison_bat_fly_down", "attackAnimKey": "" },
+  { "id": 3, "name": "枪手", "hp": 175, "armor": 3, "speed": 45, "attack": 24, "attackInterval": 1.55, "gold": 3, "exp": 11, "radius": 19, "color": "#4ec3cf", "boss": false },
+  { "id": 4, "name": "赤爪", "hp": 235, "armor": 5, "speed": 60, "attack": 34, "attackInterval": 1.45, "gold": 4, "exp": 15, "radius": 21, "color": "#ef4d54", "boss": false },
+  { "id": 5, "name": "钢铁队长", "hp": 1300, "armor": 12, "speed": 34, "attack": 85, "attackInterval": 1.8, "gold": 20, "exp": 55, "radius": 34, "color": "#8f9fb3", "boss": true }
 ]
