@@ -8,7 +8,7 @@
   { "key": "battle_weapon_slot_box", "type": "image", "url": "/game-assets/battle/ui/battle-weapon-slot-box.png", "preloadGroup": "battle", "fallbackKey": "" },
 
   { "key": "ui_button_basic", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "" },
-  { "key": "ui_button_yellow", "type": "image", "url": "/game-assets/ui/button-wood-main.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
+  { "key": "ui_button_yellow", "type": "image", "url": "/game-assets/ui/botton/button-wood-main.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
   { "key": "ui_button_blue", "type": "image", "url": "/game-assets/ui/botton/botton_blue.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
   { "key": "ui_button_green", "type": "image", "url": "/game-assets/ui/botton/botton_green.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
   { "key": "ui_button_white", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
