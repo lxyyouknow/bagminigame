@@ -83,7 +83,7 @@ export class BattleScene extends BaseScene {
   private heroAttackTimer = 0;
   private heroCastX = 0;
   private heroCastY = 0;
-  private readonly heroAnimKey = "wizard_attack_up";
+  private readonly heroAnimKey = "hero_pumpkin_slingshot_attack_up";
   private readonly animationPlayback = new AnimationPlaybackController();
   private readonly tuning: BattleTuningDef;
 
@@ -898,8 +898,8 @@ export class BattleScene extends BaseScene {
 
   private positionHero(x: number, y: number): void {
     const hero = this.ensureHero();
-    this.heroCastX = x + 34;
-    this.heroCastY = y - 96;
+    this.heroCastX = x;
+    this.heroCastY = y - 132;
     if (!hero) return;
     hero.position.set(x, y);
   }
