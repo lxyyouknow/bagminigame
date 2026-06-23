@@ -13,10 +13,10 @@ SOURCE_DIR = ROOT / "public" / "game-assets" / "source" / "hero-pumpkin-slingsho
 OUT_DIR = ROOT / "public" / "game-assets" / "characters" / "hero_pumpkin_slingshot_attack_up"
 FRAME_DIR = OUT_DIR / "frames"
 
-FRAME_W = 256
-FRAME_H = 256
-MAX_SOURCE_W = 226
-MAX_SOURCE_H = 226
+FRAME_W = 512
+FRAME_H = 512
+MAX_SOURCE_W = 512
+MAX_SOURCE_H = 512
 FPS = 18
 
 

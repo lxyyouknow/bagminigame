@@ -889,7 +889,7 @@ export class BattleScene extends BaseScene {
     const anim = data.getAnimation(this.heroAnimKey);
     hero.loop = false;
     hero.animationSpeed = (anim?.fps ?? 12) / 60;
-    hero.scale.set((anim?.scale ?? 1) * 1.65);
+    hero.scale.set(anim?.scale ?? 1);
     hero.gotoAndStop(0);
     this.hero = hero;
     this.heroLayer.addChild(hero);
