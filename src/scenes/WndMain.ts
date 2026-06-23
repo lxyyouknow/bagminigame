@@ -179,8 +179,8 @@ export class WndMain extends BaseScene {
     });
     const startPos = resolveUiLayoutPosition(startLayout, w, h);
     const cost = save.getEntryCost(level.id);
-    const startLabel = unlocked ? `开始游戏\n炸药 x${cost.amount}` : "未解锁";
-    const start = glossyButton(startLabel, startLayout.width, startLayout.height, unlocked ? 0xffe05a : 0x999999, () => this.tryStartLevel(level.id), startLayout.fontSize ?? 28);
+    const startLabel = unlocked ? `开始游戏\n钥匙 x${cost.amount}` : "未解锁";
+    const start = glossyButton(startLabel, startLayout.width, startLayout.height, unlocked ? 0xffe05a : 0x999999, () => this.tryStartLevel(level.id), startLayout.fontSize ?? 28, 0.95);
     start.position.set(startPos.x - startLayout.width / 2, startPos.y - startLayout.height / 2);
     if (levelNameLayout.visible) this.container.addChild(levelName);
     if (recordLayout.visible) this.container.addChild(record, recordText);
@@ -232,7 +232,7 @@ export class WndMain extends BaseScene {
       this.toast = "通关上一关后解锁";
     } else {
       analytics.track("level_start_failed", { levelId: level.id, reason: "notEnough", resource: result.resource, need: result.need, current: result.current });
-      this.toast = `炸药不足：需要 ${result.need}，当前 ${result.current}`;
+      this.toast = `钥匙不足：需要 ${result.need}，当前 ${result.current}`;
     }
     this.toastTimer = 1.3;
     this.draw();

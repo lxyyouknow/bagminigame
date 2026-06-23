@@ -26,20 +26,20 @@ function createService(accountId = "test_lxy", storage = new MemoryStorageAdapte
 function run(): void {
   const save = createService();
   assertEqual(save.getAccountId(), "test_lxy", "测试账号 id 应该可指定");
-  assertEqual(save.getResources().dynamite, 30, "默认炸药数量错误");
+  assertEqual(save.getResources().dynamite, 30, "默认钥匙数量错误");
   assert(save.isLevelUnlocked(1), "第 1 关默认应解锁");
   assert(!save.isLevelUnlocked(2), "第 2 关默认不应解锁");
 
   const start = save.tryConsumeLevelEntry(1);
-  assert(start.ok, "炸药足够时应允许开始第 1 关");
-  assertEqual(save.getResources().dynamite, 24, "开始关卡后应扣除 6 个炸药");
+  assert(start.ok, "钥匙足够时应允许开始第 1 关");
+  assertEqual(save.getResources().dynamite, 24, "开始关卡后应扣除 6 个钥匙");
 
   const sharedStorage = new MemoryStorageAdapter();
   const persistentSave = createService("persist_user", sharedStorage);
   const persistentStart = persistentSave.tryConsumeLevelEntry(1);
   assert(persistentStart.ok, "共享存储下也应允许开始第 1 关");
   const reloadedSave = createService("persist_user", sharedStorage);
-  assertEqual(reloadedSave.getResources().dynamite, 24, "重新初始化后炸药扣减结果应保留");
+  assertEqual(reloadedSave.getResources().dynamite, 24, "重新初始化后钥匙扣减结果应保留");
 
   const win: BattleResult = { win: true, wave: 3, kills: 18, runGold: 42, playSeconds: 31 };
   const firstReward = save.applyBattleResult(1, win);

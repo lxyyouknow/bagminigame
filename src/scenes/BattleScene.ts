@@ -3,7 +3,7 @@ import type { BagState, BattleTuningDef, CombatBuffs, FloatingRuntime, ItemDef, 
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
-import { color, drawGrassBg, text, button, weightedPick, spriteFromAsset } from "../utils/display";
+import { color, drawGrassBg, text, button, weightedPick, spriteFromAsset, spriteFromUi } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
@@ -234,8 +234,13 @@ export class BattleScene extends BaseScene {
     const statPos = resolveUiLayoutPosition(statLayout, w, h);
     const goldBg = new Graphics();
     goldBg.roundRect(18, statPos.y - 12, 112, 28, 12).fill({ color: 0x121820, alpha: 0.92 });
-    const goldIcon = new Graphics();
-    goldIcon.roundRect(24, statPos.y - 6, 30, 14, 5).fill({ color: 0xf2c548 }).stroke({ color: 0x6e5512, width: 2 });
+    const goldIcon = spriteFromUi("resource_coin_icon", 26, 26);
+    if (goldIcon) {
+      goldIcon.anchor.set(0.5);
+      goldIcon.position.set(39, statPos.y + 1);
+    }
+    const goldIconFallback = new Graphics();
+    goldIconFallback.roundRect(24, statPos.y - 6, 30, 14, 5).fill({ color: 0xf2c548 }).stroke({ color: 0x6e5512, width: 2 });
     const goldText = text(String(this.bag.gold), statLayout.fontSize ?? 17, "#ffffff", "700");
     goldText.anchor.set(0, 0.5);
     goldText.position.set(64, statPos.y + 1);
@@ -319,7 +324,7 @@ export class BattleScene extends BaseScene {
     if (pauseLayout.visible) this.uiLayer.addChild(pause);
     if (titleLayout.visible) this.uiLayer.addChild(title);
     if (waveLayout.visible) this.uiLayer.addChild(waveBar, levelBadge, levelText);
-    if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon, goldText, killText, topHp);
+    if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon ?? goldIconFallback, goldText, killText, topHp);
     if (baseLayout.visible) this.uiLayer.addChild(this.heroLayer, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
 
     this.bag.placed.slice(0, 10).forEach((placed, index) => {
@@ -1035,13 +1040,18 @@ export class BattleScene extends BaseScene {
     const bg = new Graphics();
     bg.roundRect(-150, -42, 300, 84, 24).fill({ color: 0x1f2b2b, alpha: 0.92 });
     bg.stroke({ color: 0xffdf59, width: 3, alpha: 0.86 });
-    const coin = new Graphics();
-    coin.circle(-96, -2, 22).fill({ color: 0xf3c63e }).stroke({ color: 0x7a5a0d, width: 3 });
-    coin.roundRect(-108, -7, 24, 10, 4).fill({ color: 0xffec8a, alpha: 0.75 });
+    const coin = spriteFromUi("resource_coin_icon", 44, 44);
+    if (coin) {
+      coin.anchor.set(0.5);
+      coin.position.set(-96, -2);
+    }
+    const coinFallback = new Graphics();
+    coinFallback.circle(-96, -2, 22).fill({ color: 0xf3c63e }).stroke({ color: 0x7a5a0d, width: 3 });
+    coinFallback.roundRect(-108, -7, 24, 10, 4).fill({ color: 0xffec8a, alpha: 0.75 });
     const labelText = text(label, 21, "#ffffff", "700");
     labelText.anchor.set(0.5);
     labelText.position.set(28, 0);
-    banner.addChild(bg, coin, labelText);
+    banner.addChild(bg, coin ?? coinFallback, labelText);
     banner.position.set(w / 2, h * 0.34);
     this.uiLayer.addChild(banner);
     this.floating.push({ view: banner, ttl: 0.95, vy: -10 });

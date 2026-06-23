@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, Text, TextStyle, type DestroyOptions } from "pixi.js";
+import { Container, Graphics, Rectangle, Sprite, Text, TextStyle, type DestroyOptions } from "pixi.js";
 import type { ItemDef, ItemShapeDef, LevelDef, QualityDef, ThemeName } from "../types";
 import { app, assetManager, audio, data } from "../core/runtime";
 import { getTopResourceEntries, type TopResourceLabels } from "../ui/resourceMeta";
@@ -65,14 +65,18 @@ export function button(label: string, width: number, height: number, bg: number,
   return c;
 }
 
-export function glossyButton(label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20): Container {
+export function glossyButton(label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20, pressScale = 1): Container {
   const c = new Container();
   c.eventMode = "static";
   c.cursor = "pointer";
+  c.hitArea = new Rectangle(0, 0, width, height);
+  const content = new Container();
+  content.pivot.set(width / 2, height / 2);
+  content.position.set(width / 2, height / 2);
   const skinKey = bg === 0xffc23d || bg === 0xffb33d || bg === 0xffe05a ? "button_yellow" : bg === 0x2ebaf0 || bg === 0x33bfff ? "button_blue" : bg === 0x33d7ad || bg === 0x28c9b0 ? "button_green" : "button_white";
   const skin = spriteFromUi(skinKey, width, height);
   if (skin) {
-    c.addChild(skin);
+    content.addChild(skin);
   } else {
   const shadow = new Graphics();
   shadow.roundRect(3, 5, width, height, 12).fill({ color: 0x1a1a1a, alpha: 0.38 });
@@ -80,16 +84,34 @@ export function glossyButton(label: string, width: number, height: number, bg: n
   body.roundRect(0, 0, width, height, 12).fill({ color: bg });
   body.roundRect(0, 0, width, height, 12).stroke({ color: 0x24313c, width: 4, alpha: 0.85 });
   body.roundRect(6, 6, width - 12, height * 0.38, 9).fill({ color: 0xffffff, alpha: 0.22 });
-    c.addChild(shadow, body);
+    content.addChild(shadow, body);
   }
   const t = text(label, fontSize, "#ffffff", "700");
   t.anchor.set(0.5);
   t.position.set(width / 2, height / 2);
-  c.addChild(t);
+  content.addChild(t);
+  c.addChild(content);
+  let pressed = false;
   c.on("pointerdown", (event) => {
     event.stopPropagation();
+    pressed = true;
+    content.scale.set(pressScale);
     audio.playSfxEvent("ui_click");
+  });
+  c.on("pointerup", (event) => {
+    event.stopPropagation();
+    if (!pressed) return;
+    pressed = false;
+    content.scale.set(1);
     onTap();
+  });
+  c.on("pointerupoutside", () => {
+    pressed = false;
+    content.scale.set(1);
+  });
+  c.on("pointercancel", () => {
+    pressed = false;
+    content.scale.set(1);
   });
   return c;
 }

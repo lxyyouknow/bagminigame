@@ -2,7 +2,7 @@ import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, ItemShapeDef, LevelDef, PlacedItem } from "../types";
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
-import { addImageOrFallback, createItemShapeView, drawGrassBg, screenPoint, text, button, weightedPick, color, spriteFromAsset } from "../utils/display";
+import { addImageOrFallback, createItemShapeView, drawGrassBg, screenPoint, text, button, weightedPick, color, spriteFromAsset, spriteFromUi } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import {
   findNearestDragTarget,
@@ -207,10 +207,15 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "背包界面金币文本",
     });
-    const gold = text(`金币 ${this.state.gold}`, goldLayout.fontSize ?? 18, "#ffe67b", "700");
+    const goldIcon = spriteFromUi("resource_coin_icon", 24, 24);
+    const gold = text(String(this.state.gold), goldLayout.fontSize ?? 18, "#ffe67b", "700");
     gold.anchor.set(0, 0.5);
     const goldPos = resolveUiLayoutPosition(goldLayout, w, h);
-    gold.position.set(goldPos.x, goldPos.y);
+    if (goldIcon) {
+      goldIcon.anchor.set(0.5);
+      goldIcon.position.set(goldPos.x + 12, goldPos.y);
+    }
+    gold.position.set(goldPos.x + (goldIcon ? 30 : 0), goldPos.y);
     const sizeLayout = this.layout("bag_size", {
       scene: "bag",
       key: "bag_size",
@@ -362,7 +367,10 @@ export class BagScene extends BaseScene {
     this.drawCandidateArea();
     this.drawActions(w, h);
     if (titleLayout.visible) this.container.addChild(title);
-    if (goldLayout.visible) this.container.addChild(gold);
+    if (goldLayout.visible) {
+      if (goldIcon) this.container.addChild(goldIcon);
+      this.container.addChild(gold);
+    }
     if (sizeLayout.visible) this.container.addChild(hp);
     if (expLayout.visible) this.container.addChild(expBar, levelBadge, levelText);
     if (waveLayout.visible) this.container.addChild(waveText);
