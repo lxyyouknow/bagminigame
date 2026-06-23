@@ -19,5 +19,5 @@
   "hitHoldFrame": 7,
   "hitHoldDuration": 0.5,
   "hitFadeDuration": 0.35,
-  "style": "new wheat art replaces old landing/shake effect; short impact shake using only tmp/new_1.png-derived frames"
+  "style": "new wheat hit animation tuned to subtle 1-2px positional vibration only; no rotation or stalk swing; original tmp/new_1.png untouched"
 }
