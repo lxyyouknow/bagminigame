@@ -435,7 +435,7 @@ export class BattleScene extends BaseScene {
     const view = this.createMonsterView(def, animationKey);
     view.position.set(x, y);
     this.battleLayer.addChild(view);
-    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, attackCooldown: 0, dead: false, animationKey });
+    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, animationKey });
   }
 
   private createMonsterView(def: MonsterDef, animationKey?: string): Container {
@@ -559,6 +559,13 @@ export class BattleScene extends BaseScene {
     for (const monster of this.monsters) {
       if (monster.dead) continue;
       monster.slowTimer = Math.max(0, monster.slowTimer - dt);
+      monster.hitStopTimer = Math.max(0, monster.hitStopTimer - dt);
+      if (monster.hitStopTimer > 0) {
+        this.updateMonsterAnimation(monster, false);
+        monster.view.position.set(monster.x, monster.y + Math.sin(this.time * 8 + monster.uid) * 2);
+        monster.view.scale.set(1 + Math.sin(this.time * 9 + monster.uid) * 0.035, 1 - Math.sin(this.time * 9 + monster.uid) * 0.025);
+        continue;
+      }
       const contact = stepMonsterContact({
         y: monster.y,
         speed: monster.def.speed,
@@ -765,6 +772,9 @@ export class BattleScene extends BaseScene {
     if (skill?.effectId) {
       const effect = data.getEffect(skill.effectId);
       if (effect?.type === "slow") monster.slowTimer = effect.duration;
+    }
+    if (skill?.hitStopDuration) {
+      monster.hitStopTimer = Math.max(monster.hitStopTimer, skill.hitStopDuration);
     }
     if (monster.hp <= 0) {
       this.killMonster(monster, true);

@@ -6,6 +6,8 @@ const assets = JSON.parse(await readFile("public/gamedata/s_asset.json", "utf8")
 const offensiveTypes = new Set(["projectile", "melee", "aoe", "dot"]);
 const carrotSkillIds = new Set([211, 212, 213]);
 const wheatSkillIds = new Set([221, 222, 223]);
+const chiliSkillIds = new Set([241, 242, 243]);
+const cabbageSkillIds = new Set([251, 252]);
 
 for (const skill of skills) {
   if (offensiveTypes.has(skill.type)) {
@@ -18,7 +20,11 @@ for (const skill of skills) {
       ? "hit_carrot_split"
       : wheatSkillIds.has(skill.id)
         ? "hit_wheat_stuck"
-        : "hit_tomato_burst";
+        : chiliSkillIds.has(skill.id)
+          ? "hit_chili_burst"
+          : cabbageSkillIds.has(skill.id)
+            ? "hit_cabbage_burst"
+            : "hit_tomato_burst";
     if (skill.projectileAnimKey !== expectedProjectile) {
       throw new Error(`Skill ${skill.id} projectile animation should be ${expectedProjectile}`);
     }
@@ -32,6 +38,7 @@ for (const skill of skills) {
     if (wheatSkillIds.has(skill.id)) {
       if (skill.projectileRotateToTarget !== true) throw new Error(`Wheat skill ${skill.id} must rotate projectile toward target`);
       if (skill.hitUseProjectileRotation !== true) throw new Error(`Wheat skill ${skill.id} must keep projectile angle on hit`);
+      if (skill.hitStopDuration !== 0.5) throw new Error(`Wheat skill ${skill.id} must stop hit monsters for 0.5 seconds`);
     }
     if (!(skill.speed > 0)) throw new Error(`Skill ${skill.id} projectile speed must be greater than 0`);
   } else if (skill.projectileAnimKey || skill.hitAnimKey) {
@@ -43,7 +50,9 @@ const expectedAnimations = [
   { key: "projectile_tomato_spin", loop: true, frames: 8, scale: 1 },
   { key: "projectile_carrot_spin", loop: true, frames: 8, scale: 1, fps: 22.4 },
   { key: "projectile_wheat_arrow", loop: true, frames: 8, scale: 0.78, fps: 18 },
-  { key: "hit_tomato_burst", loop: false, frames: 8, scale: 0.6 },
+  { key: "hit_tomato_burst", loop: false, frames: 8, scale: 1 },
+  { key: "hit_chili_burst", loop: false, frames: 8, scale: 1 },
+  { key: "hit_cabbage_burst", loop: false, frames: 8, scale: 1 },
   { key: "hit_carrot_split", loop: false, frames: 8, scale: 0.68 },
   { key: "hit_wheat_stuck", loop: false, frames: 8, scale: 0.78 },
 ];

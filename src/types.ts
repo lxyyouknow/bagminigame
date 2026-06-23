@@ -77,6 +77,7 @@ export interface SkillDef {
   hitAnimKey?: string;
   projectileRotateToTarget?: boolean;
   hitUseProjectileRotation?: boolean;
+  hitStopDuration?: number;
   impactSpinTurns?: number;
   impactSpinDuration?: number;
 }
@@ -317,6 +318,7 @@ export interface MonsterRuntime {
   x: number;
   y: number;
   slowTimer: number;
+  hitStopTimer: number;
   attackCooldown: number;
   dead: boolean;
   animationKey?: string;
