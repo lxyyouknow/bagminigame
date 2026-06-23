@@ -1,6 +1,22 @@
 {
   "key": "projectile_wheat_arrow",
+  "source": "public/game-assets/source/projectile-wheat-arrow-new-20260624/new_1.png",
+  "sourceOriginal": "tmp/new_1.png",
+  "sourceSize": [
+    1024,
+    1024
+  ],
+  "sourceAlphaBBox": [
+    410,
+    75,
+    613,
+    950
+  ],
+  "frameWidth": 192,
+  "frameHeight": 192,
   "frames": 8,
   "fps": 18,
-  "style": "current wheat icon head flipped 180 degrees from previous version; straight flat stalk end"
+  "direction": "left_base_after_20260624_180_fix",
+  "rotateToTarget": true,
+  "style": "new wheat projectile art; base frame rotated 180 degrees from previous generated direction; static 8-frame loop"
 }

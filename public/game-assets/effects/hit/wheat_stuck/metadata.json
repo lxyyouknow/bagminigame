@@ -1,9 +1,23 @@
 {
   "key": "hit_wheat_stuck",
+  "source": "public/game-assets/source/projectile-wheat-arrow-new-20260624/new_1.png",
+  "sourceOriginal": "tmp/new_1.png",
+  "sourceSize": [
+    1024,
+    1024
+  ],
+  "sourceAlphaBBox": [
+    410,
+    75,
+    613,
+    950
+  ],
+  "frameWidth": 192,
+  "frameHeight": 192,
   "frames": 8,
   "fps": 18,
   "hitHoldFrame": 7,
-  "hitHoldDuration": 1,
+  "hitHoldDuration": 0.5,
   "hitFadeDuration": 0.35,
-  "style": "current wheat icon head flipped 180 degrees from previous version with tomato-like golden burst"
+  "style": "new wheat art replaces old landing/shake effect; short impact shake using only tmp/new_1.png-derived frames"
 }
