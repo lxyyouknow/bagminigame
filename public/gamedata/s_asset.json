@@ -9,13 +9,13 @@
 
   { "key": "ui_button_basic", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "" },
   { "key": "ui_button_yellow", "type": "image", "url": "/game-assets/ui/button-wood-main.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
-  { "key": "ui_button_blue", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
-  { "key": "ui_button_green", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
+  { "key": "ui_button_blue", "type": "image", "url": "/game-assets/ui/botton/botton_blue.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
+  { "key": "ui_button_green", "type": "image", "url": "/game-assets/ui/botton/botton_green.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
   { "key": "ui_button_white", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
 
-  { "key": "ui_res_energy", "type": "image", "url": "/game-assets/ui/icon-va.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_res_ticket", "type": "image", "url": "/game-assets/ui/icon-key.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_res_coin", "type": "image", "url": "/game-assets/ui/icon-coin.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_res_energy", "type": "image", "url": "/game-assets/ui/icon/icon-va.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_res_ticket", "type": "image", "url": "/game-assets/ui/icon/icon-key.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
+  { "key": "ui_res_coin", "type": "image", "url": "/game-assets/ui/icon/icon-coin.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
   { "key": "ui_side_minigame", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
   { "key": "ui_side_game_circle", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
   { "key": "ui_rogue_option", "type": "image", "url": "", "preloadGroup": "battle", "fallbackKey": "placeholder_icon" },

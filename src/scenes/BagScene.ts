@@ -2,7 +2,7 @@ import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, ItemShapeDef, LevelDef, PlacedItem } from "../types";
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
-import { addImageOrFallback, createItemShapeView, drawGrassBg, screenPoint, text, button, weightedPick, color, spriteFromAsset, spriteFromUi } from "../utils/display";
+import { addImageOrFallback, createItemShapeView, drawGrassBg, screenPoint, text, button, glossyButton, weightedPick, color, spriteFromAsset, spriteFromUi } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import {
   findNearestDragTarget,
@@ -500,8 +500,8 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "背包底部开始战斗按钮",
     });
-    const refresh = button(adRefreshLabel, refreshLayout.width, refreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2());
-    const expand = button(goldRefreshLabel, expandLayout.width, expandLayout.height, 0x32a0e6, () => this.refreshCandidatesByGold());
+    const refresh = glossyButton(adRefreshLabel, refreshLayout.width, refreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2(), refreshLayout.fontSize ?? 16, 0.95);
+    const expand = glossyButton(goldRefreshLabel, expandLayout.width, expandLayout.height, 0x33bfff, () => this.refreshCandidatesByGold(), expandLayout.fontSize ?? 16, 0.95);
     const start = button(`开始第${this.runSession?.currentWave ?? this.state.currentWave ?? 1}波`, startLayout.width, startLayout.height, 0xffb33d, () => this.tryStartBattle());
     const refreshPos = resolveUiLayoutPosition(refreshLayout, w, h);
     const expandRect = resolveUiLayoutRect(expandLayout, w, h);

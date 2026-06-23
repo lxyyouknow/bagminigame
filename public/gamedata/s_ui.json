@@ -6,7 +6,7 @@
   { "key": "button_white", "assetKey": "ui_button_white", "desc": "白色左右切换按钮底图", "defaultWidth": 54, "defaultHeight": 64 },
 
   { "key": "resource_energy_icon", "assetKey": "ui_res_energy", "desc": "主界面体力/能量图标", "defaultWidth": 38, "defaultHeight": 38 },
-  { "key": "resource_ticket_icon", "assetKey": "ui_res_ticket", "desc": "主界面门票/火箭道具图标", "defaultWidth": 38, "defaultHeight": 38 },
+  { "key": "resource_ticket_icon", "assetKey": "ui_res_ticket", "desc": "主界面钥匙道具图标", "defaultWidth": 38, "defaultHeight": 38 },
   { "key": "resource_coin_icon", "assetKey": "ui_res_coin", "desc": "主界面金币/星币图标", "defaultWidth": 38, "defaultHeight": 38 },
   { "key": "side_minigame_icon", "assetKey": "ui_side_minigame", "desc": "主界面右侧小游戏入口图标", "defaultWidth": 52, "defaultHeight": 52 },
   { "key": "side_game_circle_icon", "assetKey": "ui_side_game_circle", "desc": "主界面右侧游戏圈入口图标", "defaultWidth": 52, "defaultHeight": 52 },

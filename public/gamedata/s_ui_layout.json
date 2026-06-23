@@ -28,9 +28,9 @@
   { "scene": "bag", "key": "board", "anchor": "topCenter", "x": 0, "y": 164, "width": 644, "height": 644, "scale": 120, "visible": true, "desc": "背包棋盘，scale 为单格目标尺寸，位置由代码按水平居中、垂直中心上移 20% 适配" },
   { "scene": "bag", "key": "hint", "anchor": "topCenter", "x": 0, "y": 42, "width": 340, "height": 28, "fontSize": 14, "visible": true, "desc": "背包棋盘下方提示，y 相对棋盘底部" },
   { "scene": "bag", "key": "candidates", "anchor": "bottomCenter", "x": 0, "y": -405, "width": 120, "height": 120, "gap": 24, "fontSize": 16, "visible": true, "desc": "背包备战区，width/height 为单格尺寸，武器按自身占格大小显示" },
-  { "scene": "bag", "key": "action_refresh", "anchor": "bottomLeft", "x": 20, "y": -58, "width": 122, "height": 42, "fontSize": 16, "visible": true, "desc": "背包底部刷新按钮" },
-  { "scene": "bag", "key": "action_expand", "anchor": "bottomCenter", "x": 0, "y": -58, "width": 122, "height": 42, "fontSize": 16, "visible": true, "desc": "背包底部扩格按钮" },
-  { "scene": "bag", "key": "action_start", "anchor": "bottomRight", "x": -142, "y": -61, "width": 122, "height": 48, "fontSize": 16, "visible": true, "desc": "背包底部开始战斗按钮" },
+  { "scene": "bag", "key": "action_refresh", "anchor": "bottomLeft", "x": 20, "y": -120, "width": 230, "height": 101, "fontSize": 16, "visible": true, "desc": "背包底部刷新按钮" },
+  { "scene": "bag", "key": "action_expand", "anchor": "bottomCenter", "x": 0, "y": -120, "width": 230, "height": 101, "fontSize": 16, "visible": true, "desc": "背包底部扩格按钮" },
+  { "scene": "bag", "key": "action_start", "anchor": "bottomRight", "x": -142, "y": -120, "width": 230, "height": 101, "fontSize": 16, "visible": true, "desc": "背包底部开始战斗按钮" },
   { "scene": "bag", "key": "toast", "anchor": "topCenter", "x": 0, "y": 132, "width": 300, "height": 42, "fontSize": 18, "visible": true, "desc": "背包提示气泡" },
 
   { "scene": "battle", "key": "pause_button", "anchor": "topLeft", "x": 18, "y": 20, "width": 48, "height": 48, "fontSize": 16, "visible": true, "desc": "战斗左上暂停按钮" },
