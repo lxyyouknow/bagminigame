@@ -1,0 +1,75 @@
+{
+  "frames": {
+    "031.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 160,
+        "h": 296
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 186,
+        "y": 60,
+        "w": 160,
+        "h": 296
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 512
+      }
+    },
+    "032.png": {
+      "frame": {
+        "x": 168,
+        "y": 0,
+        "w": 166,
+        "h": 290
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 183,
+        "y": 66,
+        "w": 166,
+        "h": 290
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 512
+      }
+    },
+    "033.png": {
+      "frame": {
+        "x": 336,
+        "y": 0,
+        "w": 166,
+        "h": 286
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 184,
+        "y": 70,
+        "w": 166,
+        "h": 286
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 512
+      }
+    }
+  },
+  "meta": {
+    "app": "FramePacker",
+    "version": "1.0",
+    "image": "spritesheet_11.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 502,
+      "h": 327
+    },
+    "scale": "1"
+  }
+}

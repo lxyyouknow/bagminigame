@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>frames</key>
+	<dict>
+		<key>031.png</key>
+		<dict>
+			<key>aliases</key>
+			<array/>
+			<key>spriteOffset</key>
+			<string>{10,48}</string>
+			<key>spriteSize</key>
+			<string>{160,296}</string>
+			<key>spriteSourceSize</key>
+			<string>{512,512}</string>
+			<key>textureRect</key>
+			<string>{{0,0},{160,296}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+		<key>032.png</key>
+		<dict>
+			<key>aliases</key>
+			<array/>
+			<key>spriteOffset</key>
+			<string>{10,45}</string>
+			<key>spriteSize</key>
+			<string>{166,290}</string>
+			<key>spriteSourceSize</key>
+			<string>{512,512}</string>
+			<key>textureRect</key>
+			<string>{{168,0},{166,290}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+		<key>033.png</key>
+		<dict>
+			<key>aliases</key>
+			<array/>
+			<key>spriteOffset</key>
+			<string>{11,43}</string>
+			<key>spriteSize</key>
+			<string>{166,286}</string>
+			<key>spriteSourceSize</key>
+			<string>{512,512}</string>
+			<key>textureRect</key>
+			<string>{{336,0},{166,286}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>metadata</key>
+	<dict>
+		<key>format</key>
+		<integer>3</integer>
+		<key>pixelFormat</key>
+		<string>RGBA8888</string>
+		<key>realTextureFileName</key>
+		<string>spritesheet_11.png</string>
+		<key>size</key>
+		<string>{502,327}</string>
+		<key>textureFileName</key>
+		<string>spritesheet_11.png</string>
+	</dict>
+</dict>
+</plist>

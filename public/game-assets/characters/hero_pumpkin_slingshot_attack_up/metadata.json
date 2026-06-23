@@ -1,0 +1,17 @@
+{
+  "name": "hero_pumpkin_slingshot_attack_up",
+  "source": "public\\game-assets\\source\\hero-pumpkin-slingshot-attack-up-video-20260623-221405",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "character": "pumpkin_slingshot_guardian",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 48,
+  "fps": 18,
+  "direction": "up",
+  "view": "top_down_from_bottom",
+  "anchorX": 0.5,
+  "anchorY": 0.5,
+  "scale": 1,
+  "hitFrame": 30,
+  "usage": "南瓜弹弓守卫主角攻击动画；由 tmp/video-frames-20260623-221405_sheet 原始图集复制留档后导入，源图不改写"
+}
