@@ -65,7 +65,7 @@ export function button(label: string, width: number, height: number, bg: number,
   return c;
 }
 
-export function glossyButton(label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20, pressScale = 1): Container {
+export function uiButton(uiKey: string, label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20, pressScale?: number): Container {
   const c = new Container();
   c.eventMode = "static";
   c.cursor = "pointer";
@@ -73,8 +73,7 @@ export function glossyButton(label: string, width: number, height: number, bg: n
   const content = new Container();
   content.pivot.set(width / 2, height / 2);
   content.position.set(width / 2, height / 2);
-  const skinKey = bg === 0xffc23d || bg === 0xffb33d || bg === 0xffe05a ? "button_yellow" : bg === 0x2ebaf0 || bg === 0x33bfff ? "button_blue" : bg === 0x33d7ad || bg === 0x28c9b0 ? "button_green" : "button_white";
-  const skin = spriteFromUi(skinKey, width, height);
+  const skin = spriteFromUi(uiKey, width, height);
   if (skin) {
     content.addChild(skin);
   } else {
@@ -92,10 +91,11 @@ export function glossyButton(label: string, width: number, height: number, bg: n
   content.addChild(t);
   c.addChild(content);
   let pressed = false;
+  const downScale = pressScale ?? data.getUiSkin(uiKey)?.pressScale ?? 1;
   c.on("pointerdown", (event) => {
     event.stopPropagation();
     pressed = true;
-    content.scale.set(pressScale);
+    content.scale.set(downScale);
     audio.playSfxEvent("ui_click");
   });
   c.on("pointerup", (event) => {
@@ -114,6 +114,11 @@ export function glossyButton(label: string, width: number, height: number, bg: n
     content.scale.set(1);
   });
   return c;
+}
+
+export function glossyButton(label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20, pressScale?: number): Container {
+  const skinKey = bg === 0xffc23d || bg === 0xffb33d || bg === 0xffe05a ? "button_yellow" : bg === 0x2ebaf0 || bg === 0x33bfff ? "button_blue" : bg === 0x33d7ad || bg === 0x28c9b0 ? "button_green" : "button_white";
+  return uiButton(skinKey, label, width, height, bg, onTap, fontSize, pressScale);
 }
 
 export function iconButton(label: string, bg: number, onTap: () => void): Container {

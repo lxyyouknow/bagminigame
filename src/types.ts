@@ -214,6 +214,7 @@ export interface UiSkinDef {
   desc: string;
   defaultWidth: number;
   defaultHeight: number;
+  pressScale?: number;
 }
 
 export type UiLayoutAnchor =
