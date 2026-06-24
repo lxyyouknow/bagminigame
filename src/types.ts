@@ -1,4 +1,4 @@
-import type { Container } from "pixi.js";
+import type { Container, Graphics } from "pixi.js";
 
 export type ThemeName = "green" | "purple" | "steel";
 
@@ -21,6 +21,7 @@ export interface LevelDef {
   winWave: number;
   mapAssetKey?: string;
   lockedMapAssetKey?: string;
+  battleFieldKey?: string;
   entryCostResource?: "dynamite" | "coin" | "energy";
   entryCostAmount?: number;
   firstPassRewardCoin?: number;
@@ -104,6 +105,7 @@ export interface MonsterDef {
   radius: number;
   color: string;
   boss: boolean;
+  layerType?: "ground" | "flying" | "boss";
   runAnimKey?: string;
   attackAnimKey?: string;
   deathAnimKey?: string;
@@ -124,6 +126,26 @@ export interface BattleTuningDef {
   monsterGoldMul: number;
   monsterExpMul: number;
   waveRewardGoldMul: number;
+}
+
+export interface BattleFieldDef {
+  key: string;
+  name: string;
+  bgAssetKey: string;
+  fenceAssetKey: string;
+  fenceForegroundAssetKey?: string;
+  fenceForegroundY?: number;
+  fenceCoversMonsters?: boolean;
+  baseAssetKey: string;
+  monsterContactMode: "line" | "fenceForeground";
+  monsterContactY: number;
+  monsterContactOffsetY?: number;
+  baseHitFxY: number;
+  heroY: number;
+  hpBarY: number;
+  monsterAttackHitFrame?: number;
+  monsterAttackHitTime?: number;
+  desc: string;
 }
 
 export interface ResolvedWaveTuning {
@@ -317,6 +339,7 @@ export interface MonsterRuntime {
   uid: number;
   def: MonsterDef;
   view: Container;
+  hpBarFill?: Graphics;
   hp: number;
   maxHp: number;
   x: number;
@@ -349,7 +372,9 @@ export interface ProjectileRuntime {
 export interface FloatingRuntime {
   view: Container;
   ttl: number;
+  maxTtl?: number;
   vy: number;
+  popScale?: number;
 }
 
 export interface SpinDamageRuntime {

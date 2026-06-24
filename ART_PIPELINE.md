@@ -361,6 +361,9 @@ public/game-assets/enemies/slime-death-sheet.png
 - `runAnimKey`：移动时循环播放。
 - `attackAnimKey`：贴近基地后切换；留空时继续播放移动动作。
 - `deathAnimKey`：被击杀后播放非循环死亡动画，播完最后一帧短暂渐隐并释放节点；留空时保持立即销毁回退。
+- 怪物贴近/攻击的位置由 `public/gamedata/s_battle_field.json` 决定，默认 `monsterContactMode=fenceForeground`，跟随栏杆前景图实际位置，再用 `monsterContactOffsetY` 微调；不要默认写固定 `monsterContactY`。下方基地、栏杆、地面风格换皮时优先调这张表。
+- 栏杆遮挡层由 `s_battle_field.fenceForegroundAssetKey` 控制，运行时放在怪物层之上。怪物到栏杆处攻击时，视觉上应该被栏杆前景压住，而不是踩在栏杆上面。
+- `s_battle_field` 已预留 `monsterAttackHitFrame` / `monsterAttackHitTime`，后续接攻击动作时用于让基地扣血对齐怪物挥击或咬栏杆的关键帧。
 
 怪物替换建议：
 

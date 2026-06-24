@@ -9,6 +9,8 @@ import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
+import { getDamageNumberFeedback } from "./battleDamageFeedbackRules";
+import { resolveMonsterContactY } from "./battleContactLineRules";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
 import { isWaveCombatSettled } from "./battleWaveClearRules";
 import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, type WaveSpawnEvent } from "./battleWaveRules";
@@ -19,6 +21,9 @@ import { chooseMonsterSpawnPosition } from "./monsterSpawnRules";
 import { AnimationPlaybackController } from "./animationPlaybackController";
 import { getImpactAnimationKey, shouldUseVisualProjectile, usesAreaImpact } from "./skillVisualRules";
 import { chooseBalancedTarget, getInitialWeaponCooldown } from "./weaponAttackRules";
+import { shouldOpenRogueOptionsOnLevelUp } from "./rogueTriggerRules";
+import { getMonsterHpFillWidth } from "./monsterHpBarRules";
+import { getMonsterDepthZIndex, separateMonsterCrowd } from "./monsterDepthRules";
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
 
@@ -90,9 +95,11 @@ export class BattleScene extends BaseScene {
   private battleLayer = new Container();
   private groundFxLayer = new Container();
   private monsterLayer = new Container();
+  private fieldForegroundLayer = new Container();
   private projectileLayer = new Container();
   private hitFxLayer = new Container();
   private deathFxLayer = new Container();
+  private damageTextLayer = new Container();
   private heroLayer = new Container();
   private uiLayer = new Container();
   private modalWindow: GameWindow | undefined;
@@ -110,6 +117,7 @@ export class BattleScene extends BaseScene {
     super();
     audio.preloadGroups(["battle"]);
     audio.playMusicEvent("music_battle");
+    this.monsterLayer.sortableChildren = true;
     this.tuning = data.getBattleTuning(level.battleTuningId);
     this.baseMaxHp = getBaseMaxHp(level, this.tuning);
     const session = options.session;
@@ -127,7 +135,7 @@ export class BattleScene extends BaseScene {
     this.initializeWeaponCooldowns();
     this.buildSpawnQueue();
     analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
-    this.container.addChild(this.battleLayer, this.groundFxLayer, this.monsterLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.uiLayer);
+    this.container.addChild(this.battleLayer, this.groundFxLayer, this.monsterLayer, this.fieldForegroundLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.damageTextLayer, this.uiLayer);
     this.drawStatic();
   }
 
@@ -378,15 +386,30 @@ export class BattleScene extends BaseScene {
     skin.position.set((w - skinW) / 2, h - skinH);
     this.battleLayer.addChild(skin);
 
-    const lineTexture = assetManager.texture("battle_divider_line");
+    const field = data.getBattleField(this.level.battleFieldKey);
+    const lineAssetKey = field.fenceForegroundAssetKey || field.fenceAssetKey || "battle_divider_line";
+    const lineTexture = assetManager.texture(lineAssetKey);
     if (!lineTexture) return;
     const lineScale = w / lineTexture.width;
     const lineW = lineTexture.width * lineScale;
     const lineH = lineTexture.height * lineScale;
-    const line = spriteFromAsset("battle_divider_line", lineW, lineH);
+    const line = spriteFromAsset(lineAssetKey, lineW, lineH);
     if (!line) return;
-    line.position.set((w - lineW) / 2, skin.y - lineH);
-    this.battleLayer.addChild(line);
+    line.position.set((w - lineW) / 2, this.resolveFenceForegroundY(field));
+    const targetLayer = field.fenceCoversMonsters === false ? this.battleLayer : this.fieldForegroundLayer;
+    targetLayer.addChild(line);
+  }
+
+  private resolveFenceForegroundY(field = data.getBattleField(this.level.battleFieldKey)): number | undefined {
+    if (field.fenceForegroundY && field.fenceForegroundY > 0) return field.fenceForegroundY;
+    const skinTexture = assetManager.texture("battle_friendly_area_skin");
+    const fenceAssetKey = field.fenceForegroundAssetKey || field.fenceAssetKey || "battle_divider_line";
+    const fenceTexture = assetManager.texture(fenceAssetKey);
+    if (!skinTexture || !fenceTexture) return undefined;
+    const skinScale = app.screen.width / skinTexture.width;
+    const fenceScale = app.screen.width / fenceTexture.width;
+    const skinY = app.screen.height - skinTexture.height * skinScale;
+    return Math.round(skinY - fenceTexture.height * fenceScale);
   }
 
   private friendlyAreaCenterY(fallbackY: number): number {
@@ -456,9 +479,10 @@ export class BattleScene extends BaseScene {
     );
     const animationKey = getMonsterAnimationKey(def, false);
     const view = this.createMonsterView(def, animationKey);
+    const hpBarFill = def.boss ? this.addMonsterHpBar(view, def) : undefined;
     view.position.set(x, y);
     this.monsterLayer.addChild(view);
-    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, deathVisualDone: false, animationKey });
+    this.monsters.push({ uid: nextUid(), def, view, hpBarFill, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, deathVisualDone: false, animationKey });
   }
 
   private createMonsterView(def: MonsterDef, animationKey?: string): Container {
@@ -475,11 +499,37 @@ export class BattleScene extends BaseScene {
     body.circle(-r * 0.28, -r * 0.12, Math.max(3, r * 0.13)).fill({ color: 0xffffff });
     body.circle(r * 0.28, -r * 0.12, Math.max(3, r * 0.13)).fill({ color: 0xffffff });
     body.roundRect(-r * 0.28, r * 0.22, r * 0.56, 4, 2).fill({ color: 0x1b2028 });
-    if (def.boss) {
-      body.roundRect(-r * 0.9, -r * 1.2, r * 1.8, 10, 5).fill({ color: 0xffd25a });
-    }
     c.addChild(body);
     return c;
+  }
+
+  private addMonsterHpBar(view: Container, def: MonsterDef): Graphics {
+    const r = def.radius;
+    const barWidth = Math.max(72, r * 2.8);
+    const barHeight = 12;
+    const barX = -barWidth / 2;
+    const barY = -r * 1.55;
+    const track = new Graphics();
+    track.roundRect(barX, barY, barWidth, barHeight, 6).fill({ color: 0x1b2028, alpha: 0.9 });
+    track.roundRect(barX + 2, barY + 2, barWidth - 4, barHeight - 4, 4).fill({ color: 0x4a1f2b, alpha: 0.95 });
+    const fill = new Graphics();
+    view.addChild(track, fill);
+    this.redrawMonsterHpBar({ def, hp: def.hp, maxHp: def.hp, hpBarFill: fill } as MonsterRuntime);
+    return fill;
+  }
+
+  private redrawMonsterHpBar(monster: MonsterRuntime): void {
+    if (!monster.hpBarFill) return;
+    const r = monster.def.radius;
+    const barWidth = Math.max(72, r * 2.8);
+    const barHeight = 12;
+    const innerWidth = barWidth - 4;
+    const fillWidth = getMonsterHpFillWidth(monster.hp, monster.maxHp, innerWidth);
+    monster.hpBarFill.clear();
+    if (fillWidth <= 0) return;
+    monster.hpBarFill
+      .roundRect(-barWidth / 2 + 2, -r * 1.55 + 2, fillWidth, barHeight - 4, 4)
+      .fill({ color: 0xffd25a });
   }
 
   private updateWeapons(dt: number): void {
@@ -617,6 +667,28 @@ export class BattleScene extends BaseScene {
         this.addFloating(monster.x, monster.y - 24, `-${Math.round(contact.damage)}`, 0xff5b5b);
       }
     }
+    this.separateAndSortMonsters();
+  }
+
+  private separateAndSortMonsters(): void {
+    const alive = this.monsters.filter((monster) => !monster.dead);
+    const points = alive.map((monster) => ({
+      uid: monster.uid,
+      x: monster.x,
+      y: monster.y,
+      radius: monster.def.radius,
+    }));
+    separateMonsterCrowd(points, app.screen.width);
+    const pointsByUid = new Map(points.map((point) => [point.uid, point]));
+    for (const monster of alive) {
+      const point = pointsByUid.get(monster.uid);
+      if (!point) continue;
+      monster.x = point.x;
+      monster.y = Math.min(this.baseContactY(monster), point.y);
+      monster.view.position.set(monster.x, monster.y + Math.sin(this.time * 8 + monster.uid) * 2);
+      monster.view.zIndex = getMonsterDepthZIndex(monster.y, monster.uid, monster.def.layerType);
+    }
+    this.monsterLayer.sortChildren();
   }
 
   private updateMonsterAnimation(monster: MonsterRuntime, contacted: boolean): void {
@@ -631,42 +703,15 @@ export class BattleScene extends BaseScene {
   }
 
   private baseContactY(monster: MonsterRuntime): number {
-    const w = app.screen.width;
     const h = app.screen.height;
-    const equipLayout = this.layout("equip_bar", {
-      scene: "battle",
-      key: "equip_bar",
-      anchor: "bottomCenter",
-      x: 0,
-      y: -18,
-      width: Math.min(w - 28, 366),
-      height: 112,
-      gap: 8,
-      iconSize: 42,
-      visible: true,
-      desc: "战斗底部横向武器槽面板",
+    const field = data.getBattleField(this.level.battleFieldKey);
+    return resolveMonsterContactY({
+      screenHeight: h,
+      configuredY: field.monsterContactY,
+      fenceForegroundY: field.monsterContactMode === "fenceForeground" ? this.resolveFenceForegroundY(field) : undefined,
+      monsterContactOffsetY: field.monsterContactOffsetY,
+      monsterRadius: monster.def.radius,
     });
-    const equipGap = equipLayout.gap ?? 8;
-    const equipSlotSize = this.assetDisplaySize("battle_weapon_slot_box", 50) * 0.5;
-    const equipCount = Math.min(this.bag.placed.length, 10);
-    const equipColumns = Math.max(1, Math.min(6, equipCount || 1));
-    const equipPanelWidth = Math.min(w - 28, equipColumns * equipSlotSize + Math.max(0, equipColumns - 1) * equipGap + 24);
-    const equipList = computeBattleEquipListLayout(equipCount, equipPanelWidth - 24, equipSlotSize, equipGap);
-    const equipPanelHeight = Math.max(equipLayout.height, equipList.panelHeight + 18);
-    const baseLayout = this.layout("base_panel", {
-      scene: "battle",
-      key: "base_panel",
-      anchor: "bottomCenter",
-      x: 0,
-      y: -132,
-      width: Math.min(w - 40, 360),
-      height: 128,
-      fontSize: 16,
-      visible: true,
-      desc: "战斗底部基地区域",
-    });
-    const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipPanelWidth, equipPanelHeight, equipLayout.y);
-    return hud.base.y + 34 - monster.def.radius * 0.18;
   }
 
   private updateProjectiles(dt: number): void {
@@ -798,7 +843,9 @@ export class BattleScene extends BaseScene {
     audio.playSfxEvent("battle_hit");
     const damage = Math.max(1, amount - monster.def.armor);
     monster.hp -= damage;
-    this.addFloating(monster.x, monster.y - 26, Math.round(damage).toString(), 0xffffff);
+    this.redrawMonsterHpBar(monster);
+    const killed = monster.hp <= 0;
+    this.addDamageFloating(monster.x, monster.y - 36, damage, killed);
     if (skill?.effectId) {
       const effect = data.getEffect(skill.effectId);
       if (effect?.type === "slow") monster.slowTimer = effect.duration;
@@ -806,7 +853,6 @@ export class BattleScene extends BaseScene {
     if (skill?.hitStopDuration) {
       monster.hitStopTimer = Math.max(monster.hitStopTimer, skill.hitStopDuration);
     }
-    const killed = monster.hp <= 0;
     if (killed) {
       this.killMonster(monster, true);
     }
@@ -854,8 +900,11 @@ export class BattleScene extends BaseScene {
       this.exp -= need;
       this.levelNo += 1;
       this.syncSessionProgress();
-      audio.playSfxEvent("battle_level_up");
-      this.showRogueOptions();
+      // 买量视频阶段先关闭升级三选一触发，避免玩家被阅读选择打断。
+      if (shouldOpenRogueOptionsOnLevelUp()) {
+        audio.playSfxEvent("battle_level_up");
+        this.showRogueOptions();
+      }
     }
   }
 
@@ -909,7 +958,14 @@ export class BattleScene extends BaseScene {
     for (const item of [...this.floating]) {
       item.ttl -= dt;
       item.view.y += item.vy * dt;
-      item.view.alpha = Math.max(0, item.ttl / 0.7);
+      const maxTtl = item.maxTtl ?? 0.7;
+      const life = Math.max(0, item.ttl / maxTtl);
+      item.view.alpha = Math.min(1, life * 1.35);
+      if (item.popScale !== undefined) {
+        const progress = 1 - life;
+        const scale = 1 + (item.popScale - 1) * Math.max(0, 1 - progress * 4);
+        item.view.scale.set(scale);
+      }
       if (item.ttl <= 0) {
         item.view.destroy({ children: true } as DestroyOptions);
         this.floating = this.floating.filter((f) => f !== item);
@@ -1072,6 +1128,46 @@ export class BattleScene extends BaseScene {
     this.floating.push({ view: t, ttl: 0.75, vy: -34 });
   }
 
+  private addDamageFloating(x: number, y: number, damage: number, killed: boolean): void {
+    const feedback = getDamageNumberFeedback(damage, killed);
+    const view = this.createOutlinedText(feedback.label, feedback.fontSize, feedback.fill);
+    view.position.set(x, y);
+    this.damageTextLayer.addChild(view);
+    this.floating.push({
+      view,
+      ttl: feedback.ttl,
+      maxTtl: feedback.ttl,
+      vy: feedback.vy,
+      popScale: feedback.popScale,
+    });
+  }
+
+  private createOutlinedText(label: string, fontSize: number, fill: number): Container {
+    const c = new Container();
+    const fillHex = `#${fill.toString(16).padStart(6, "0")}`;
+    const offsets = [
+      [-2, 0],
+      [2, 0],
+      [0, -2],
+      [0, 2],
+      [-1.4, -1.4],
+      [1.4, -1.4],
+      [-1.4, 1.4],
+      [1.4, 1.4],
+    ];
+    for (const [dx, dy] of offsets) {
+      const outline = text(label, fontSize, "#5b1a12", "700");
+      outline.anchor.set(0.5);
+      outline.position.set(dx, dy);
+      c.addChild(outline);
+    }
+    const main = text(label, fontSize, fillHex, "700");
+    main.anchor.set(0.5);
+    main.position.set(0, 0);
+    c.addChild(main);
+    return c;
+  }
+
   private layout(key: string, defaults: Parameters<typeof getUiLayout>[3]) {
     return getUiLayout(data, "battle", key, defaults);
   }
@@ -1183,7 +1279,7 @@ export class BattleScene extends BaseScene {
   private setBattlePaused(paused: boolean): void {
     this.paused = paused;
     if (paused) {
-      this.animationPlayback.pause([this.battleLayer, this.groundFxLayer, this.monsterLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.heroLayer]);
+      this.animationPlayback.pause([this.battleLayer, this.groundFxLayer, this.monsterLayer, this.fieldForegroundLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.damageTextLayer, this.heroLayer]);
     } else {
       this.animationPlayback.resume();
     }

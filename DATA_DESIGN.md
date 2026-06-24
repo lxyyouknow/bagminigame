@@ -17,6 +17,7 @@ public/gamedata/
 - `s_level.json`：关卡主表。
 - `s_wave.json`：波次刷怪表。
 - `s_monster.json`：怪物表。
+- `s_battle_field.json`：战斗场景皮肤表，管理背景、栏杆/基地资源、怪物攻击接触线和后续攻击命中帧预留。
 - `s_battle_tuning.json`：战斗难度和人物/基地成长表。
 - `s_item.json`：背包武器/物品表。
 - `s_item_shape.json`：背包形状表。
@@ -84,6 +85,53 @@ public/gamedata/s_ui_layout.json
 - 改点击行为、打开新系统、扣资源、跳转：才改 `src/scenes/WndMain.ts` 等功能代码。
 - 后续策划提示词只要是“界面元素摆放不满意”，默认先查 `s_ui_layout.json` 的 `scene/key/desc`，不要全局搜索代码。
 
+注意：怪物走到哪里停下、在哪里开始攻击栏杆，属于战斗场景皮肤配置，不属于 UI 布局。不要把怪物接触线放回 `s_ui_layout.json`，应改 `s_battle_field.json`。
+
+## 战斗场景皮肤配置：s_battle_field
+
+路径：
+
+```text
+public/gamedata/s_battle_field.json
+```
+
+目标是把“下方战场美术结构”从 HUD/UI 中拆出来。基地皮肤、栏杆位置、怪物停靠攻击点和后续攻击命中帧，都跟战场皮肤走，避免换基地图或血条位置时影响怪物移动逻辑。
+
+当前关卡通过 `s_level.battleFieldKey` 引用战场皮肤。默认皮肤：
+
+```json
+{
+  "key": "farm_fence_field",
+  "name": "农场木栏杆战场",
+  "fenceForegroundAssetKey": "battle_divider_line",
+  "fenceCoversMonsters": true,
+  "monsterContactMode": "fenceForeground",
+  "monsterContactY": 0,
+  "monsterContactOffsetY": 56,
+  "monsterAttackHitFrame": 0,
+  "monsterAttackHitTime": 0
+}
+```
+
+核心字段：
+
+- `key`：战场皮肤 key，关卡通过 `battleFieldKey` 引用。
+- `bgAssetKey`：战斗背景资源 key。
+- `fenceAssetKey`：栏杆资源 key，当前可留空，后续接正式栏杆图时使用。
+- `fenceForegroundAssetKey`：栏杆前景遮挡图资源 key。怪物走到栏杆处攻击时，栏杆应该盖在怪物上方，避免怪物像踩在栏杆上。
+- `fenceForegroundY`：栏杆前景图 Y 坐标。为 `0` 时使用当前友方区域顶部的自动位置；需要精细换皮时可配置具体 Y。
+- `fenceCoversMonsters`：是否把栏杆前景放在怪物层之上。默认应为 `true`。
+- `baseAssetKey`：基地/炮台资源 key，当前可留空。
+- `monsterContactMode`：怪物接触模式。默认用 `fenceForeground`，表示根据栏杆前景图的实际屏幕位置计算攻击线；`line` 仅用于特殊关卡强制绝对坐标。
+- `monsterContactY`：绝对 Y 坐标覆盖值。默认填 `0`，表示不使用固定坐标。不要把默认战斗写成固定 `372` 这类值，否则高屏幕会导致怪物停在中场。
+- `monsterContactOffsetY`：在栏杆前景图 Y 坐标基础上的偏移。默认 `56`，用于把怪物脚底/攻击点推到栏杆前沿附近。
+- `baseHitFxY`：后续基地受击特效的推荐 Y 坐标。
+- `heroY`：后续主角/防守者皮肤换位的推荐 Y 坐标。
+- `hpBarY`：如果未来血条也跟战场皮肤走，可从这里读取；当前 HUD 仍由 `s_ui_layout` 控制。
+- `monsterAttackHitFrame` / `monsterAttackHitTime`：预留给后续怪物攻击动作。接入攻击动画后，可让扣血点对齐挥击/咬栏杆的帧或时间。
+
+换下方美术风格时，优先新增或调整 `s_battle_field`，例如城墙、南瓜基地、农田围栏各自一条配置。不要用 `base_panel` 或血条位置反推怪物攻击点，也不要把栏杆遮挡图放到普通 HUD 层里硬盖。
+
 ## 当前 6 关定位
 
 第 1 关：`1. 失落荒野`
@@ -91,6 +139,7 @@ public/gamedata/s_ui_layout.json
 - 教学加压关。
 - 初始背包 `3x3`。
 - `winWave = 10`。
+- `battleFieldKey`：引用 `s_battle_field`，决定战斗场景皮肤、怪物停靠攻击点和后续攻击命中帧预留。
 - 当前采用“每波战斗后回背包备战”的中继流程，前几波会按 `s_wave.expandRows/expandCols` 扩充背包。
 - 武器池偏基础：弹力球、短棍、长矛、盾帽。
 - 目标是让玩家理解拖拽、放置、开始战斗、基础合成，同时第一关就有明显怪物压力。

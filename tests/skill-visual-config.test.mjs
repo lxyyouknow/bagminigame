@@ -54,12 +54,12 @@ const expectedAnimations = [
   { key: "projectile_tomato_spin", loop: true, frames: 8, scale: 1 },
   { key: "projectile_carrot_spin", loop: true, frames: 8, scale: 1, fps: 22.4 },
   { key: "projectile_wheat_arrow", loop: true, frames: 8, scale: 0.78, fps: 18 },
-  { key: "hit_tomato_burst", loop: false, frames: 8, scale: 1 },
-  { key: "hit_tomato_splash_small", loop: false, frames: 8, scale: 0.42, fps: 18 },
-  { key: "hit_chili_burst", loop: false, frames: 8, scale: 1 },
-  { key: "hit_cabbage_burst", loop: false, frames: 8, scale: 1 },
-  { key: "hit_carrot_split", loop: false, frames: 8, scale: 0.68 },
-  { key: "hit_wheat_stuck", loop: false, frames: 8, scale: 0.78 },
+  { key: "hit_tomato_burst", loop: false, frames: 8, scale: 0.7 },
+  { key: "hit_tomato_splash_small", loop: false, frames: 8, scale: 0.7, fps: 18 },
+  { key: "hit_chili_burst", loop: false, frames: 8, scale: 0.4 },
+  { key: "hit_cabbage_burst", loop: false, frames: 8, scale: 0.4 },
+  { key: "hit_carrot_split", loop: false, frames: 8, scale: 0.4 },
+  { key: "hit_wheat_stuck", loop: false, frames: 8, scale: 0.4 },
 ];
 for (const expected of expectedAnimations) {
   const animation = animations.find((row) => row.key === expected.key);

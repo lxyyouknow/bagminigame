@@ -1,19 +1,19 @@
 [
   {
     "id": 1,
-    "name": "教学耐打",
-    "desc": "第1关使用，怪物中等血量，攻击压力保持基础值",
+    "name": "买量视频快节奏",
+    "desc": "第1关买量视频版使用，压低升级干扰，提高清波奖励和爽感",
     "baseHpMul": 1,
     "baseArmorAdd": 0,
-    "expNeedBase": 14,
-    "expNeedPerLevel": 22,
-    "monsterHpMul": 0.92,
+    "expNeedBase": 999,
+    "expNeedPerLevel": 999,
+    "monsterHpMul": 0.85,
     "monsterArmorAdd": 0,
-    "monsterAttackMul": 1,
-    "monsterSpeedMul": 0.96,
-    "monsterGoldMul": 1,
-    "monsterExpMul": 1,
-    "waveRewardGoldMul": 1
+    "monsterAttackMul": 0.8,
+    "monsterSpeedMul": 1,
+    "monsterGoldMul": 1.25,
+    "monsterExpMul": 0,
+    "waveRewardGoldMul": 1.25
   },
   {
     "id": 2,

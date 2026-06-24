@@ -16,6 +16,7 @@ import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
 import { refreshWaveCandidates } from "./battleWaveRules";
 import { getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
+import { shouldShowBagTextFeedback } from "./bagTextFeedbackRules";
 
 interface Point {
   x: number;
@@ -358,11 +359,13 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "背包棋盘下方提示，y 相对棋盘底部",
     });
-    const hint = text("拖到空格放置，拖到同武器同品质上合成", hintLayout.fontSize ?? 14, "#244b3a", "700");
-    hint.anchor.set(0.5);
-    const hintPos = resolveUiLayoutPosition({ ...hintLayout, y: this.gridTop + boardH + hintLayout.y }, w, h);
-    hint.position.set(hintPos.x, hintPos.y);
-    if (hintLayout.visible) this.container.addChild(hint);
+    if (hintLayout.visible && shouldShowBagTextFeedback()) {
+      const hint = text("拖到空格放置，拖到同武器同品质上合成", hintLayout.fontSize ?? 14, "#244b3a", "700");
+      hint.anchor.set(0.5);
+      const hintPos = resolveUiLayoutPosition({ ...hintLayout, y: this.gridTop + boardH + hintLayout.y }, w, h);
+      hint.position.set(hintPos.x, hintPos.y);
+      this.container.addChild(hint);
+    }
 
     this.drawCandidateArea();
     this.drawActions(w, h);
@@ -376,7 +379,7 @@ export class BagScene extends BaseScene {
     if (waveLayout.visible) this.container.addChild(waveText);
     if (hpLayout.visible) this.container.addChild(hpText);
 
-    if (this.toast) {
+    if (this.toast && shouldShowBagTextFeedback()) {
       const toastLayout = this.layout("toast", {
         scene: "bag",
         key: "toast",
@@ -750,6 +753,7 @@ export class BagScene extends BaseScene {
 
   private addHintText(x: number, y: number, label: string, tint: number): void {
     if (!this.hintLayer) return;
+    if (!shouldShowBagTextFeedback()) return;
     const t = text(label, 15, "#ffffff", "700");
     t.anchor.set(0.5);
     t.position.set(x, Math.max(106, y));

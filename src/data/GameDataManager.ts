@@ -1,4 +1,4 @@
-import type { AnimationDef, AssetDef, AudioDef, AudioEventDef, BattleTuningDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
+import type { AnimationDef, AssetDef, AudioDef, AudioEventDef, BattleFieldDef, BattleTuningDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
 
 export class GameDataManager {
   levels: LevelDef[] = [];
@@ -8,6 +8,7 @@ export class GameDataManager {
   skills: SkillDef[] = [];
   effects: EffectDef[] = [];
   monsters: MonsterDef[] = [];
+  battleFields: BattleFieldDef[] = [];
   battleTunings: BattleTuningDef[] = [];
   waves: WaveDef[] = [];
   rogueOptions: RogueOptionDef[] = [];
@@ -29,6 +30,7 @@ export class GameDataManager {
       skills,
       effects,
       monsters,
+      battleFields,
       battleTunings,
       waves,
       rogueOptions,
@@ -48,6 +50,7 @@ export class GameDataManager {
       this.fetchTable<SkillDef>("s_skill"),
       this.fetchTable<EffectDef>("s_effect"),
       this.fetchTable<MonsterDef>("s_monster"),
+      this.fetchTable<BattleFieldDef>("s_battle_field"),
       this.fetchTable<BattleTuningDef>("s_battle_tuning"),
       this.fetchTable<WaveDef>("s_wave"),
       this.fetchTable<RogueOptionDef>("s_rogue_option"),
@@ -68,6 +71,7 @@ export class GameDataManager {
     this.skills = skills;
     this.effects = effects;
     this.monsters = monsters;
+    this.battleFields = battleFields;
     this.battleTunings = battleTunings;
     this.waves = waves;
     this.rogueOptions = rogueOptions;
@@ -107,6 +111,11 @@ export class GameDataManager {
 
   getMonster(id: number): MonsterDef {
     return this.must(this.monsters.find((row) => row.id === id), `怪物 ${id}`);
+  }
+
+  getBattleField(key: string | undefined): BattleFieldDef {
+    const fieldKey = key || "farm_fence_field";
+    return this.must(this.battleFields.find((row) => row.key === fieldKey), `战场皮肤 ${fieldKey}`);
   }
 
   getBattleTuning(id: number | undefined): BattleTuningDef {

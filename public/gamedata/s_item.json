@@ -11,7 +11,7 @@
     "projectileAssetKey": "weapon_tomato_fruit_lv1_icon",
     "skillId": 201,
     "mergeToId": 102,
-    "weight": 34,
+    "weight": 24,
     "pools": [
       101,
       102,
@@ -30,8 +30,9 @@
     "projectileAssetKey": "weapon_tomato_fruit_lv2_icon",
     "skillId": 202,
     "mergeToId": 103,
-    "weight": 8,
+    "weight": 12,
     "pools": [
+      101,
       102,
       103
     ]
@@ -65,7 +66,7 @@
     "projectileAssetKey": "weapon_carrot_fruit_lv1_icon",
     "skillId": 211,
     "mergeToId": 112,
-    "weight": 28,
+    "weight": 20,
     "pools": [
       101,
       102,
@@ -84,8 +85,9 @@
     "projectileAssetKey": "weapon_carrot_fruit_lv2_icon",
     "skillId": 212,
     "mergeToId": 113,
-    "weight": 7,
+    "weight": 10,
     "pools": [
+      101,
       102,
       103
     ]
@@ -117,7 +119,7 @@
     "iconAssetKey": "weapon_wheat_lv1_icon",
     "skillId": 221,
     "mergeToId": 122,
-    "weight": 26,
+    "weight": 20,
     "pools": [
       101,
       102,
@@ -134,8 +136,9 @@
     "iconAssetKey": "weapon_wheat_lv2_icon",
     "skillId": 222,
     "mergeToId": 123,
-    "weight": 7,
+    "weight": 10,
     "pools": [
+      101,
       102,
       103
     ]
@@ -165,7 +168,7 @@
     "iconAssetKey": "weapon_blueberry_lv1_icon",
     "skillId": 231,
     "mergeToId": 132,
-    "weight": 18,
+    "weight": 12,
     "pools": [
       101,
       102,
@@ -182,8 +185,9 @@
     "iconAssetKey": "weapon_blueberry_lv2_icon",
     "skillId": 232,
     "mergeToId": 133,
-    "weight": 6,
+    "weight": 8,
     "pools": [
+      101,
       102,
       103
     ]
@@ -213,8 +217,9 @@
     "iconAssetKey": "weapon_bomb_icon",
     "skillId": 241,
     "mergeToId": 142,
-    "weight": 18,
+    "weight": 10,
     "pools": [
+      101,
       102,
       103
     ]
@@ -229,8 +234,9 @@
     "iconAssetKey": "weapon_bomb_icon",
     "skillId": 242,
     "mergeToId": 143,
-    "weight": 6,
+    "weight": 5,
     "pools": [
+      101,
       103
     ]
   },
@@ -259,8 +265,9 @@
     "iconAssetKey": "weapon_staff_icon",
     "skillId": 251,
     "mergeToId": 152,
-    "weight": 5,
+    "weight": 4,
     "pools": [
+      101,
       103
     ]
   },

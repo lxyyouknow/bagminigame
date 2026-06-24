@@ -318,6 +318,13 @@ public/game-assets/<category>/<anim-key>/
 - 不要把多个角色、文字、水印、血条、UI 混进同一个动作图集。
 - 同一个动作允许拆成多张 `spritesheet_1/2/3`，脚本会合并排序。
 
+### 动画生成工具选择
+
+- 不默认强制使用 `Agent Sprite Forge 2d`。如果 lxy 明确要求使用该工具，再按它的格式写提示词或接入输出。
+- 普通小怪、简单弹道、简单命中特效可以尝试 Sprite Forge 这类序列帧工具，优点是出图快、结构稳定。
+- Boss、主角、复杂攻击、复杂死亡这类高要求动画，优先按“角色设计图 -> 动作分镜 -> 视频/序列帧生成 -> TexturePacker 图集 -> 导入脚本”的流程处理，不把某个生成工具写成默认优先级。
+- 文档和提示词应描述动作、方向、锚点、帧数、透明背景和导入规格，而不是绑定某一个具体生成工具。
+
 ### 导入脚本职责
 
 导入脚本不要只是复制图片，应完成下面这些工作：
@@ -499,6 +506,18 @@ game.html?animtest=poison_bat_fly_down&verify=poison-bat-1
 7. 怪物在 `s_monster.json` 配 `runAnimKey/attackAnimKey`；技能在 `s_skill.json` 配 `projectileAnimKey/hitAnimKey`；主角后续走 `s_actor_visual.json` 或 `s_hero_visual.json`。
 8. 使用 `game.html?animtest=<动画key>` 单独预览，再进入实战检查轨迹、命中点和层级。
 9. 运行对应帧 QA、`npm run test:monster-visual`、`npm run test:skill-visual`、JSON 校验和 `npm run build`。
+
+怪物攻击栏杆/基地的停靠点不放在 UI 布局里，统一走 `public/gamedata/s_battle_field.json`：
+
+- `monsterContactMode`：默认 `fenceForeground`，怪物停止点跟随栏杆前景图实际位置，适配不同屏幕高度。
+- `monsterContactY`：绝对接触线覆盖值。默认保持 `0`，只在特殊调试或特殊关卡中使用。
+- `monsterContactOffsetY`：相对栏杆前景图的纵向偏移，用来微调怪物脚底/攻击点到栏杆前沿。
+- `fenceForegroundAssetKey`：栏杆前景遮挡图，运行时层级高于怪物，保证怪物攻击栏杆时不会踩在栏杆上。
+- `fenceCoversMonsters`：是否让栏杆盖住怪物，默认保持 `true`。
+- `monsterAttackHitFrame`：后续攻击动画命中帧预留。
+- `monsterAttackHitTime`：后续攻击动画命中时间预留。
+
+这样下方基地、栏杆、地面美术换皮时，只需要切换或调整战场皮肤表，不会因为血条、装备栏或基地面板位置变化导致怪物走到错误位置。
 
 ## 运行时释放规则
 
