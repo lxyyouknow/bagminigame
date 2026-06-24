@@ -504,8 +504,131 @@ game.html?animtest=poison_bat_fly_down&verify=poison-bat-1
 
 - 弹道命中、目标提前死亡或战斗场景销毁时，立即从显示层移除并 `destroy`。
 - 命中爆炸必须 `loop=false`，在 `onComplete` 中移除并 `destroy`。
+- 怪物死亡动画必须 `loop=false`。怪物被击杀时先标记 `dead=true`，停止参与移动、碰撞和受击结算，再播放 `deathAnimKey`。
+- 死亡动画播完后停在最后一帧，执行一个很短的渐隐，例如 `0.32s`，渐隐结束后再 `removeFromParent()` 并 `destroy({ children: true })`。
+- 不要用伤害数字的 floating 队列复用死亡淡出，死亡淡出应使用独立释放队列，避免半透明初始帧或释放时机混乱。
 - 暂停战斗时，弹道和命中特效也统一暂停；继续后恢复。
 - 单帧纹理由 `AssetManager` 统一缓存和复用，不要每次攻击重新加载，也不要在单个特效结束时卸载共享纹理。
+
+## 怪物死亡动画接入实装经验
+
+2026-06-24 已接入小僵尸死亡动画 `zombie_death_down`，流程可作为后续毒蝠、精英怪和 Boss 死亡动画模板。
+
+### 资源目录
+
+```text
+原始图集：
+video-frames-20260624-125306_sheet/
+
+归档源文件：
+public/game-assets/source/zombie-death-down-video-20260624-125306/
+
+运行时资源：
+public/game-assets/enemies/zombie_death_down/
+  frames/
+    zombie-death-down-00.png
+    zombie-death-down-01.png
+    ...
+    zombie-death-down-18.png
+  zombie-death-down-sheet.png
+  zombie-death-down.gif
+  zombie-death-down-contact-sheet.jpg
+  metadata.json
+
+导入脚本：
+scripts/import-zombie-death-video-sheet.py
+```
+
+### 配置表
+
+`s_monster.json`：
+
+```json
+{
+  "id": 1,
+  "name": "小僵尸",
+  "runAnimKey": "zombie_walk_down",
+  "attackAnimKey": "",
+  "deathAnimKey": "zombie_death_down"
+}
+```
+
+`s_animation.json`：
+
+```json
+{
+  "key": "zombie_death_down",
+  "assetKey": "loose_frames",
+  "frames": [
+    "zombie_death_down_00",
+    "zombie_death_down_01",
+    "zombie_death_down_02"
+  ],
+  "fps": 12,
+  "loop": false,
+  "anchorX": 0.5,
+  "anchorY": 0.92,
+  "scale": 0.5
+}
+```
+
+`s_asset.json`：
+
+```json
+{
+  "key": "zombie_death_down_00",
+  "type": "image",
+  "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-00.png?v=zombie-death-1",
+  "preloadGroup": "battle",
+  "fallbackKey": "placeholder_enemy"
+}
+```
+
+注意：
+
+- `deathAnimKey` 缺失或资源加载失败时，运行时应回退到旧逻辑：立即销毁怪物节点。
+- `death` 动画的 `anchorX/anchorY/scale` 应尽量和 `run` 动画一致，避免击杀瞬间跳位或缩放突变。
+- `metadata.json.runtimeFadeAfterComplete` 可记录运行时淡出时长；当前小僵尸为 `0.32` 秒。
+- 图集导入时要优先使用 TexturePacker JSON 的 `spriteSourceSize/sourceSize` 还原原始帧位置，再统一全局包围盒和缩放，避免每帧重新居中造成倒地动作抖动。
+- 根目录临时 `video-frames-*` 文件夹不要直接作为运行时资源；导入后要复制归档到 `public/game-assets/source/`，运行时只读 `public/game-assets/enemies/<anim-key>/frames/`。
+
+### 代码行为
+
+当前 `BattleScene.killMonster()` 的死亡流程：
+
+```text
+怪物 hp <= 0
+-> monster.dead = true
+-> 如果 monster.def.deathAnimKey 能创建动画：
+   清空怪物当前显示子节点
+   播放 death 动画
+   onComplete 停到最后一帧
+   fadeAndRelease 线性渐隐
+   releaseCombatVisual 销毁容器
+-> 如果没有 death 动画：
+   立即 destroy，保持旧回退
+-> 结算金币、经验、击杀数和升级检查
+```
+
+这个顺序保证死亡动画播放期间怪物不再被寻路、碰撞、攻击锁定或重复受击，但视觉上仍留在 `monsterLayer` 里完成死亡表现。
+
+### 验证命令
+
+每次新增或替换怪物死亡动画后至少执行：
+
+```bash
+npm run test:monster-visual
+npm run test:monster-config
+node -e "const fs=require('fs'); for (const f of fs.readdirSync('public/gamedata').filter(f=>f.endsWith('.json'))) JSON.parse(fs.readFileSync('public/gamedata/'+f,'utf8')); console.log('json ok')"
+npm run build
+```
+
+浏览器检查：
+
+- `game.html?animtest=zombie_death_down` 单独看帧动画是否完整。
+- 实战击杀小僵尸，确认死亡动画播放完才渐隐消失。
+- 多只小僵尸同时死亡时，确认不会残留透明节点或继续被攻击锁定。
+- 暂停/升级弹窗出现时，确认死亡动画和淡出节奏不会和战斗状态冲突。
 
 ## 武器动画接入与合并冲突经验
 

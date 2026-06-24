@@ -360,13 +360,14 @@ public/game-assets/enemies/slime-death-sheet.png
 
 - `runAnimKey`：移动时循环播放。
 - `attackAnimKey`：贴近基地后切换；留空时继续播放移动动作。
+- `deathAnimKey`：被击杀后播放非循环死亡动画，播完最后一帧短暂渐隐并释放节点；留空时保持立即销毁回退。
 
 怪物替换建议：
 
 - 小怪至少先做 `run` 和 `death`，能明显提升战斗质感。
 - 如果资源紧张，`idle` 和 `run` 可以共用一套循环动画。
 - 怪物移动时不要再叠加过强的代码缩放/上下浮动，避免和帧动画打架。
-- 怪物死亡动画非循环，播完后再销毁节点。
+- 怪物死亡动画非循环，`anchor/scale` 尽量和移动动画一致，播完后停最后一帧渐隐再销毁节点。
 - 怪物受击可以先用代码闪白/抖动，后续再接 `hitAnimKey`。
 
 动画配置写在 `s_animation.json`：

@@ -11,3 +11,8 @@ export function shouldUseVisualProjectile(skill: SkillDef): boolean {
 export function usesAreaImpact(skill: SkillDef): boolean {
   return skill.type !== "projectile";
 }
+
+export function getImpactAnimationKey(skill: SkillDef, killed: boolean): string | undefined {
+  if (killed && skill.killAnimKey) return skill.killAnimKey;
+  return skill.hitAnimKey || undefined;
+}

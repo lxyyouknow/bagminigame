@@ -1,0 +1,25 @@
+{
+  "name": "hit_tomato_splash_small",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 8,
+  "fps": 18,
+  "loop": false,
+  "anchorX": 0.5,
+  "anchorY": 0.5,
+  "suggestedLayer": "hitFxLayer",
+  "suggestedScale": 0.42,
+  "maxSplashRadiusPx": 62,
+  "transparentSafeMarginPx": 66,
+  "usage": "番茄 projectile 普通命中怪物但未击杀时播放的小型命中特效，不作为击杀爆炸使用",
+  "artNotes": [
+    "Q版卡通农场防守风格，主色为番茄红汁液，辅以少量橙黄色中心星芒和绿色叶片碎屑",
+    "主体集中在中心，飞溅半径小，避免遮住怪物读形",
+    "最后帧只保留低透明红色残点，便于短时间淡出"
+  ],
+  "exports": {
+    "spriteSheet": "hit-tomato-splash-small-sheet.png",
+    "gifPreview": "hit-tomato-splash-small.gif",
+    "framesDir": "frames"
+  }
+}

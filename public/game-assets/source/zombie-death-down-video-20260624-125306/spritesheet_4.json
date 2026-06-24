@@ -1,0 +1,35 @@
+{
+  "frames": {
+    "019.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 516,
+        "h": 708
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 166,
+        "y": 229,
+        "w": 516,
+        "h": 708
+      },
+      "sourceSize": {
+        "w": 834,
+        "h": 1112
+      }
+    }
+  },
+  "meta": {
+    "app": "FramePacker",
+    "version": "1.0",
+    "image": "spritesheet_4.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 519,
+      "h": 752
+    },
+    "scale": "1"
+  }
+}

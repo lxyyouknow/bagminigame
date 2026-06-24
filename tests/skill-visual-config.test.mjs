@@ -4,6 +4,7 @@ const skills = JSON.parse(await readFile("public/gamedata/s_skill.json", "utf8")
 const animations = JSON.parse(await readFile("public/gamedata/s_animation.json", "utf8"));
 const assets = JSON.parse(await readFile("public/gamedata/s_asset.json", "utf8"));
 const offensiveTypes = new Set(["projectile", "melee", "aoe", "dot"]);
+const tomatoSkillIds = new Set([201, 202, 203]);
 const carrotSkillIds = new Set([211, 212, 213]);
 const wheatSkillIds = new Set([221, 222, 223]);
 const chiliSkillIds = new Set([241, 242, 243]);
@@ -24,12 +25,15 @@ for (const skill of skills) {
           ? "hit_chili_burst"
           : cabbageSkillIds.has(skill.id)
             ? "hit_cabbage_burst"
-            : "hit_tomato_burst";
+            : "hit_tomato_splash_small";
     if (skill.projectileAnimKey !== expectedProjectile) {
       throw new Error(`Skill ${skill.id} projectile animation should be ${expectedProjectile}`);
     }
     if (skill.hitAnimKey !== expectedHit) {
       throw new Error(`Skill ${skill.id} hit animation should be ${expectedHit}`);
+    }
+    if (tomatoSkillIds.has(skill.id) && skill.killAnimKey !== "hit_tomato_burst") {
+      throw new Error(`Tomato skill ${skill.id} kill animation should be hit_tomato_burst`);
     }
     if (carrotSkillIds.has(skill.id)) {
       if (skill.impactSpinTurns !== -2) throw new Error(`Carrot skill ${skill.id} should spin counterclockwise on impact`);
@@ -38,7 +42,7 @@ for (const skill of skills) {
     if (wheatSkillIds.has(skill.id)) {
       if (skill.projectileRotateToTarget !== true) throw new Error(`Wheat skill ${skill.id} must rotate projectile toward target`);
       if (skill.hitUseProjectileRotation !== true) throw new Error(`Wheat skill ${skill.id} must keep projectile angle on hit`);
-      if (skill.hitStopDuration !== 0.5) throw new Error(`Wheat skill ${skill.id} must stop hit monsters for 0.5 seconds`);
+      if (skill.hitStopDuration !== 0.8) throw new Error(`Wheat skill ${skill.id} must stop hit monsters for 0.8 seconds`);
     }
     if (!(skill.speed > 0)) throw new Error(`Skill ${skill.id} projectile speed must be greater than 0`);
   } else if (skill.projectileAnimKey || skill.hitAnimKey) {
@@ -51,6 +55,7 @@ const expectedAnimations = [
   { key: "projectile_carrot_spin", loop: true, frames: 8, scale: 1, fps: 22.4 },
   { key: "projectile_wheat_arrow", loop: true, frames: 8, scale: 0.78, fps: 18 },
   { key: "hit_tomato_burst", loop: false, frames: 8, scale: 1 },
+  { key: "hit_tomato_splash_small", loop: false, frames: 8, scale: 0.42, fps: 18 },
   { key: "hit_chili_burst", loop: false, frames: 8, scale: 1 },
   { key: "hit_cabbage_burst", loop: false, frames: 8, scale: 1 },
   { key: "hit_carrot_split", loop: false, frames: 8, scale: 0.68 },
@@ -66,7 +71,7 @@ for (const expected of expectedAnimations) {
   for (const frameKey of animation.frames) {
     const asset = assets.find((row) => row.key === frameKey);
     if (!asset?.url) throw new Error(`Animation frame ${frameKey} is missing an asset path`);
-    await access(`public${asset.url}`);
+    await access(`public${asset.url.split("?")[0]}`);
   }
 }
 
@@ -86,8 +91,8 @@ if (JSON.stringify(carrotProjectile?.frames) !== JSON.stringify(expectedCarrotFr
 }
 
 const wheatHit = animations.find((row) => row.key === "hit_wheat_stuck");
-if (wheatHit?.hitHoldFrame !== 7 || wheatHit?.hitHoldDuration !== 1 || wheatHit?.hitFadeDuration !== 0.35) {
-  throw new Error("Wheat hit animation should wobble, hold for 1 second, then fade out");
+if (wheatHit?.hitHoldFrame !== 7 || wheatHit?.hitHoldDuration !== 0.5 || wheatHit?.hitFadeDuration !== 0.35) {
+  throw new Error("Wheat hit animation should wobble, hold for 0.5 seconds, then fade out");
 }
 
 console.log("skill-visual-config tests ok");

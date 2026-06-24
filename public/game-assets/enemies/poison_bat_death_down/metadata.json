@@ -1,0 +1,18 @@
+{
+  "name": "poison_bat_death_down",
+  "source": "public/game-assets/source/poison-bat-death-down-video-20260624-134007",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "character": "poison_bat",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 17,
+  "fps": 14,
+  "loop": false,
+  "direction": "down",
+  "view": "top_down_flying",
+  "anchorX": 0.5,
+  "anchorY": 0.55,
+  "scale": 0.45,
+  "runtimeFadeAfterComplete": 0.32,
+  "usage": "毒蝠被击杀后的死亡动画；保持和 poison_bat_fly_down 相同锚点和缩放，播完后由战斗逻辑渐隐释放"
+}

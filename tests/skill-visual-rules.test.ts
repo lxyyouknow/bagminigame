@@ -1,5 +1,5 @@
 import type { SkillDef } from "../src/types.js";
-import { isOffensiveSkill, shouldUseVisualProjectile, usesAreaImpact } from "../src/scenes/skillVisualRules.js";
+import { getImpactAnimationKey, isOffensiveSkill, shouldUseVisualProjectile, usesAreaImpact } from "../src/scenes/skillVisualRules.js";
 
 function assertEqual(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) throw new Error(`${message}，期望 ${String(expected)}，实际 ${String(actual)}`);
@@ -36,5 +36,14 @@ assertEqual(usesAreaImpact(skill("dot")), true, "DOT 番茄命中后应结算范
 assertEqual(shouldUseVisualProjectile(skill("shield")), false, "护盾技能不应发射番茄");
 assertEqual(shouldUseVisualProjectile(skill("heal")), false, "治疗技能不应发射番茄");
 assertEqual(shouldUseVisualProjectile(skill("projectile", false)), false, "未配置弹道动画时应保留原表现回退");
+
+const tomatoSkill = {
+  ...skill("projectile"),
+  hitAnimKey: "hit_tomato_splash_small",
+  killAnimKey: "hit_tomato_burst",
+};
+assertEqual(getImpactAnimationKey(tomatoSkill, false), "hit_tomato_splash_small", "番茄普通命中应播放小型飞溅");
+assertEqual(getImpactAnimationKey(tomatoSkill, true), "hit_tomato_burst", "番茄击杀应播放大爆炸");
+assertEqual(getImpactAnimationKey(skill("projectile"), true), "hit_tomato_burst", "未配置击杀动画时应回退到普通命中特效");
 
 console.log("skill-visual-rules tests ok");

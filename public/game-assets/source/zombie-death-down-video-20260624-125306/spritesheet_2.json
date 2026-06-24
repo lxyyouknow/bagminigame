@@ -1,0 +1,135 @@
+{
+  "frames": {
+    "007.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 406,
+        "h": 750
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 258,
+        "y": 136,
+        "w": 406,
+        "h": 750
+      },
+      "sourceSize": {
+        "w": 834,
+        "h": 1112
+      }
+    },
+    "008.png": {
+      "frame": {
+        "x": 521,
+        "y": 0,
+        "w": 407,
+        "h": 752
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 253,
+        "y": 137,
+        "w": 407,
+        "h": 752
+      },
+      "sourceSize": {
+        "w": 834,
+        "h": 1112
+      }
+    },
+    "009.png": {
+      "frame": {
+        "x": 1042,
+        "y": 0,
+        "w": 407,
+        "h": 751
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 235,
+        "y": 147,
+        "w": 407,
+        "h": 751
+      },
+      "sourceSize": {
+        "w": 834,
+        "h": 1112
+      }
+    },
+    "010.png": {
+      "frame": {
+        "x": 0,
+        "y": 754,
+        "w": 406,
+        "h": 719
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 219,
+        "y": 179,
+        "w": 406,
+        "h": 719
+      },
+      "sourceSize": {
+        "w": 834,
+        "h": 1112
+      }
+    },
+    "011.png": {
+      "frame": {
+        "x": 521,
+        "y": 754,
+        "w": 406,
+        "h": 715
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 219,
+        "y": 183,
+        "w": 406,
+        "h": 715
+      },
+      "sourceSize": {
+        "w": 834,
+        "h": 1112
+      }
+    },
+    "012.png": {
+      "frame": {
+        "x": 1042,
+        "y": 754,
+        "w": 453,
+        "h": 726
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 217,
+        "y": 189,
+        "w": 453,
+        "h": 726
+      },
+      "sourceSize": {
+        "w": 834,
+        "h": 1112
+      }
+    }
+  },
+  "meta": {
+    "app": "FramePacker",
+    "version": "1.0",
+    "image": "spritesheet_2.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1561,
+      "h": 1506
+    },
+    "scale": "1"
+  }
+}

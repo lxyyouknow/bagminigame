@@ -75,6 +75,8 @@ export interface SkillDef {
   color: string;
   projectileAnimKey?: string;
   hitAnimKey?: string;
+  killAnimKey?: string;
+  groundFxAnimKey?: string;
   projectileRotateToTarget?: boolean;
   hitUseProjectileRotation?: boolean;
   hitStopDuration?: number;
@@ -104,6 +106,7 @@ export interface MonsterDef {
   boss: boolean;
   runAnimKey?: string;
   attackAnimKey?: string;
+  deathAnimKey?: string;
 }
 
 export interface BattleTuningDef {
@@ -322,6 +325,7 @@ export interface MonsterRuntime {
   hitStopTimer: number;
   attackCooldown: number;
   dead: boolean;
+  deathVisualDone?: boolean;
   animationKey?: string;
 }
 

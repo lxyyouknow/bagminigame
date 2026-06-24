@@ -4,3 +4,7 @@ export function getMonsterAnimationKey(monster: MonsterDef, contacted: boolean):
   if (contacted && monster.attackAnimKey) return monster.attackAnimKey;
   return monster.runAnimKey || undefined;
 }
+
+export function getMonsterDeathAnimationKey(monster: MonsterDef): string | undefined {
+  return monster.deathAnimKey || undefined;
+}

@@ -10,13 +10,14 @@ import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
+import { isWaveCombatSettled } from "./battleWaveClearRules";
 import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, type WaveSpawnEvent } from "./battleWaveRules";
 import { createEffectiveMonster, getBaseArmor, getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
 import { stepMonsterContact } from "./monsterContactRules";
-import { getMonsterAnimationKey } from "./monsterVisualRules";
+import { getMonsterAnimationKey, getMonsterDeathAnimationKey } from "./monsterVisualRules";
 import { chooseMonsterSpawnPosition } from "./monsterSpawnRules";
 import { AnimationPlaybackController } from "./animationPlaybackController";
-import { shouldUseVisualProjectile, usesAreaImpact } from "./skillVisualRules";
+import { getImpactAnimationKey, shouldUseVisualProjectile, usesAreaImpact } from "./skillVisualRules";
 import { chooseBalancedTarget, getInitialWeaponCooldown } from "./weaponAttackRules";
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
@@ -31,6 +32,18 @@ interface HitHoldRuntime {
   holdDuration: number;
   fadeDuration: number;
   elapsed: number;
+}
+
+interface DamageResult {
+  damage: number;
+  killed: boolean;
+}
+
+interface FadeReleaseRuntime {
+  view: Container;
+  duration: number;
+  elapsed: number;
+  onComplete?: () => void;
 }
 
 interface DelayedImpactRuntime {
@@ -52,6 +65,7 @@ export class BattleScene extends BaseScene {
   private delayedImpacts: DelayedImpactRuntime[] = [];
   private spinZones: SpinDamageRuntime[] = [];
   private floating: FloatingRuntime[] = [];
+  private fadeReleases: FadeReleaseRuntime[] = [];
   private hitHolds: HitHoldRuntime[] = [];
   private spawnQueue: WaveSpawnEvent[] = [];
   private time = 0;
@@ -74,8 +88,11 @@ export class BattleScene extends BaseScene {
     qualityAttack: {},
   };
   private battleLayer = new Container();
+  private groundFxLayer = new Container();
+  private monsterLayer = new Container();
   private projectileLayer = new Container();
   private hitFxLayer = new Container();
+  private deathFxLayer = new Container();
   private heroLayer = new Container();
   private uiLayer = new Container();
   private modalWindow: GameWindow | undefined;
@@ -110,7 +127,7 @@ export class BattleScene extends BaseScene {
     this.initializeWeaponCooldowns();
     this.buildSpawnQueue();
     analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
-    this.container.addChild(this.battleLayer, this.uiLayer, this.projectileLayer, this.hitFxLayer);
+    this.container.addChild(this.battleLayer, this.groundFxLayer, this.monsterLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.uiLayer);
     this.drawStatic();
   }
 
@@ -126,12 +143,13 @@ export class BattleScene extends BaseScene {
     this.updateSpinZones(dt);
     this.updateHitHolds(dt);
     this.updateFloating(dt);
+    this.updateFadeReleases(dt);
     this.updateHero(dt);
     this.drawStatic();
     if (this.ending) return;
     if (this.baseHp <= 0) {
       this.showResult(false);
-    } else if (this.spawnQueue.length === 0 && this.monsters.every((monster) => monster.dead)) {
+    } else if (isWaveCombatSettled(this.spawnQueue.length, this.monsters)) {
       if (this.currentWave >= this.level.winWave) this.showResult(true);
       else this.showWaveCheckpoint();
     }
@@ -439,8 +457,8 @@ export class BattleScene extends BaseScene {
     const animationKey = getMonsterAnimationKey(def, false);
     const view = this.createMonsterView(def, animationKey);
     view.position.set(x, y);
-    this.battleLayer.addChild(view);
-    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, animationKey });
+    this.monsterLayer.addChild(view);
+    this.monsters.push({ uid: nextUid(), def, view, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, deathVisualDone: false, animationKey });
   }
 
   private createMonsterView(def: MonsterDef, animationKey?: string): Container {
@@ -545,18 +563,22 @@ export class BattleScene extends BaseScene {
   }
 
   private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef): void {
-    if (!this.playHitEffect(skill.hitAnimKey, x, y)) {
+    let playedAnimatedEffect = false;
+    for (const monster of this.monsters) {
+      if (!monster.dead && Math.hypot(monster.x - x, monster.y - y) <= radius) {
+        const hitX = monster.x;
+        const hitY = monster.y;
+        const result = this.damageMonster(monster, damage, skill);
+        playedAnimatedEffect = this.playImpactEffect(skill, result.killed, hitX, hitY) || playedAnimatedEffect;
+      }
+    }
+    if (!playedAnimatedEffect) {
       const fx = new Graphics();
       fx.circle(0, 0, radius).fill({ color: color(skill.color), alpha: 0.18 });
       fx.circle(0, 0, radius * 0.55).stroke({ color: color(skill.color), width: 5, alpha: 0.8 });
       fx.position.set(x, y);
-      this.battleLayer.addChild(fx);
+      this.groundFxLayer.addChild(fx);
       this.floating.push({ view: fx, ttl: 0.35, vy: 0 });
-    }
-    for (const monster of this.monsters) {
-      if (!monster.dead && Math.hypot(monster.x - x, monster.y - y) <= radius) {
-        this.damageMonster(monster, damage, skill);
-      }
     }
   }
 
@@ -682,13 +704,16 @@ export class BattleScene extends BaseScene {
       this.areaDamage(projectile.target.x, projectile.target.y, projectile.radius, projectile.damage, projectile.skill);
       return true;
     }
-    this.playHitEffect(
-      projectile.skill.hitAnimKey,
-      projectile.target.x,
-      projectile.target.y,
+    const hitX = projectile.target.x;
+    const hitY = projectile.target.y;
+    const result = this.damageMonster(projectile.target, projectile.damage, projectile.skill);
+    this.playImpactEffect(
+      projectile.skill,
+      result.killed,
+      hitX,
+      hitY,
       projectile.skill.hitUseProjectileRotation ? projectile.view.rotation : 0,
     );
-    this.damageMonster(projectile.target, projectile.damage, projectile.skill);
     return true;
   }
 
@@ -769,7 +794,7 @@ export class BattleScene extends BaseScene {
     }
   }
 
-  private damageMonster(monster: MonsterRuntime, amount: number, skill?: SkillDef): void {
+  private damageMonster(monster: MonsterRuntime, amount: number, skill?: SkillDef): DamageResult {
     audio.playSfxEvent("battle_hit");
     const damage = Math.max(1, amount - monster.def.armor);
     monster.hp -= damage;
@@ -781,14 +806,19 @@ export class BattleScene extends BaseScene {
     if (skill?.hitStopDuration) {
       monster.hitStopTimer = Math.max(monster.hitStopTimer, skill.hitStopDuration);
     }
-    if (monster.hp <= 0) {
+    const killed = monster.hp <= 0;
+    if (killed) {
       this.killMonster(monster, true);
     }
+    return { damage, killed };
   }
 
   private killMonster(monster: MonsterRuntime, reward: boolean): void {
     monster.dead = true;
-    monster.view.destroy({ children: true } as DestroyOptions);
+    if (!this.playMonsterDeath(monster)) {
+      monster.deathVisualDone = true;
+      monster.view.destroy({ children: true } as DestroyOptions);
+    }
     if (reward) {
       this.kills += 1;
       this.bag.gold += monster.def.gold;
@@ -797,6 +827,25 @@ export class BattleScene extends BaseScene {
       this.addFloating(monster.x, monster.y, `+${monster.def.gold}`, 0xffdf59);
       this.checkLevelUp();
     }
+  }
+
+  private playMonsterDeath(monster: MonsterRuntime): boolean {
+    const animationKey = getMonsterDeathAnimationKey(monster.def);
+    const animated = animationKey ? assetManager.animation(animationKey) : undefined;
+    if (!animated) return false;
+    monster.deathVisualDone = false;
+    for (const child of monster.view.removeChildren()) child.destroy({ children: true });
+    animated.loop = false;
+    animated.onComplete = () => {
+      animated.gotoAndStop(Math.max(0, animated.totalFrames - 1));
+      this.fadeAndRelease(monster.view, 0.32, () => {
+        monster.deathVisualDone = true;
+      });
+    };
+    animated.play();
+    monster.view.addChild(animated);
+    monster.animationKey = animationKey;
+    return true;
   }
 
   private checkLevelUp(): void {
@@ -864,6 +913,24 @@ export class BattleScene extends BaseScene {
       if (item.ttl <= 0) {
         item.view.destroy({ children: true } as DestroyOptions);
         this.floating = this.floating.filter((f) => f !== item);
+      }
+    }
+  }
+
+  private fadeAndRelease(view: Container, duration: number, onComplete?: () => void): void {
+    if (view.destroyed) return;
+    view.alpha = 1;
+    this.fadeReleases.push({ view, duration: Math.max(0.01, duration), elapsed: 0, onComplete });
+  }
+
+  private updateFadeReleases(dt: number): void {
+    for (const item of [...this.fadeReleases]) {
+      item.elapsed += dt;
+      item.view.alpha = Math.max(0, 1 - item.elapsed / item.duration);
+      if (item.elapsed >= item.duration) {
+        this.fadeReleases = this.fadeReleases.filter((fade) => fade !== item);
+        item.onComplete?.();
+        this.releaseCombatVisual(item.view);
       }
     }
   }
@@ -936,7 +1003,11 @@ export class BattleScene extends BaseScene {
     return c;
   }
 
-  private playHitEffect(animationKey: string | undefined, x: number, y: number, rotation = 0): boolean {
+  private playImpactEffect(skill: SkillDef, killed: boolean, x: number, y: number, rotation = 0): boolean {
+    return this.playHitEffect(getImpactAnimationKey(skill, killed), x, y, rotation, killed ? this.deathFxLayer : this.hitFxLayer);
+  }
+
+  private playHitEffect(animationKey: string | undefined, x: number, y: number, rotation = 0, layer: Container = this.hitFxLayer): boolean {
     const animated = animationKey ? assetManager.animation(animationKey) : undefined;
     if (!animated) return false;
     const anim = animationKey ? data.getAnimation(animationKey) : undefined;
@@ -964,7 +1035,7 @@ export class BattleScene extends BaseScene {
     } else {
       animated.onComplete = () => this.releaseCombatVisual(animated);
     }
-    this.hitFxLayer.addChild(animated);
+    layer.addChild(animated);
     animated.play();
     return true;
   }
@@ -1112,7 +1183,7 @@ export class BattleScene extends BaseScene {
   private setBattlePaused(paused: boolean): void {
     this.paused = paused;
     if (paused) {
-      this.animationPlayback.pause([this.battleLayer, this.projectileLayer, this.hitFxLayer, this.heroLayer]);
+      this.animationPlayback.pause([this.battleLayer, this.groundFxLayer, this.monsterLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.heroLayer]);
     } else {
       this.animationPlayback.resume();
     }
@@ -1127,6 +1198,8 @@ export class BattleScene extends BaseScene {
     this.delayedImpacts = [];
     for (const hold of [...this.hitHolds]) this.releaseCombatVisual(hold.view);
     this.hitHolds = [];
+    for (const fade of [...this.fadeReleases]) this.releaseCombatVisual(fade.view);
+    this.fadeReleases = [];
     super.destroy();
   }
 }

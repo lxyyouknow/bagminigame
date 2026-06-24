@@ -1,5 +1,5 @@
 import type { MonsterDef } from "../src/types.js";
-import { getMonsterAnimationKey } from "../src/scenes/monsterVisualRules.js";
+import { getMonsterAnimationKey, getMonsterDeathAnimationKey } from "../src/scenes/monsterVisualRules.js";
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) throw new Error(`${message}，期望 ${String(expected)}，实际 ${String(actual)}`);
@@ -20,11 +20,14 @@ const zombie = {
   boss: false,
   runAnimKey: "zombie_walk_down",
   attackAnimKey: "",
+  deathAnimKey: "zombie_death_down",
 } satisfies MonsterDef;
 
 assertEqual(getMonsterAnimationKey(zombie, false), "zombie_walk_down", "移动中的小僵尸应播放向下行走动画");
 assertEqual(getMonsterAnimationKey(zombie, true), "zombie_walk_down", "攻击动画未配置时，贴脸后应继续保持行走动画");
 assertEqual(getMonsterAnimationKey({ ...zombie, attackAnimKey: "zombie_attack_down" }, true), "zombie_attack_down", "后续配置攻击动画后应自动切换");
+assertEqual(getMonsterDeathAnimationKey(zombie), "zombie_death_down", "小僵尸被击杀后应播放死亡动画");
+assertEqual(getMonsterDeathAnimationKey({ ...zombie, deathAnimKey: "" }), undefined, "未配置死亡动画时应保持旧的立即销毁回退");
 
 const poisonBat = {
   id: 2,
