@@ -39,8 +39,12 @@ const withTargets = stepBossRoarCooldown({ skill: roar, cooldown: 0, dt: 0.2, bo
 assertEqual(withTargets.shouldCast, true, "怒吼有其他怪物可强化时才应触发");
 assertEqual(withTargets.cooldown, 40, "怒吼有目标触发后应进入 CD");
 
-const buff = applyBossRoarBuff(1, 1, roar);
+const buff = applyBossRoarBuff(1, 1, 1, roar);
 assertEqual(buff.speedMul, 1.35, "怒吼应按表提高其他怪物移动速度");
 assertEqual(buff.attackMul, 1.25, "怒吼应按表提高其他怪物攻击力");
+assertEqual(buff.attackSpeedMul, 1, "怒吼未配置攻速倍率时，不应额外改变攻击动画速度");
+
+const speedBuff = applyBossRoarBuff(1, 1, 1, { ...roar, attackSpeedMul: 1.4 });
+assertEqual(speedBuff.attackSpeedMul, 1.4, "怒吼配置攻速倍率时，应同步提高攻击频率和攻击动画速度");
 
 console.log("boss-skill-rules tests ok");

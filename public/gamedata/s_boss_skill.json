@@ -9,7 +9,8 @@
     "duration": 8,
     "speedMul": 1.35,
     "attackMul": 1.25,
+    "attackSpeedMul": 1,
     "target": "otherMonsters",
-    "desc": "Boss 出生 5 秒后怒吼，8 秒内让其他怪物移动速度提高 35%、攻击力提高 25%。"
+    "desc": "Boss 出生 5 秒后怒吼，8 秒内让其他怪物移动速度提高 35%、攻击力提高 25%。attackSpeedMul 可配置攻击频率，并同步提高攻击动画播放速度。"
   }
 ]

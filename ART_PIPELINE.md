@@ -373,6 +373,66 @@ public/game-assets/enemies/slime-death-sheet.png
 - 怪物死亡动画非循环，`anchor/scale` 尽量和移动动画一致，播完后停最后一帧渐隐再销毁节点。
 - 怪物受击可以先用代码闪白/抖动，后续再接 `hitAnimKey`。
 
+### 2026-06 Boss 和怪物动作接入经验
+
+本轮已经把多套 TexturePacker/Cocos 风格图集接入运行时：
+
+- 小僵尸：`zombie_attack_down`，绑定到 `s_monster.id=1.attackAnimKey`。
+- 毒蝠：`poison_bat_attack_down`，绑定到 `s_monster.id=2.attackAnimKey`。
+- Boss：`boss_walk_down`、`boss_attack_down`、`boss_roar_down`、`boss_death_down`，分别绑定到 Boss 的移动、攻击、怒吼和死亡。
+
+源资源处理约定：
+
+- lxy 临时放入项目根目录或 Downloads 的 `*_sheet/` 目录，接入后必须复制归档到 `public/game-assets/source/<语义名>-20260625/`。
+- 运行时只依赖 `public/game-assets/enemies/<anim_key>/frames/*.png`、`s_asset.json` 和 `s_animation.json`。
+- 根目录临时源文件不要作为运行时依赖；如果需要清理，确认 source 归档和运行帧目录已经生成。
+- 通用导入脚本是 `scripts/import-texturepacker-animation.py`，用于读取 `spritesheet_*.json/png` 并输出透明散帧、横排预览、GIF 和 `metadata.json`。
+
+尺寸一致性是 Boss 动作最容易出问题的点。TexturePacker 每个动作的原始裁剪框可能差很多，如果每套动作都按“自身最大包围盒”缩放，切换动作时会看到模型突然变小或变大。本轮 Boss 攻击/死亡就出现过这个问题：
+
+- 行走动作透明主体平均高度约 `240px`。
+- 旧攻击导出平均高度约 `206px`，看起来攻击时变小。
+- 旧死亡起始帧约 `199px`，看起来刚死亡就缩小。
+- 修复方式：攻击/死亡重新导出到更大的统一画布 `320x320`，按行走动作的显示高度做归一化，而不是按各自动作最大宽高压进 `256x256`。
+
+后续接 Boss 或大型怪物动作时，推荐流程：
+
+1. 先导入移动/待机动作，确定目标显示尺寸、`anchorY` 和 `scale`。
+2. 再导入攻击、怒吼、死亡动作，用脚本量透明包围盒，确保攻击和死亡前半段不要比移动动作小太多。
+3. 如果死亡后半段是横躺，主体高度自然变矮是正常的；重点检查死亡前 5 到 8 帧不能切换瞬间缩小。
+4. 大型怪物可使用 `320x320` 或更大画布，不必强行塞进 `256x256`。
+5. `s_animation.scale` 和 `anchorY` 同一角色各动作尽量一致；尺寸问题优先修导出帧，不要给每个动作单独乱调 scale。
+6. 每次导出后打开 `game.html?animtest=<动画key>` 看一遍，再跑尺寸测试。
+
+当前 Boss 尺寸回归测试：
+
+```bash
+npm run test:boss-animation-size
+```
+
+测试会检查 Boss 攻击平均高度、死亡前半段高度是否和行走动作接近，避免模型切动作时明显缩小。
+
+怪物攻击动画和实际伤害必须对齐：
+
+- `s_animation.hitFrame` 表示“第几帧真正生效扣基地血”。
+- Boss 新攻击是 19 帧，当前 `hitFrame=15`，对齐后半段挥击落点。
+- 小僵尸攻击当前 `hitFrame=6`。
+- 毒蝠攻击当前 `hitFrame=22`。
+- 不要让怪物刚碰到栏杆就立刻扣血，应先播放攻击前摇，到 `hitFrame` 再调用扣血。
+
+Boss 死亡动画要求：
+
+- Boss 被击杀后必须播放 `boss_death_down`。
+- 死亡动画播放完成、末帧停住并短暂渐隐后，才允许清波或胜利结算。
+- 这条由 `deathVisualDone=false/true` 控制，回归测试是 `npm run test:battle-wave-clear`。
+
+基地受击震颤经验：
+
+- 不要抖整个 `BattleScene.container`，竖屏固定画布会露出 renderer 黑底。
+- Boss 打基地时只做局部震颤：轻微移动栏杆前景层和基地/守卫局部层。
+- 背景、地图和 HUD 保持不动，冲击感来自局部抖动、伤害数字和命中特效。
+- 对应测试：`npm run test:base-damage-feedback`。
+
 动画配置写在 `s_animation.json`：
 
 ```json

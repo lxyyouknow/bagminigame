@@ -313,6 +313,32 @@ public/gamedata/s_wave.json
 - 同一波可以写多行，适合“先小怪压场，再精英进场”。
 - 如果战斗时间太长，优先减少怪物血量或波次间隔，而不是单纯加我方伤害。
 
+### Boss 波次配置经验
+
+Boss 不是只看 Boss 本体数值，还要看它和怪群的时间关系。2026-06 这轮接入 Boss 怒吼技能时发现：如果 Boss 在本波最后才出现，或者 Boss 出现时前面小怪已经被清完，Boss 技能即使触发也没有目标可强化，玩家会感觉“技能失效”。
+
+推荐 Boss 波结构：
+
+```text
+前锋怪群 -> Boss 出场 -> 后续增援持续刷一段时间
+```
+
+第 1 关第 3 波当前采用这种结构：
+
+- 前锋小僵尸：`0.2s ~ 4.4s`
+- 前锋毒蝠：`0.7s ~ 3.9s`
+- Boss：`3.2s`
+- 后续小僵尸：`4.2s ~ 13.0s`
+- 后续毒蝠：`5.0s ~ 11.4s`
+
+这样 Boss 会夹在前后怪群中间，出生后 5 秒怒吼时，场上更稳定地有其他怪物吃到加速和加攻。后续做 Boss 波时，不要只写一行 Boss；至少加两段护卫或增援怪，并用 `time/count/interval` 控制持续出怪窗口。
+
+对应检查：
+
+```bash
+npm run test:boss-wave-config
+```
+
 ## 怪物配置：s_monster
 
 字段：
@@ -327,6 +353,12 @@ public/gamedata/s_wave.json
 - `radius`：碰撞和占位体积。
 - `color`：当前占位图颜色。
 - `boss`：是否 Boss。
+- `layerType`：怪物层级类型，当前支持 `ground`、`flying`、`boss`。Boss 出生位置可固定中路，但层级仍按地面怪 y 深度排序，不要额外给 Boss 加固定高层级，否则会踩到前排怪头上。
+- `attackDistance`：攻击基地距离覆盖值。Boss 当前保持近战攻击栏杆，默认 `0`。
+- `runAnimKey`：移动动画 key。
+- `attackAnimKey`：攻击动画 key。配置后怪物到达接触线不会立刻扣血，而是播放攻击动画，到 `s_animation.hitFrame` 才扣基地血。
+- `deathAnimKey`：死亡动画 key。配置后死亡动画播完并渐隐后才清波。
+- `roarSkillKey`：Boss 技能 key，引用 `s_boss_skill.json`。
 
 后续美术接入时，建议增加：
 
@@ -337,6 +369,60 @@ public/gamedata/s_wave.json
 - `deathAnimKey`
 - `hitSize`
 - `shadowAssetKey`
+
+## Boss 技能配置：s_boss_skill
+
+路径：
+
+```text
+public/gamedata/s_boss_skill.json
+```
+
+当前 Boss 怒吼技能已经独立成表，不写死在 `BattleScene` 里。示例：
+
+```json
+{
+  "key": "steel_captain_roar",
+  "monsterId": 5,
+  "trigger": "afterSpawn",
+  "animKey": "boss_roar_down",
+  "cd": 40,
+  "delay": 5,
+  "duration": 8,
+  "speedMul": 1.35,
+  "attackMul": 1.25,
+  "target": "otherMonsters"
+}
+```
+
+字段说明：
+
+- `key`：技能 key，由 `s_monster.roarSkillKey` 引用。
+- `monsterId`：拥有该技能的 Boss id。
+- `trigger`：触发方式。当前支持：
+  - `afterSpawn`：Boss 出生后延迟触发。
+  - `onHit`：兼容旧逻辑，Boss 被击打时触发。
+- `delay`：`afterSpawn` 触发时的出生后延迟秒数。当前 Boss 为 5 秒。
+- `animKey`：技能动画 key，当前为 `boss_roar_down`。
+- `cd`：技能 CD。当前为 40 秒。
+- `duration`：强化持续时间。
+- `speedMul`：其他怪物移动速度倍率。
+- `attackMul`：其他怪物攻击倍率。
+- `target`：当前为 `otherMonsters`，只强化 Boss 以外的存活怪。
+
+实现经验：
+
+- 怒吼必须有其他存活怪物可强化才触发；没有目标时不播放怒吼，也不消耗 CD。
+- 如果用 `onHit`，高火力情况下可能很难打到 Boss 或打到时场上没怪，体感不稳定。
+- 当前买量 demo 更推荐 `afterSpawn + delay=5`，玩家能稳定看到 Boss 先出现、再怒吼强化怪群。
+- 怒吼期间 Boss 攻击动画会暂停切换，避免怒吼动画被攻击动作立刻打断。
+
+对应验证：
+
+```bash
+npm run test:boss-skill-config
+npm run test:monster-attack-animation
+```
 
 ## 武器配置：s_item
 

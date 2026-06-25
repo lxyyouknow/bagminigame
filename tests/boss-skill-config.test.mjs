@@ -17,6 +17,7 @@ if (roar.cd !== 40) throw new Error(`怒吼 CD 应为 40 秒，实际为 ${roar.
 if (roar.duration !== 8) throw new Error(`怒吼强化持续时间应为 8 秒，实际为 ${roar.duration}`);
 if (roar.speedMul !== 1.35) throw new Error(`怒吼移速倍率应为 1.35，实际为 ${roar.speedMul}`);
 if (roar.attackMul !== 1.25) throw new Error(`怒吼攻击倍率应为 1.25，实际为 ${roar.attackMul}`);
+if (!(roar.attackSpeedMul > 0)) throw new Error(`怒吼攻速倍率必须大于 0，实际为 ${roar.attackSpeedMul}`);
 if (roar.target !== "otherMonsters") throw new Error("怒吼目标应为其他怪物，不应强化 Boss 自己");
 if (!animations.some((animation) => animation.key === roar.animKey)) {
   throw new Error(`怒吼技能引用了不存在的动画：${roar.animKey}`);

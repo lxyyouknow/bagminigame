@@ -29,9 +29,15 @@ export function stepBossRoarCooldown(input: BossRoarStateInput): BossRoarStateRe
   return { cooldown: Math.max(0.1, input.skill.cd), shouldCast: true };
 }
 
-export function applyBossRoarBuff(baseSpeedMul: number, baseAttackMul: number, skill: BossSkillDef): { speedMul: number; attackMul: number } {
+export function applyBossRoarBuff(
+  baseSpeedMul: number,
+  baseAttackMul: number,
+  baseAttackSpeedMul: number,
+  skill: BossSkillDef,
+): { speedMul: number; attackMul: number; attackSpeedMul: number } {
   return {
     speedMul: baseSpeedMul * Math.max(0.01, skill.speedMul),
     attackMul: baseAttackMul * Math.max(0.01, skill.attackMul),
+    attackSpeedMul: baseAttackSpeedMul * Math.max(0.01, skill.attackSpeedMul ?? 1),
   };
 }

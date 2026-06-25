@@ -9,10 +9,17 @@ export interface AnimatedMonsterAttackInput {
   dt: number;
   attack: number;
   attackInterval: number;
+  attackSpeedMul?: number;
   armor: number;
   armorBonus: number;
   animation?: AnimationDef;
   fallbackHitTime?: number;
+}
+
+export interface AnimatedMonsterAttackTiming {
+  attackInterval: number;
+  hitTime: number;
+  animationSpeedMul: number;
 }
 
 export interface AnimatedMonsterAttackResult {
@@ -30,6 +37,23 @@ export function getMonsterAttackHitTime(animation: AnimationDef | undefined, fal
   return (frameCount * 0.5) / Math.max(1, animation?.fps ?? 10);
 }
 
+export function resolveAnimatedMonsterAttackTiming(input: {
+  animation?: AnimationDef;
+  fallbackHitTime?: number;
+  attackInterval: number;
+  attackSpeedMul?: number;
+}): AnimatedMonsterAttackTiming {
+  const attackSpeedMul = Math.max(0.01, input.attackSpeedMul ?? 1);
+  const attackInterval = Math.max(0.1, input.attackInterval / attackSpeedMul);
+  const rawHitTime = getMonsterAttackHitTime(input.animation, input.fallbackHitTime);
+  const animationSpeedMul = Math.max(attackSpeedMul, rawHitTime / attackInterval);
+  return {
+    attackInterval,
+    hitTime: rawHitTime / animationSpeedMul,
+    animationSpeedMul,
+  };
+}
+
 export function stepAnimatedMonsterAttack(input: AnimatedMonsterAttackInput): AnimatedMonsterAttackResult {
   let attackCooldown = Math.max(0, input.attackCooldown - input.dt);
   let attackWindupTimer = input.attackWindupTimer;
@@ -42,9 +66,10 @@ export function stepAnimatedMonsterAttack(input: AnimatedMonsterAttackInput): An
   }
 
   if (!attackDamagePending && attackCooldown <= 0) {
-    attackWindupTimer = getMonsterAttackHitTime(input.animation, input.fallbackHitTime);
+    const timing = resolveAnimatedMonsterAttackTiming(input);
+    attackWindupTimer = timing.hitTime;
     attackDamagePending = true;
-    attackCooldown = Math.max(0.1, input.attackInterval);
+    attackCooldown = timing.attackInterval;
     startedAttack = true;
   }
 

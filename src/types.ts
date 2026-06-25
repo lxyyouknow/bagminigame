@@ -123,6 +123,7 @@ export interface BossSkillDef {
   duration: number;
   speedMul: number;
   attackMul: number;
+  attackSpeedMul?: number;
   target: "otherMonsters";
   desc: string;
 }
@@ -368,6 +369,7 @@ export interface MonsterRuntime {
   attackDamagePending?: boolean;
   speedBuffMul?: number;
   attackBuffMul?: number;
+  attackSpeedBuffMul?: number;
   bossBuffTimer?: number;
   bossRoarCooldown?: number;
   bossRoarTimer?: number;

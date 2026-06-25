@@ -1,5 +1,5 @@
 import type { AnimationDef } from "../src/types.js";
-import { getMonsterAttackHitTime, stepAnimatedMonsterAttack } from "../src/scenes/monsterAttackAnimationRules.js";
+import { getMonsterAttackHitTime, resolveAnimatedMonsterAttackTiming, stepAnimatedMonsterAttack } from "../src/scenes/monsterAttackAnimationRules.js";
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) throw new Error(`${message}，期望 ${String(expected)}，实际 ${String(actual)}`);
@@ -18,6 +18,16 @@ const attackAnim: AnimationDef = {
 };
 
 assertEqual(getMonsterAttackHitTime(attackAnim), 0.25, "攻击动画命中时间应由 hitFrame/fps 决定");
+assertEqual(
+  resolveAnimatedMonsterAttackTiming({ animation: attackAnim, attackInterval: 0.2 }).animationSpeedMul,
+  1.25,
+  "攻击间隔短于命中帧时，应自动提速动画让命中帧对齐攻速表",
+);
+assertEqual(
+  resolveAnimatedMonsterAttackTiming({ animation: attackAnim, attackInterval: 2, attackSpeedMul: 2 }).animationSpeedMul,
+  2,
+  "攻速倍率提升时，攻击动画播放速度也应同步提升",
+);
 
 const first = stepAnimatedMonsterAttack({
   contacted: true,
@@ -34,6 +44,7 @@ const first = stepAnimatedMonsterAttack({
 assertEqual(first.startedAttack, true, "冷却结束且已贴脸时应启动攻击动画");
 assertEqual(first.damage, 0, "攻击动画尚未到命中帧时不应立刻扣血");
 assertEqual(first.attackDamagePending, true, "命中帧之前应保留待结算伤害");
+assertEqual(first.attackCooldown, 2, "未提升攻速时，攻击 CD 应使用怪物表里的攻击间隔");
 
 const second = stepAnimatedMonsterAttack({
   ...first,
@@ -47,5 +58,20 @@ const second = stepAnimatedMonsterAttack({
 });
 assertEqual(second.damage, 95.5, "攻击动画到达 hitFrame 后才应按护甲结算基地伤害");
 assertEqual(second.attackDamagePending, false, "命中帧结算后不应重复扣血");
+
+const boosted = stepAnimatedMonsterAttack({
+  contacted: true,
+  attackCooldown: 0,
+  attackWindupTimer: 0,
+  attackDamagePending: false,
+  dt: 0.1,
+  attack: 100,
+  attackInterval: 2,
+  attackSpeedMul: 2,
+  armor: 10,
+  armorBonus: 0,
+  animation: attackAnim,
+});
+assertEqual(boosted.attackCooldown, 1, "攻速倍率提升时，攻击 CD 应按倍率缩短");
 
 console.log("monster-attack-animation-rules tests ok");

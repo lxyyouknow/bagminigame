@@ -467,6 +467,46 @@ game.html?animtest=poison_bat_fly_down&verify=poison-bat-1
 - 控制台是否有 error/warn。
 - 主体方向是否符合战斗方向，例如怪物从上往下冲向基地。
 
+### Boss 多动作尺寸归一经验
+
+大型 Boss 动作不要默认全部归一到 `256x256`。如果攻击或死亡动作有大幅挥击、横躺、白色冲击帧，`256x256` 会迫使脚本按“最大宽高”缩放，结果是站立本体明显变小。
+
+当前 Boss 的最终规格：
+
+- `boss_walk_down`：`256x256`，18 帧，12 FPS，loop=true，`anchor=(0.5,0.92)`，`scale=0.9`。
+- `boss_attack_down`：`320x320`，19 帧，12 FPS，loop=false，`anchor=(0.5,0.92)`，`scale=0.9`，`hitFrame=15`。
+- `boss_roar_down`：`256x256`，19 帧，12 FPS，loop=false，`anchor=(0.5,0.92)`，`scale=0.9`。
+- `boss_death_down`：`320x320`，22 帧，12 FPS，loop=false，`anchor=(0.5,0.92)`，`scale=0.9`。
+
+为什么攻击和死亡用 `320x320`：
+
+- 攻击动作的冲击/挥击帧横向更宽，如果塞进 `256x256`，角色本体会被压小。
+- 死亡动作后半段横躺更宽，如果按横躺最大宽度缩放，死亡前几帧站立状态会突然缩小。
+- 使用更大画布后，攻击平均主体高度和行走动作基本一致，切换时不会明显跳尺寸。
+
+当前尺寸回归数据：
+
+```text
+boss_walk_down   平均主体高约 240px
+boss_attack_down 平均主体高约 240px
+boss_death_down  前半段主体高接近行走；后半段横躺自然变矮
+```
+
+回归命令：
+
+```bash
+npm run test:boss-animation-size
+```
+
+后续接任何大型怪物多动作时，建议先跑一个包围盒统计脚本，至少看：
+
+- 移动动作平均宽高。
+- 攻击动作首帧、中段、末帧宽高。
+- 死亡动作前 5 到 8 帧宽高。
+- 这些值是否接近，不要只看 `s_animation.scale` 是否相同。
+
+如果同角色不同动作看起来大小不一致，优先重新导出帧和统一画布；不要给 `attack/death` 单独配置不同 `scale`，否则后续层级、血条、命中点更难维护。
+
 ### 番茄旋转弹道
 
 番茄弹道只需要美术或 AI 生成一张独立番茄，不需要画 8 个不同番茄。脚本按固定角度旋转生成序列帧：
@@ -528,6 +568,90 @@ game.html?animtest=poison_bat_fly_down&verify=poison-bat-1
 - 不要用伤害数字的 floating 队列复用死亡淡出，死亡淡出应使用独立释放队列，避免半透明初始帧或释放时机混乱。
 - 暂停战斗时，弹道和命中特效也统一暂停；继续后恢复。
 - 单帧纹理由 `AssetManager` 统一缓存和复用，不要每次攻击重新加载，也不要在单个特效结束时卸载共享纹理。
+
+## 怪物攻击、技能和基地反馈实装经验
+
+### 怪物攻击动作和伤害帧
+
+怪物配置了 `attackAnimKey` 后，运行时不应该在接触栏杆的同一帧立刻扣基地血。正确流程：
+
+```text
+怪物走到 s_battle_field 接触线
+-> 切 attackAnimKey
+-> 等到 s_animation.hitFrame
+-> 扣基地血、显示基地扣血数字、播放受击反馈
+-> 攻击动画/冷却继续
+```
+
+当前关键配置：
+
+- Boss 攻击：`boss_attack_down`，19 帧，`hitFrame=15`。
+- 小僵尸攻击：`zombie_attack_down`，13 帧，`hitFrame=6`。
+- 毒蝠攻击：`poison_bat_attack_down`，43 帧，`hitFrame=22`。
+
+相关测试：
+
+```bash
+npm run test:monster-attack-animation
+npm run test:monster-config
+```
+
+### Boss 怒吼技能
+
+Boss 怒吼资源是普通怪物动作，但触发规则走 `s_boss_skill.json`：
+
+```text
+s_monster.roarSkillKey -> s_boss_skill.key -> s_boss_skill.animKey -> s_animation
+```
+
+当前 Boss 怒吼策略：
+
+- `trigger=afterSpawn`
+- `delay=5`
+- `cd=40`
+- `duration=8`
+- 只强化 `otherMonsters`
+- 速度倍率 `1.35`
+- 攻击倍率 `1.25`
+
+经验：
+
+- 早期使用 `onHit` 会遇到高火力时 Boss 还没被打到、或被打到时已经没小怪，体感像技能失效。
+- 改成出生 5 秒后自动吼，更适合买量 demo 展示。
+- 没有其他存活怪时不触发、不消耗 CD，避免 Boss 空吼。
+- 怒吼期间不要让攻击动画立刻覆盖怒吼动画。
+
+相关测试：
+
+```bash
+npm run test:boss-skill-config
+npm run test:boss-wave-config
+```
+
+### 基地受击震颤
+
+不要做整屏震颤。旧方案移动 `BattleScene.container`，固定尺寸竖屏画布被整体平移后，会在边缘露出 renderer 黑底。
+
+当前推荐做法是局部震颤：
+
+- 背景和 HUD 不动。
+- 只轻微移动栏杆前景层 `fieldForegroundLayer`。
+- 基地/守卫局部层 `heroLayer` 做更小幅度跟随。
+- 同时配合基地扣血数字和命中特效。
+
+Boss 当前局部震颤参数：
+
+```text
+duration = 0.34
+amplitude = 7
+mode = local
+```
+
+相关测试：
+
+```bash
+npm run test:base-damage-feedback
+```
 
 ## 怪物死亡动画接入实装经验
 

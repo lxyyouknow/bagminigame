@@ -1,5 +1,5 @@
 import { AnimatedSprite, Container, Graphics, type DestroyOptions } from "pixi.js";
-import type { BagState, BattleTuningDef, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
+import type { AnimationDef, BagState, BattleTuningDef, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
@@ -18,7 +18,7 @@ import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, type WaveSpawnEven
 import { createEffectiveMonster, getBaseArmor, getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
 import { stepMonsterContact } from "./monsterContactRules";
 import { getMonsterAnimationKey, getMonsterDeathAnimationKey } from "./monsterVisualRules";
-import { stepAnimatedMonsterAttack } from "./monsterAttackAnimationRules";
+import { resolveAnimatedMonsterAttackTiming, stepAnimatedMonsterAttack } from "./monsterAttackAnimationRules";
 import { resolveMonsterAttackContactY } from "./monsterAttackDistanceRules";
 import { applyBossRoarBuff, stepBossRoarCooldown } from "./bossSkillRules";
 import { shouldPreserveMonsterOverlayChild } from "./monsterViewRules";
@@ -657,11 +657,13 @@ export class BattleScene extends BaseScene {
       }
       const speedMul = monster.speedBuffMul ?? 1;
       const attackMul = monster.attackBuffMul ?? 1;
+      const attackSpeedMul = monster.attackSpeedBuffMul ?? 1;
       monster.spawnAge = (monster.spawnAge ?? 0) + dt;
       monster.bossBuffTimer = Math.max(0, (monster.bossBuffTimer ?? 0) - dt);
       if (monster.bossBuffTimer <= 0) {
         monster.speedBuffMul = 1;
         monster.attackBuffMul = 1;
+        monster.attackSpeedBuffMul = 1;
       }
       monster.bossRoarTimer = Math.max(0, (monster.bossRoarTimer ?? 0) - dt);
       this.tryTriggerBossRoar(monster, false, dt);
@@ -698,6 +700,7 @@ export class BattleScene extends BaseScene {
           dt,
           attack: monster.def.attack * attackMul,
           attackInterval: monster.def.attackInterval,
+          attackSpeedMul,
           armor: this.armor,
           armorBonus: this.buffs.armorBonus,
           animation: attackAnim,
@@ -707,7 +710,7 @@ export class BattleScene extends BaseScene {
         monster.attackWindupTimer = animatedAttack.attackWindupTimer;
         monster.attackDamagePending = animatedAttack.attackDamagePending;
         damage = animatedAttack.damage;
-        if (animatedAttack.startedAttack) this.restartMonsterAnimation(monster, monster.def.attackAnimKey);
+        if (animatedAttack.startedAttack) this.restartMonsterAnimation(monster, monster.def.attackAnimKey, this.getMonsterAttackAnimationSpeedMul(monster, attackAnim));
       }
       if (damage > 0) {
         this.applyBaseDamage(monster, damage);
@@ -743,27 +746,45 @@ export class BattleScene extends BaseScene {
     if (!nextKey || nextKey === monster.animationKey) return;
     const animated = assetManager.animation(nextKey);
     if (!animated) return;
-    this.replaceMonsterLiveVisual(monster, animated);
+    this.replaceMonsterLiveVisual(monster, animated, this.getMonsterAnimationSpeedMul(monster, nextKey));
     monster.animationKey = nextKey;
   }
 
-  private restartMonsterAnimation(monster: MonsterRuntime, animationKey: string | undefined): void {
+  private restartMonsterAnimation(monster: MonsterRuntime, animationKey: string | undefined, animationSpeedMul = 1): void {
     if (!animationKey) return;
     const animated = assetManager.animation(animationKey);
     if (!animated) return;
-    this.replaceMonsterLiveVisual(monster, animated);
+    this.replaceMonsterLiveVisual(monster, animated, animationSpeedMul);
     monster.animationKey = animationKey;
+    monster.view.zIndex = getMonsterDepthZIndex(monster.y, monster.uid, monster.def.layerType);
   }
 
-  private replaceMonsterLiveVisual(monster: MonsterRuntime, animated: AnimatedSprite): void {
+  private replaceMonsterLiveVisual(monster: MonsterRuntime, animated: AnimatedSprite, animationSpeedMul = 1): void {
+    const keepZIndex = monster.view.zIndex;
     const overlays = [monster.hpBarTrack, monster.hpBarFill];
     for (const child of [...monster.view.children]) {
       if (shouldPreserveMonsterOverlayChild(child, overlays)) continue;
       child.removeFromParent();
       child.destroy({ children: true });
     }
+    animated.animationSpeed *= Math.max(0.01, animationSpeedMul);
     animated.play();
     monster.view.addChildAt(animated, 0);
+    monster.view.zIndex = keepZIndex;
+  }
+
+  private getMonsterAnimationSpeedMul(monster: MonsterRuntime, animationKey: string): number {
+    if (animationKey !== monster.def.attackAnimKey) return 1;
+    return this.getMonsterAttackAnimationSpeedMul(monster, data.getAnimation(animationKey));
+  }
+
+  private getMonsterAttackAnimationSpeedMul(monster: MonsterRuntime, animation: AnimationDef | undefined): number {
+    return resolveAnimatedMonsterAttackTiming({
+      animation,
+      fallbackHitTime: data.getBattleField(this.level.battleFieldKey).monsterAttackHitTime,
+      attackInterval: monster.def.attackInterval,
+      attackSpeedMul: monster.attackSpeedBuffMul ?? 1,
+    }).animationSpeedMul;
   }
 
   private applyBaseDamage(monster: MonsterRuntime, damage: number): void {
@@ -958,9 +979,10 @@ export class BattleScene extends BaseScene {
     const anim = data.getAnimation(skill.animKey);
     monster.bossRoarTimer = (anim?.frames.length ?? 1) / Math.max(1, anim?.fps ?? 12);
     for (const other of targets) {
-      const buff = applyBossRoarBuff(other.speedBuffMul ?? 1, other.attackBuffMul ?? 1, skill);
+      const buff = applyBossRoarBuff(other.speedBuffMul ?? 1, other.attackBuffMul ?? 1, other.attackSpeedBuffMul ?? 1, skill);
       other.speedBuffMul = buff.speedMul;
       other.attackBuffMul = buff.attackMul;
+      other.attackSpeedBuffMul = buff.attackSpeedMul;
       other.bossBuffTimer = Math.max(other.bossBuffTimer ?? 0, skill.duration);
     }
     this.addFloating(monster.x, monster.y - 64, "怒吼强化!", 0xff7a38);
