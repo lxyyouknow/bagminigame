@@ -4,6 +4,9 @@
   { "key": "button_blue", "assetKey": "ui_button_blue", "desc": "蓝色按钮底图，用于取消、设置等次级操作", "defaultWidth": 168, "defaultHeight": 58 },
   { "key": "button_green", "assetKey": "botton_green_png", "desc": "绿色功能按钮底图，用于主页、广告收益等", "defaultWidth": 70, "defaultHeight": 64, "pressScale": 0.95 },
   { "key": "button_white", "assetKey": "ui_button_white", "desc": "白色左右切换按钮底图", "defaultWidth": 54, "defaultHeight": 64 },
+  { "key": "bag_ad_refresh_button", "assetKey": "ui_bag_ad_refresh_button", "desc": "背包界面广告刷新按钮图片", "defaultWidth": 230, "defaultHeight": 101, "pressScale": 0.95 },
+  { "key": "bag_gold_refresh_button", "assetKey": "ui_bag_gold_refresh_button", "desc": "背包界面金币刷新按钮图片", "defaultWidth": 230, "defaultHeight": 101, "pressScale": 0.95 },
+  { "key": "bag_start_wave_button", "assetKey": "ui_bag_start_wave_button", "desc": "背包界面开始波次按钮图片", "defaultWidth": 270, "defaultHeight": 71, "pressScale": 0.95 },
 
   { "key": "resource_energy_icon", "assetKey": "ui_res_energy", "desc": "主界面体力/能量图标", "defaultWidth": 38, "defaultHeight": 38 },
   { "key": "resource_ticket_icon", "assetKey": "ui_res_ticket", "desc": "主界面钥匙道具图标", "defaultWidth": 38, "defaultHeight": 38 },

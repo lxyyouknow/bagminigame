@@ -3,7 +3,7 @@ import type { AnimationDef, BagState, BattleTuningDef, CombatBuffs, FloatingRunt
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
-import { color, drawGrassBg, text, button, weightedPick, spriteFromAsset, spriteFromUi } from "../utils/display";
+import { color, drawAssetBg, text, button, weightedPick, spriteFromAsset, spriteFromUi } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
@@ -194,7 +194,8 @@ export class BattleScene extends BaseScene {
     const w = app.screen.width;
     const h = app.screen.height;
     if (this.battleLayer.children.length === 0) {
-      drawGrassBg(this.battleLayer, this.level.theme);
+      const field = data.getBattleField(this.level.battleFieldKey);
+      drawAssetBg(this.battleLayer, field.bgAssetKey, this.level.theme);
       this.drawBattleMapDecor();
     }
 

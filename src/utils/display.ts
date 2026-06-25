@@ -140,10 +140,10 @@ export function drawGradientBg(container: Container, theme: ThemeName): void {
   container.addChildAt(g, 0);
 }
 
-export function drawGrassBg(container: Container, fallbackTheme: ThemeName = "green"): void {
+export function drawAssetBg(container: Container, assetKey: string, fallbackTheme: ThemeName = "green"): void {
   const w = app.screen.width;
   const h = app.screen.height;
-  const texture = assetManager.texture("bg_grass_cartoon");
+  const texture = assetManager.texture(assetKey);
   if (!texture) {
     drawGradientBg(container, fallbackTheme);
     return;
@@ -153,6 +153,10 @@ export function drawGrassBg(container: Container, fallbackTheme: ThemeName = "gr
   bg.scale.set(scale);
   bg.position.set((w - texture.width * scale) / 2, (h - texture.height * scale) / 2);
   container.addChildAt(bg, 0);
+}
+
+export function drawGrassBg(container: Container, fallbackTheme: ThemeName = "green"): void {
+  drawAssetBg(container, "bg_grass_cartoon", fallbackTheme);
 }
 
 export function drawMainBg(container: Container): void {

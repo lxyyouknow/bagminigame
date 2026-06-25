@@ -2,7 +2,7 @@
   {
     "key": "farm_fence_field",
     "name": "农场木栏杆战场",
-    "bgAssetKey": "bg_grass_cartoon",
+    "bgAssetKey": "bg_battle_field",
     "fenceAssetKey": "",
     "fenceForegroundAssetKey": "battle_divider_line",
     "fenceForegroundY": 0,

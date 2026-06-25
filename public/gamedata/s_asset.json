@@ -14,6 +14,20 @@
     "fallbackKey": ""
   },
   {
+    "key": "bg_bag_prebattle",
+    "type": "image",
+    "url": "/game-assets/backgrounds/bag-prebattle-background.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "bg_grass_cartoon"
+  },
+  {
+    "key": "bg_battle_field",
+    "type": "image",
+    "url": "/game-assets/backgrounds/battle-background.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "bg_grass_cartoon"
+  },
+  {
     "key": "atlas_ui_main",
     "type": "generated",
     "url": "",
@@ -89,6 +103,27 @@
     "url": "",
     "preloadGroup": "ui",
     "fallbackKey": "ui_button_basic"
+  },
+  {
+    "key": "ui_bag_ad_refresh_button",
+    "type": "image",
+    "url": "/game-assets/ui/bag/bag-ad-refresh-button.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "ui_button_green"
+  },
+  {
+    "key": "ui_bag_gold_refresh_button",
+    "type": "image",
+    "url": "/game-assets/ui/bag/bag-gold-refresh-button.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "ui_button_blue"
+  },
+  {
+    "key": "ui_bag_start_wave_button",
+    "type": "image",
+    "url": "/game-assets/ui/bag/bag-start-wave-button.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "ui_button_yellow"
   },
   {
     "key": "ui_res_energy",

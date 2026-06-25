@@ -41,6 +41,19 @@ export function resolveUiLayoutRect(layout: UiLayoutDef, screenWidth: number, sc
   };
 }
 
+export function scaleUiLayoutSize(layout: UiLayoutDef): UiLayoutDef {
+  const scale = layout.scale ?? 1;
+  if (scale === 1) return layout;
+  return {
+    ...layout,
+    width: Math.round(layout.width * scale),
+    height: Math.round(layout.height * scale),
+    iconSize: layout.iconSize === undefined ? undefined : Math.round(layout.iconSize * scale),
+    fontSize: layout.fontSize === undefined ? undefined : Math.round(layout.fontSize * scale),
+    gap: layout.gap === undefined ? undefined : Math.round(layout.gap * scale),
+  };
+}
+
 function anchorBase(anchor: UiLayoutAnchor, screenWidth: number, screenHeight: number): { x: number; y: number } {
   switch (anchor) {
     case "topLeft":

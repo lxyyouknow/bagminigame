@@ -2,8 +2,8 @@ import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, ItemShapeDef, LevelDef, PlacedItem } from "../types";
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
-import { addImageOrFallback, createItemShapeView, drawGrassBg, screenPoint, text, glossyButton, uiButton, weightedPick, color, spriteFromAsset, spriteFromUi } from "../utils/display";
-import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
+import { addImageOrFallback, createItemShapeView, drawAssetBg, screenPoint, text, uiButton, weightedPick, color, spriteFromAsset, spriteFromUi } from "../utils/display";
+import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
 import {
   findNearestDragTarget,
   isSameDragSource,
@@ -153,7 +153,7 @@ export class BagScene extends BaseScene {
     this.candidateViews.clear();
     this.candidateMotions = [];
     this.container.removeChildren();
-    drawGrassBg(this.container);
+    drawAssetBg(this.container, "bg_bag_prebattle");
     const w = app.screen.width;
     const h = app.screen.height;
     const boardLayout = this.layout("board", {
@@ -465,8 +465,6 @@ export class BagScene extends BaseScene {
   }
 
   private drawActions(w: number, h: number): void {
-    const adRefreshLabel = "广告刷新\n必出2级";
-    const goldRefreshLabel = `刷新\n金币 ${data.getEconomy("bag_refresh_gold_cost")}`;
     const refreshLayout = this.layout("action_refresh", {
       scene: "bag",
       key: "action_refresh",
@@ -503,15 +501,18 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "背包底部开始战斗按钮",
     });
-    const refresh = uiButton("button_green", adRefreshLabel, refreshLayout.width, refreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2(), refreshLayout.fontSize ?? 16);
-    const expand = glossyButton(goldRefreshLabel, expandLayout.width, expandLayout.height, 0x33bfff, () => this.refreshCandidatesByGold(), expandLayout.fontSize ?? 16, 0.95);
-    const start = glossyButton(`开始第${this.runSession?.currentWave ?? this.state.currentWave ?? 1}波`, startLayout.width, startLayout.height, 0xffb33d, () => this.tryStartBattle(), startLayout.fontSize ?? 16, 0.95);
-    const refreshPos = resolveUiLayoutPosition(refreshLayout, w, h);
-    const expandRect = resolveUiLayoutRect(expandLayout, w, h);
-    const startPos = resolveUiLayoutPosition(startLayout, w, h);
+    const scaledRefreshLayout = scaleUiLayoutSize(refreshLayout);
+    const scaledExpandLayout = scaleUiLayoutSize(expandLayout);
+    const scaledStartLayout = scaleUiLayoutSize(startLayout);
+    const refresh = uiButton("bag_ad_refresh_button", "", scaledRefreshLayout.width, scaledRefreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2(), scaledRefreshLayout.fontSize ?? 16);
+    const expand = uiButton("bag_gold_refresh_button", "", scaledExpandLayout.width, scaledExpandLayout.height, 0x33bfff, () => this.refreshCandidatesByGold(), scaledExpandLayout.fontSize ?? 16, 0.95);
+    const start = uiButton("bag_start_wave_button", "", scaledStartLayout.width, scaledStartLayout.height, 0xffb33d, () => this.tryStartBattle(), scaledStartLayout.fontSize ?? 16, 0.95);
+    const refreshPos = resolveUiLayoutPosition(scaledRefreshLayout, w, h);
+    const expandRect = resolveUiLayoutRect(scaledExpandLayout, w, h);
+    const startRect = resolveUiLayoutRect(scaledStartLayout, w, h);
     refresh.position.set(refreshPos.x, refreshPos.y);
     expand.position.set(expandRect.x, expandRect.y);
-    start.position.set(startPos.x, startPos.y);
+    start.position.set(startRect.x, startRect.y);
     if (refreshLayout.visible) this.container.addChild(refresh);
     if (expandLayout.visible) this.container.addChild(expand);
     if (startLayout.visible) this.container.addChild(start);
