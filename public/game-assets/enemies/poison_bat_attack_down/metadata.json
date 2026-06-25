@@ -1,0 +1,14 @@
+{
+  "key": "poison_bat_attack_down",
+  "source": "poison-bat-attack-down-video-20260625",
+  "frameCount": 43,
+  "fps": 30,
+  "loop": false,
+  "anchorX": 0.5,
+  "anchorY": 0.31,
+  "scale": 0.45,
+  "hitFrame": 22,
+  "frameWidth": 256,
+  "frameHeight": 455,
+  "notes": "保留原始 720x1280 高度，按宽度归一到 256，避免毒蝠本体变小，同时显示向下攻击延展。"
+}

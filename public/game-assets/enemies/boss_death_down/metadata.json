@@ -1,0 +1,17 @@
+{
+  "name": "boss_death_down",
+  "source": "public/game-assets/source/boss-death-down-video-20260625",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "category": "steel_captain",
+  "frameWidth": 320,
+  "frameHeight": 320,
+  "frames": 22,
+  "fps": 12,
+  "loop": false,
+  "direction": "down",
+  "anchorX": 0.5,
+  "anchorY": 0.92,
+  "scale": 0.9,
+  "hitFrame": null,
+  "usage": "Boss 被击杀后的死亡动作，320画布保持与行走动作显示尺寸一致，播完后再进入胜利结算"
+}

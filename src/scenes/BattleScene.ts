@@ -9,6 +9,7 @@ import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
+import { getBaseDamageFeedback, getBaseShakeFeedback } from "./baseDamageFeedbackRules";
 import { getDamageNumberFeedback } from "./battleDamageFeedbackRules";
 import { resolveMonsterContactY } from "./battleContactLineRules";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
@@ -17,6 +18,10 @@ import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, type WaveSpawnEven
 import { createEffectiveMonster, getBaseArmor, getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
 import { stepMonsterContact } from "./monsterContactRules";
 import { getMonsterAnimationKey, getMonsterDeathAnimationKey } from "./monsterVisualRules";
+import { stepAnimatedMonsterAttack } from "./monsterAttackAnimationRules";
+import { resolveMonsterAttackContactY } from "./monsterAttackDistanceRules";
+import { applyBossRoarBuff, stepBossRoarCooldown } from "./bossSkillRules";
+import { shouldPreserveMonsterOverlayChild } from "./monsterViewRules";
 import { chooseMonsterSpawnPosition } from "./monsterSpawnRules";
 import { AnimationPlaybackController } from "./animationPlaybackController";
 import { getImpactAnimationKey, shouldUseVisualProjectile, usesAreaImpact } from "./skillVisualRules";
@@ -107,6 +112,9 @@ export class BattleScene extends BaseScene {
   private heroAttackTimer = 0;
   private heroCastX = 0;
   private heroCastY = 0;
+  private baseShakeTimer = 0;
+  private baseShakeDuration = 0;
+  private baseShakeAmplitude = 0;
   private readonly heroAnimKey = "hero_pumpkin_slingshot_attack_up";
   private readonly animationPlayback = new AnimationPlaybackController();
   private readonly tuning: BattleTuningDef;
@@ -154,6 +162,7 @@ export class BattleScene extends BaseScene {
     this.updateFadeReleases(dt);
     this.updateHero(dt);
     this.drawStatic();
+    this.updateBaseShake(dt);
     if (this.ending) return;
     if (this.baseHp <= 0) {
       this.showResult(false);
@@ -476,13 +485,16 @@ export class BattleScene extends BaseScene {
     const { x, y } = chooseMonsterSpawnPosition(
       w,
       this.monsters.filter((monster) => !monster.dead).map((monster) => ({ x: monster.x, y: monster.y })),
+      Math.random,
+      16,
+      def.layerType === "boss" ? "center" : "spread",
     );
     const animationKey = getMonsterAnimationKey(def, false);
     const view = this.createMonsterView(def, animationKey);
-    const hpBarFill = def.boss ? this.addMonsterHpBar(view, def) : undefined;
+    const hpBar = def.boss ? this.addMonsterHpBar(view, def) : undefined;
     view.position.set(x, y);
     this.monsterLayer.addChild(view);
-    this.monsters.push({ uid: nextUid(), def, view, hpBarFill, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, deathVisualDone: false, animationKey });
+    this.monsters.push({ uid: nextUid(), def, view, hpBarTrack: hpBar?.track, hpBarFill: hpBar?.fill, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, deathVisualDone: false, animationKey, spawnAge: 0 });
   }
 
   private createMonsterView(def: MonsterDef, animationKey?: string): Container {
@@ -503,7 +515,7 @@ export class BattleScene extends BaseScene {
     return c;
   }
 
-  private addMonsterHpBar(view: Container, def: MonsterDef): Graphics {
+  private addMonsterHpBar(view: Container, def: MonsterDef): { track: Graphics; fill: Graphics } {
     const r = def.radius;
     const barWidth = Math.max(72, r * 2.8);
     const barHeight = 12;
@@ -515,11 +527,11 @@ export class BattleScene extends BaseScene {
     const fill = new Graphics();
     view.addChild(track, fill);
     this.redrawMonsterHpBar({ def, hp: def.hp, maxHp: def.hp, hpBarFill: fill } as MonsterRuntime);
-    return fill;
+    return { track, fill };
   }
 
   private redrawMonsterHpBar(monster: MonsterRuntime): void {
-    if (!monster.hpBarFill) return;
+    if (!monster.hpBarFill || monster.hpBarFill.destroyed) return;
     const r = monster.def.radius;
     const barWidth = Math.max(72, r * 2.8);
     const barHeight = 12;
@@ -643,28 +655,62 @@ export class BattleScene extends BaseScene {
         monster.view.scale.set(1 + Math.sin(this.time * 9 + monster.uid) * 0.035, 1 - Math.sin(this.time * 9 + monster.uid) * 0.025);
         continue;
       }
+      const speedMul = monster.speedBuffMul ?? 1;
+      const attackMul = monster.attackBuffMul ?? 1;
+      monster.spawnAge = (monster.spawnAge ?? 0) + dt;
+      monster.bossBuffTimer = Math.max(0, (monster.bossBuffTimer ?? 0) - dt);
+      if (monster.bossBuffTimer <= 0) {
+        monster.speedBuffMul = 1;
+        monster.attackBuffMul = 1;
+      }
+      monster.bossRoarTimer = Math.max(0, (monster.bossRoarTimer ?? 0) - dt);
+      this.tryTriggerBossRoar(monster, false, dt);
+      const attackAnim = monster.bossRoarTimer && monster.bossRoarTimer > 0 ? undefined : monster.def.attackAnimKey ? data.getAnimation(monster.def.attackAnimKey) : undefined;
+      const hasAnimatedAttack = Boolean(attackAnim);
+      const baseHitY = this.baseFenceContactY(monster);
+      const contactY = this.baseContactY(monster);
+      monster.lastBaseHitY = baseHitY;
+      monster.lastContactY = contactY;
       const contact = stepMonsterContact({
         y: monster.y,
-        speed: monster.def.speed,
+        speed: monster.def.speed * speedMul,
         slowTimer: monster.slowTimer,
-        attackCooldown: monster.attackCooldown,
+        attackCooldown: hasAnimatedAttack ? Number.POSITIVE_INFINITY : monster.attackCooldown,
         dt,
-        contactY: this.baseContactY(monster),
-        attack: monster.def.attack,
+        contactY,
+        attack: monster.def.attack * attackMul,
         attackInterval: monster.def.attackInterval,
         armor: this.armor,
         armorBonus: this.buffs.armorBonus,
       });
       monster.y = contact.y;
-      monster.attackCooldown = contact.attackCooldown;
+      monster.attackCooldown = hasAnimatedAttack ? monster.attackCooldown : contact.attackCooldown;
       this.updateMonsterAnimation(monster, contact.contacted);
       monster.view.position.set(monster.x, monster.y + Math.sin(this.time * 8 + monster.uid) * 2);
       monster.view.scale.set(1 + Math.sin(this.time * 9 + monster.uid) * 0.035, 1 - Math.sin(this.time * 9 + monster.uid) * 0.025);
-      if (contact.damage > 0) {
-        this.baseHp -= contact.damage;
-        this.bag.baseHp = Math.max(0, this.baseHp);
-        this.syncSessionProgress();
-        this.addFloating(monster.x, monster.y - 24, `-${Math.round(contact.damage)}`, 0xff5b5b);
+      let damage = contact.damage;
+      if (hasAnimatedAttack) {
+        const animatedAttack = stepAnimatedMonsterAttack({
+          contacted: contact.contacted,
+          attackCooldown: monster.attackCooldown,
+          attackWindupTimer: monster.attackWindupTimer ?? 0,
+          attackDamagePending: monster.attackDamagePending ?? false,
+          dt,
+          attack: monster.def.attack * attackMul,
+          attackInterval: monster.def.attackInterval,
+          armor: this.armor,
+          armorBonus: this.buffs.armorBonus,
+          animation: attackAnim,
+          fallbackHitTime: data.getBattleField(this.level.battleFieldKey).monsterAttackHitTime,
+        });
+        monster.attackCooldown = animatedAttack.attackCooldown;
+        monster.attackWindupTimer = animatedAttack.attackWindupTimer;
+        monster.attackDamagePending = animatedAttack.attackDamagePending;
+        damage = animatedAttack.damage;
+        if (animatedAttack.startedAttack) this.restartMonsterAnimation(monster, monster.def.attackAnimKey);
+      }
+      if (damage > 0) {
+        this.applyBaseDamage(monster, damage);
       }
     }
     this.separateAndSortMonsters();
@@ -692,17 +738,51 @@ export class BattleScene extends BaseScene {
   }
 
   private updateMonsterAnimation(monster: MonsterRuntime, contacted: boolean): void {
+    if (monster.bossRoarTimer && monster.bossRoarTimer > 0) return;
     const nextKey = getMonsterAnimationKey(monster.def, contacted);
     if (!nextKey || nextKey === monster.animationKey) return;
     const animated = assetManager.animation(nextKey);
     if (!animated) return;
-    for (const child of monster.view.removeChildren()) child.destroy({ children: true });
-    animated.play();
-    monster.view.addChild(animated);
+    this.replaceMonsterLiveVisual(monster, animated);
     monster.animationKey = nextKey;
   }
 
+  private restartMonsterAnimation(monster: MonsterRuntime, animationKey: string | undefined): void {
+    if (!animationKey) return;
+    const animated = assetManager.animation(animationKey);
+    if (!animated) return;
+    this.replaceMonsterLiveVisual(monster, animated);
+    monster.animationKey = animationKey;
+  }
+
+  private replaceMonsterLiveVisual(monster: MonsterRuntime, animated: AnimatedSprite): void {
+    const overlays = [monster.hpBarTrack, monster.hpBarFill];
+    for (const child of [...monster.view.children]) {
+      if (shouldPreserveMonsterOverlayChild(child, overlays)) continue;
+      child.removeFromParent();
+      child.destroy({ children: true });
+    }
+    animated.play();
+    monster.view.addChildAt(animated, 0);
+  }
+
+  private applyBaseDamage(monster: MonsterRuntime, damage: number): void {
+    this.baseHp -= damage;
+    this.bag.baseHp = Math.max(0, this.baseHp);
+    this.syncSessionProgress();
+    this.addBaseDamageFloating(monster.x, (monster.lastBaseHitY ?? this.baseFenceContactY(monster)) - 18, damage);
+    const shake = getBaseShakeFeedback(monster.def.boss);
+    if (shake) this.startBaseShake(shake.duration, shake.amplitude);
+  }
+
   private baseContactY(monster: MonsterRuntime): number {
+    return resolveMonsterAttackContactY({
+      baseContactY: this.baseFenceContactY(monster),
+      attackDistance: monster.def.attackDistance,
+    });
+  }
+
+  private baseFenceContactY(monster: MonsterRuntime): number {
     const h = app.screen.height;
     const field = data.getBattleField(this.level.battleFieldKey);
     return resolveMonsterContactY({
@@ -853,10 +933,37 @@ export class BattleScene extends BaseScene {
     if (skill?.hitStopDuration) {
       monster.hitStopTimer = Math.max(monster.hitStopTimer, skill.hitStopDuration);
     }
+    if (!killed) this.tryTriggerBossRoar(monster, true, 0);
     if (killed) {
       this.killMonster(monster, true);
     }
     return { damage, killed };
+  }
+
+  private tryTriggerBossRoar(monster: MonsterRuntime, bossWasHit: boolean, dt: number): void {
+    if (!monster.def.boss || monster.dead) return;
+    const skill = data.getBossSkill(monster.def.roarSkillKey);
+    const targets = this.monsters.filter((other) => other.uid !== monster.uid && !other.dead);
+    const result = stepBossRoarCooldown({
+      skill,
+      cooldown: monster.bossRoarCooldown ?? 0,
+      dt,
+      bossWasHit,
+      spawnAge: monster.spawnAge ?? 0,
+      targetCount: targets.length,
+    });
+    monster.bossRoarCooldown = result.cooldown;
+    if (!result.shouldCast || !skill) return;
+    this.restartMonsterAnimation(monster, skill.animKey);
+    const anim = data.getAnimation(skill.animKey);
+    monster.bossRoarTimer = (anim?.frames.length ?? 1) / Math.max(1, anim?.fps ?? 12);
+    for (const other of targets) {
+      const buff = applyBossRoarBuff(other.speedBuffMul ?? 1, other.attackBuffMul ?? 1, skill);
+      other.speedBuffMul = buff.speedMul;
+      other.attackBuffMul = buff.attackMul;
+      other.bossBuffTimer = Math.max(other.bossBuffTimer ?? 0, skill.duration);
+    }
+    this.addFloating(monster.x, monster.y - 64, "怒吼强化!", 0xff7a38);
   }
 
   private killMonster(monster: MonsterRuntime, reward: boolean): void {
@@ -1140,6 +1247,44 @@ export class BattleScene extends BaseScene {
       vy: feedback.vy,
       popScale: feedback.popScale,
     });
+  }
+
+  private addBaseDamageFloating(x: number, y: number, damage: number): void {
+    const feedback = getBaseDamageFeedback(damage);
+    const view = this.createOutlinedText(feedback.label, feedback.fontSize, feedback.fill);
+    view.position.set(x, y);
+    this.damageTextLayer.addChild(view);
+    this.floating.push({
+      view,
+      ttl: feedback.ttl,
+      maxTtl: feedback.ttl,
+      vy: feedback.vy,
+      popScale: feedback.popScale,
+    });
+  }
+
+  private startBaseShake(duration: number, amplitude: number): void {
+    this.baseShakeDuration = Math.max(this.baseShakeDuration, duration);
+    this.baseShakeTimer = Math.max(this.baseShakeTimer, duration);
+    this.baseShakeAmplitude = Math.max(this.baseShakeAmplitude, amplitude);
+  }
+
+  private updateBaseShake(dt: number): void {
+    if (this.baseShakeTimer <= 0 || this.baseShakeDuration <= 0) {
+      this.fieldForegroundLayer.position.set(0, 0);
+      this.heroLayer.position.set(0, 0);
+      this.baseShakeTimer = 0;
+      this.baseShakeDuration = 0;
+      this.baseShakeAmplitude = 0;
+      return;
+    }
+    this.baseShakeTimer = Math.max(0, this.baseShakeTimer - dt);
+    const life = this.baseShakeTimer / this.baseShakeDuration;
+    const amount = this.baseShakeAmplitude * life;
+    const x = Math.sin(this.time * 86) * amount;
+    const y = Math.cos(this.time * 73) * amount * 0.42;
+    this.fieldForegroundLayer.position.set(x, y);
+    this.heroLayer.position.set(x * 0.55, y * 0.55);
   }
 
   private createOutlinedText(label: string, fontSize: number, fill: number): Container {

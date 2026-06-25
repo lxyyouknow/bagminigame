@@ -1,0 +1,17 @@
+{
+  "name": "boss_roar_down",
+  "source": "public/game-assets/source/boss-roar-down-video-20260625",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "category": "steel_captain",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 19,
+  "fps": 12,
+  "loop": false,
+  "direction": "down",
+  "anchorX": 0.5,
+  "anchorY": 0.92,
+  "scale": 0.68,
+  "hitFrame": 6,
+  "usage": "Boss 被击打后怒吼，给其他怪物增加移动速度和攻击力"
+}

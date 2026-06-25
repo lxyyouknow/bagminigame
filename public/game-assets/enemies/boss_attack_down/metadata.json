@@ -1,0 +1,17 @@
+{
+  "name": "boss_attack_down",
+  "source": "public/game-assets/source/boss-attack-down-video-20260625",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "category": "steel_captain",
+  "frameWidth": 320,
+  "frameHeight": 320,
+  "frames": 19,
+  "fps": 12,
+  "loop": false,
+  "direction": "down",
+  "anchorX": 0.5,
+  "anchorY": 0.92,
+  "scale": 0.9,
+  "hitFrame": 15,
+  "usage": "Boss 到达栏杆后打人，hitFrame 对齐挥击落点和基地扣血；320画布保持与行走动作显示尺寸一致"
+}

@@ -15,6 +15,8 @@ function run(): void {
   assertEqual(getMonsterDepthZIndex(180, 7), 180007, "同一 y 值附近应使用 uid 做稳定排序，避免层级抖动");
   assert(getMonsterDepthZIndex(120, 2, "flying") > getMonsterDepthZIndex(420, 1, "ground"), "飞行怪应始终压在地面怪上方");
   assert(getMonsterDepthZIndex(260, 3, "flying") > getMonsterDepthZIndex(180, 2, "flying"), "飞行怪之间仍应按 y 值排序");
+  assertEqual(getMonsterDepthZIndex(260, 5, "boss"), getMonsterDepthZIndex(260, 5, "ground"), "Boss 应使用地面怪 y 深度排序，不应额外压在前排怪头上");
+  assert(getMonsterDepthZIndex(180, 5, "boss") < getMonsterDepthZIndex(320, 1, "ground"), "后排 Boss 应被更靠下的地面怪压住");
 
   const monsters = [
     { uid: 1, x: 200, y: 220, radius: 24 },

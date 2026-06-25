@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>frames</key>
+	<dict>
+		<key>037.png</key>
+		<dict>
+			<key>aliases</key>
+			<array/>
+			<key>spriteOffset</key>
+			<string>{0,-175}</string>
+			<key>spriteSize</key>
+			<string>{720,887}</string>
+			<key>spriteSourceSize</key>
+			<string>{720,1280}</string>
+			<key>textureRect</key>
+			<string>{{0,0},{720,887}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+		<key>038.png</key>
+		<dict>
+			<key>aliases</key>
+			<array/>
+			<key>spriteOffset</key>
+			<string>{0,-186}</string>
+			<key>spriteSize</key>
+			<string>{720,865}</string>
+			<key>spriteSourceSize</key>
+			<string>{720,1280}</string>
+			<key>textureRect</key>
+			<string>{{722,0},{720,865}}</string>
+			<key>textureRotated</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>metadata</key>
+	<dict>
+		<key>format</key>
+		<integer>3</integer>
+		<key>pixelFormat</key>
+		<string>RGBA8888</string>
+		<key>realTextureFileName</key>
+		<string>spritesheet_19.png</string>
+		<key>size</key>
+		<string>{1442,1210}</string>
+		<key>textureFileName</key>
+		<string>spritesheet_19.png</string>
+	</dict>
+</dict>
+</plist>

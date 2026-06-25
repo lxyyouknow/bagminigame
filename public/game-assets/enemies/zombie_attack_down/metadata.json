@@ -1,0 +1,17 @@
+{
+  "name": "zombie_attack_down",
+  "source": "public/game-assets/source/zombie-attack-down-video-20260625",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "category": "miner_zombie",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 13,
+  "fps": 12,
+  "loop": false,
+  "direction": "down",
+  "anchorX": 0.5,
+  "anchorY": 0.92,
+  "scale": 0.5,
+  "hitFrame": 6,
+  "usage": "小僵尸到达栏杆后向下攻击，hitFrame 对齐基地扣血"
+}

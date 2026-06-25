@@ -1,0 +1,17 @@
+{
+  "name": "boss_walk_down",
+  "source": "public/game-assets/source/boss-walk-down-video-20260625",
+  "sourceFormat": "TexturePacker JSON + PNG",
+  "category": "steel_captain",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frames": 18,
+  "fps": 12,
+  "loop": true,
+  "direction": "down",
+  "anchorX": 0.5,
+  "anchorY": 0.92,
+  "scale": 0.68,
+  "hitFrame": null,
+  "usage": "Boss 向屏幕下方走路，进入栏杆前的移动动作"
+}

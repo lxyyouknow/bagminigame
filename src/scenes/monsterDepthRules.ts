@@ -42,6 +42,5 @@ function clamp(value: number, min: number, max: number): number {
 
 function getLayerBase(layerType: MonsterLayerType): number {
   if (layerType === "flying") return 10_000_000;
-  if (layerType === "boss") return 5_000_000;
   return 0;
 }

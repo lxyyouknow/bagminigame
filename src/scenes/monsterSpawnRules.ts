@@ -3,15 +3,21 @@ export interface MonsterSpawnPoint {
   y: number;
 }
 
+export type MonsterSpawnMode = "spread" | "center";
+
 export function chooseMonsterSpawnPosition(
   screenWidth: number,
   existing: readonly MonsterSpawnPoint[],
   random: () => number = Math.random,
   sampleCount = 16,
+  mode: MonsterSpawnMode = "spread",
 ): MonsterSpawnPoint {
   const margin = Math.min(72, Math.max(52, screenWidth * 0.09));
   const left = margin;
   const right = Math.max(left, screenWidth - margin);
+  if (mode === "center") {
+    return { x: screenWidth / 2, y: 126 };
+  }
   const nearby = existing.filter((monster) => monster.y <= 360);
   const count = Math.max(1, Math.floor(sampleCount));
   let best: MonsterSpawnPoint | undefined;

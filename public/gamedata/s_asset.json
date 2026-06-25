@@ -1,277 +1,2766 @@
 [
-  { "key": "ui_loading_bg", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" },
-  { "key": "bg_grass_cartoon", "type": "image", "url": "/game-assets/backgrounds/grass-cartoon-base.png", "preloadGroup": "boot", "fallbackKey": "" },
-  { "key": "atlas_ui_main", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" },
-  { "key": "atlas_battle_main", "type": "generated", "url": "", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "battle_friendly_area_skin", "type": "image", "url": "/game-assets/battle/ui/battle-friendly-area-skin.png", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "battle_divider_line", "type": "image", "url": "/game-assets/battle/ui/battle-divider-line.png", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "battle_weapon_slot_box", "type": "image", "url": "/game-assets/battle/ui/battle-weapon-slot-box.png", "preloadGroup": "battle", "fallbackKey": "" },
-
-  { "key": "ui_button_basic", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "" },
-  { "key": "ui_button_yellow", "type": "image", "url": "/game-assets/ui/botton/button-wood-main.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
-  { "key": "ui_button_blue", "type": "image", "url": "/game-assets/ui/botton/botton_blue.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
-  { "key": "botton_green_png", "type": "image", "url": "/game-assets/ui/botton/botton_green.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
-  { "key": "ui_button_green", "type": "image", "url": "/game-assets/ui/botton/botton_green.png", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
-  { "key": "ui_button_white", "type": "image", "url": "", "preloadGroup": "ui", "fallbackKey": "ui_button_basic" },
-
-  { "key": "ui_res_energy", "type": "image", "url": "/game-assets/ui/icon/icon-va.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_res_ticket", "type": "image", "url": "/game-assets/ui/icon/icon-key.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_res_coin", "type": "image", "url": "/game-assets/ui/icon/icon-coin.png", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_side_minigame", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_side_game_circle", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_rogue_option", "type": "image", "url": "", "preloadGroup": "battle", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_result_exp", "type": "image", "url": "", "preloadGroup": "battle", "fallbackKey": "placeholder_icon" },
-  { "key": "ui_result_coin", "type": "image", "url": "/game-assets/ui/icon-coin.png", "preloadGroup": "battle", "fallbackKey": "placeholder_icon" },
-
-  { "key": "level_map_1", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "" },
-  { "key": "level_map_2", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_1" },
-  { "key": "level_map_3", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_1" },
-  { "key": "level_map_4", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_1" },
-  { "key": "level_map_5", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_2" },
-  { "key": "level_map_6", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_3" },
-  { "key": "level_map_2_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_2" },
-  { "key": "level_map_3_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_3" },
-  { "key": "level_map_4_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_4" },
-  { "key": "level_map_5_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_5" },
-  { "key": "level_map_6_locked", "type": "image", "url": "", "preloadGroup": "main", "fallbackKey": "level_map_6" },
-
-  { "key": "bag_farm_frame", "type": "image", "url": "/game-assets/bag/farm/bag-farm-frame.png", "preloadGroup": "bag", "fallbackKey": "" },
-  { "key": "bag_farm_cell", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell.png", "preloadGroup": "bag", "fallbackKey": "" },
-  { "key": "bag_farm_cell_1x2", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-1x2.png", "preloadGroup": "bag", "fallbackKey": "" },
-  { "key": "bag_farm_cell_2x1", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-2x1.png", "preloadGroup": "bag", "fallbackKey": "" },
-  { "key": "bag_farm_cell_2x2", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-2x2.png", "preloadGroup": "bag", "fallbackKey": "" },
-  { "key": "bag_farm_cell_l3", "type": "image", "url": "/game-assets/bag/farm/bag-farm-cell-l3.png", "preloadGroup": "bag", "fallbackKey": "" },
-
-  { "key": "weapon_tomato_lv1_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv1-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_tomato_lv2_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv2-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_tomato_lv1_icon" },
-  { "key": "weapon_tomato_lv3_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv3-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_tomato_lv2_icon" },
-  { "key": "weapon_tomato_fruit_lv1_icon", "type": "image", "url": "/game-assets/weapons/fruits/weapon-fruit-tomato-lv1-icon.png", "preloadGroup": "battle", "fallbackKey": "weapon_tomato_lv1_icon" },
-  { "key": "weapon_tomato_fruit_lv2_icon", "type": "image", "url": "/game-assets/weapons/fruits/weapon-fruit-tomato-lv2-icon.png", "preloadGroup": "battle", "fallbackKey": "weapon_tomato_fruit_lv1_icon" },
-  { "key": "weapon_tomato_fruit_lv3_icon", "type": "image", "url": "/game-assets/weapons/fruits/weapon-fruit-tomato-lv3-icon.png", "preloadGroup": "battle", "fallbackKey": "weapon_tomato_fruit_lv2_icon" },
-  { "key": "weapon_blueberry_lv1_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv1-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_blueberry_lv2_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv2-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_blueberry_lv1_icon" },
-  { "key": "weapon_blueberry_lv3_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv3-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_blueberry_lv2_icon" },
-  { "key": "weapon_carrot_lv1_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-carrot-lv1-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_carrot_lv2_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-carrot-lv2-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_carrot_lv1_icon" },
-  { "key": "weapon_carrot_lv3_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-carrot-lv3-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_carrot_lv2_icon" },
-  { "key": "weapon_carrot_fruit_lv1_icon", "type": "image", "url": "/game-assets/weapons/fruits/weapon-fruit-carrot-lv1-icon.png", "preloadGroup": "battle", "fallbackKey": "weapon_carrot_lv1_icon" },
-  { "key": "weapon_carrot_fruit_lv2_icon", "type": "image", "url": "/game-assets/weapons/fruits/weapon-fruit-carrot-lv2-icon.png", "preloadGroup": "battle", "fallbackKey": "weapon_carrot_fruit_lv1_icon" },
-  { "key": "weapon_carrot_fruit_lv3_icon", "type": "image", "url": "/game-assets/weapons/fruits/weapon-fruit-carrot-lv3-icon.png", "preloadGroup": "battle", "fallbackKey": "weapon_carrot_fruit_lv2_icon" },
-  { "key": "weapon_wheat_lv1_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv1-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_wheat_lv2_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv2-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_wheat_lv1_icon" },
-  { "key": "weapon_wheat_lv3_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv3-icon.png", "preloadGroup": "bag", "fallbackKey": "weapon_wheat_lv2_icon" },
-  { "key": "weapon_ball_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-tomato-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_bat_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-carrot-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_spear_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-wheat-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_shield_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-blueberry-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_bomb_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-pepper-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-  { "key": "weapon_staff_icon", "type": "image", "url": "/game-assets/weapons/plants/weapon-plant-cabbage-icon.png", "preloadGroup": "bag", "fallbackKey": "placeholder_icon" },
-
-  { "key": "fx_merge_test_00", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-00.svg", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "fx_merge_test_01", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-01.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_00" },
-  { "key": "fx_merge_test_02", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-02.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_01" },
-  { "key": "fx_merge_test_03", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-03.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_02" },
-  { "key": "fx_merge_test_04", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-04.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_03" },
-  { "key": "fx_merge_test_05", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-05.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_04" },
-  { "key": "fx_merge_test_06", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-06.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_05" },
-  { "key": "fx_merge_test_07", "type": "image", "url": "/game-assets/effects/generated/fx-merge-test-07.svg", "preloadGroup": "battle", "fallbackKey": "fx_merge_test_06" },
-
-  { "key": "wizard_attack_up_00", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-00.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "wizard_attack_up_01", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-01.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_00" },
-  { "key": "wizard_attack_up_02", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-02.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_01" },
-  { "key": "wizard_attack_up_03", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-03.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_02" },
-  { "key": "wizard_attack_up_04", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-04.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_03" },
-  { "key": "wizard_attack_up_05", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-05.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_04" },
-  { "key": "wizard_attack_up_06", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-06.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_05" },
-  { "key": "wizard_attack_up_07", "type": "image", "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-07.png?v=farm-guardian-1", "preloadGroup": "battle", "fallbackKey": "wizard_attack_up_06" },
-
-  { "key": "hero_pumpkin_slingshot_attack_up_00", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-00.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "hero_pumpkin_slingshot_attack_up_01", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-01.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_00" },
-  { "key": "hero_pumpkin_slingshot_attack_up_02", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-02.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_01" },
-  { "key": "hero_pumpkin_slingshot_attack_up_03", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-03.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_02" },
-  { "key": "hero_pumpkin_slingshot_attack_up_04", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-04.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_03" },
-  { "key": "hero_pumpkin_slingshot_attack_up_05", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-05.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_04" },
-  { "key": "hero_pumpkin_slingshot_attack_up_06", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-06.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_05" },
-  { "key": "hero_pumpkin_slingshot_attack_up_07", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-07.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_06" },
-  { "key": "hero_pumpkin_slingshot_attack_up_08", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-08.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_07" },
-  { "key": "hero_pumpkin_slingshot_attack_up_09", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-09.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_08" },
-  { "key": "hero_pumpkin_slingshot_attack_up_10", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-10.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_09" },
-  { "key": "hero_pumpkin_slingshot_attack_up_11", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-11.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_10" },
-  { "key": "hero_pumpkin_slingshot_attack_up_12", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-12.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_11" },
-  { "key": "hero_pumpkin_slingshot_attack_up_13", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-13.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_12" },
-  { "key": "hero_pumpkin_slingshot_attack_up_14", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-14.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_13" },
-  { "key": "hero_pumpkin_slingshot_attack_up_15", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-15.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_14" },
-  { "key": "hero_pumpkin_slingshot_attack_up_16", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-16.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_15" },
-  { "key": "hero_pumpkin_slingshot_attack_up_17", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-17.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_16" },
-  { "key": "hero_pumpkin_slingshot_attack_up_18", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-18.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_17" },
-  { "key": "hero_pumpkin_slingshot_attack_up_19", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-19.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_18" },
-  { "key": "hero_pumpkin_slingshot_attack_up_20", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-20.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_19" },
-  { "key": "hero_pumpkin_slingshot_attack_up_21", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-21.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_20" },
-  { "key": "hero_pumpkin_slingshot_attack_up_22", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-22.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_21" },
-  { "key": "hero_pumpkin_slingshot_attack_up_23", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-23.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_22" },
-  { "key": "hero_pumpkin_slingshot_attack_up_24", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-24.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_23" },
-  { "key": "hero_pumpkin_slingshot_attack_up_25", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-25.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_24" },
-  { "key": "hero_pumpkin_slingshot_attack_up_26", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-26.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_25" },
-  { "key": "hero_pumpkin_slingshot_attack_up_27", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-27.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_26" },
-  { "key": "hero_pumpkin_slingshot_attack_up_28", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-28.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_27" },
-  { "key": "hero_pumpkin_slingshot_attack_up_29", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-29.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_28" },
-  { "key": "hero_pumpkin_slingshot_attack_up_30", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-30.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_29" },
-  { "key": "hero_pumpkin_slingshot_attack_up_31", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-31.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_30" },
-  { "key": "hero_pumpkin_slingshot_attack_up_32", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-32.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_31" },
-  { "key": "hero_pumpkin_slingshot_attack_up_33", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-33.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_32" },
-  { "key": "hero_pumpkin_slingshot_attack_up_34", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-34.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_33" },
-  { "key": "hero_pumpkin_slingshot_attack_up_35", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-35.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_34" },
-  { "key": "hero_pumpkin_slingshot_attack_up_36", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-36.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_35" },
-  { "key": "hero_pumpkin_slingshot_attack_up_37", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-37.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_36" },
-  { "key": "hero_pumpkin_slingshot_attack_up_38", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-38.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_37" },
-  { "key": "hero_pumpkin_slingshot_attack_up_39", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-39.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_38" },
-  { "key": "hero_pumpkin_slingshot_attack_up_40", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-40.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_39" },
-  { "key": "hero_pumpkin_slingshot_attack_up_41", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-41.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_40" },
-  { "key": "hero_pumpkin_slingshot_attack_up_42", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-42.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_41" },
-  { "key": "hero_pumpkin_slingshot_attack_up_43", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-43.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_42" },
-  { "key": "hero_pumpkin_slingshot_attack_up_44", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-44.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_43" },
-  { "key": "hero_pumpkin_slingshot_attack_up_45", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-45.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_44" },
-  { "key": "hero_pumpkin_slingshot_attack_up_46", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-46.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_45" },
-  { "key": "hero_pumpkin_slingshot_attack_up_47", "type": "image", "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-47.png?v=pumpkin-slingshot-1", "preloadGroup": "battle", "fallbackKey": "hero_pumpkin_slingshot_attack_up_46" },
-
-  { "key": "zombie_walk_down_00", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-00.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "placeholder_enemy" },
-  { "key": "zombie_walk_down_01", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-01.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_00" },
-  { "key": "zombie_walk_down_02", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-02.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_01" },
-  { "key": "zombie_walk_down_03", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-03.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_02" },
-  { "key": "zombie_walk_down_04", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-04.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_03" },
-  { "key": "zombie_walk_down_05", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-05.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_04" },
-  { "key": "zombie_walk_down_06", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-06.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_05" },
-  { "key": "zombie_walk_down_07", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-07.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_06" },
-  { "key": "zombie_walk_down_08", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-08.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_07" },
-  { "key": "zombie_walk_down_09", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-09.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_08" },
-  { "key": "zombie_walk_down_10", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-10.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_09" },
-  { "key": "zombie_walk_down_11", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-11.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_10" },
-  { "key": "zombie_walk_down_12", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-12.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_11" },
-  { "key": "zombie_walk_down_13", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-13.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_12" },
-  { "key": "zombie_walk_down_14", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-14.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_13" },
-  { "key": "zombie_walk_down_15", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-15.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_14" },
-  { "key": "zombie_walk_down_16", "type": "image", "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-16.png?v=miner-zombie-1", "preloadGroup": "battle", "fallbackKey": "zombie_walk_down_15" },
-
-  { "key": "zombie_death_down_00", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-00.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "placeholder_enemy" },
-  { "key": "zombie_death_down_01", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-01.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_00" },
-  { "key": "zombie_death_down_02", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-02.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_01" },
-  { "key": "zombie_death_down_03", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-03.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_02" },
-  { "key": "zombie_death_down_04", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-04.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_03" },
-  { "key": "zombie_death_down_05", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-05.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_04" },
-  { "key": "zombie_death_down_06", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-06.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_05" },
-  { "key": "zombie_death_down_07", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-07.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_06" },
-  { "key": "zombie_death_down_08", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-08.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_07" },
-  { "key": "zombie_death_down_09", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-09.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_08" },
-  { "key": "zombie_death_down_10", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-10.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_09" },
-  { "key": "zombie_death_down_11", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-11.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_10" },
-  { "key": "zombie_death_down_12", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-12.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_11" },
-  { "key": "zombie_death_down_13", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-13.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_12" },
-  { "key": "zombie_death_down_14", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-14.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_13" },
-  { "key": "zombie_death_down_15", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-15.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_14" },
-  { "key": "zombie_death_down_16", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-16.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_15" },
-  { "key": "zombie_death_down_17", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-17.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_16" },
-  { "key": "zombie_death_down_18", "type": "image", "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-18.png?v=zombie-death-1", "preloadGroup": "battle", "fallbackKey": "zombie_death_down_17" },
-
-  { "key": "poison_bat_fly_down_00", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-00.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "placeholder_enemy" },
-  { "key": "poison_bat_fly_down_01", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-01.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_00" },
-  { "key": "poison_bat_fly_down_02", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-02.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_01" },
-  { "key": "poison_bat_fly_down_03", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-03.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_02" },
-  { "key": "poison_bat_fly_down_04", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-04.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_03" },
-  { "key": "poison_bat_fly_down_05", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-05.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_04" },
-  { "key": "poison_bat_fly_down_06", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-06.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_05" },
-  { "key": "poison_bat_fly_down_07", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-07.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_06" },
-  { "key": "poison_bat_fly_down_08", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-08.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_07" },
-  { "key": "poison_bat_fly_down_09", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-09.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_08" },
-  { "key": "poison_bat_fly_down_10", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-10.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_09" },
-  { "key": "poison_bat_fly_down_11", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-11.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_10" },
-  { "key": "poison_bat_fly_down_12", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-12.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_11" },
-  { "key": "poison_bat_fly_down_13", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-13.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_12" },
-  { "key": "poison_bat_fly_down_14", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-14.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_13" },
-  { "key": "poison_bat_fly_down_15", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-15.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_14" },
-  { "key": "poison_bat_fly_down_16", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-16.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_15" },
-  { "key": "poison_bat_fly_down_17", "type": "image", "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-17.png?v=poison-bat-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_fly_down_16" },
-
-  { "key": "poison_bat_death_down_00", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-00.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "placeholder_enemy" },
-  { "key": "poison_bat_death_down_01", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-01.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_00" },
-  { "key": "poison_bat_death_down_02", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-02.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_01" },
-  { "key": "poison_bat_death_down_03", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-03.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_02" },
-  { "key": "poison_bat_death_down_04", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-04.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_03" },
-  { "key": "poison_bat_death_down_05", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-05.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_04" },
-  { "key": "poison_bat_death_down_06", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-06.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_05" },
-  { "key": "poison_bat_death_down_07", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-07.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_06" },
-  { "key": "poison_bat_death_down_08", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-08.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_07" },
-  { "key": "poison_bat_death_down_09", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-09.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_08" },
-  { "key": "poison_bat_death_down_10", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-10.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_09" },
-  { "key": "poison_bat_death_down_11", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-11.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_10" },
-  { "key": "poison_bat_death_down_12", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-12.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_11" },
-  { "key": "poison_bat_death_down_13", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-13.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_12" },
-  { "key": "poison_bat_death_down_14", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-14.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_13" },
-  { "key": "poison_bat_death_down_15", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-15.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_14" },
-  { "key": "poison_bat_death_down_16", "type": "image", "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-16.png?v=poison-bat-death-1", "preloadGroup": "battle", "fallbackKey": "poison_bat_death_down_15" },
-
-  { "key": "projectile_tomato_spin_00", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-00.png", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "projectile_tomato_spin_01", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-01.png", "preloadGroup": "battle", "fallbackKey": "projectile_tomato_spin_00" },
-  { "key": "projectile_tomato_spin_02", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-02.png", "preloadGroup": "battle", "fallbackKey": "projectile_tomato_spin_01" },
-  { "key": "projectile_tomato_spin_03", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-03.png", "preloadGroup": "battle", "fallbackKey": "projectile_tomato_spin_02" },
-  { "key": "projectile_tomato_spin_04", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-04.png", "preloadGroup": "battle", "fallbackKey": "projectile_tomato_spin_03" },
-  { "key": "projectile_tomato_spin_05", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-05.png", "preloadGroup": "battle", "fallbackKey": "projectile_tomato_spin_04" },
-  { "key": "projectile_tomato_spin_06", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-06.png", "preloadGroup": "battle", "fallbackKey": "projectile_tomato_spin_05" },
-  { "key": "projectile_tomato_spin_07", "type": "image", "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-07.png", "preloadGroup": "battle", "fallbackKey": "projectile_tomato_spin_06" },
-
-  { "key": "projectile_carrot_spin_00", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-00.png", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "projectile_carrot_spin_01", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-01.png", "preloadGroup": "battle", "fallbackKey": "projectile_carrot_spin_00" },
-  { "key": "projectile_carrot_spin_02", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-02.png", "preloadGroup": "battle", "fallbackKey": "projectile_carrot_spin_01" },
-  { "key": "projectile_carrot_spin_03", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-03.png", "preloadGroup": "battle", "fallbackKey": "projectile_carrot_spin_02" },
-  { "key": "projectile_carrot_spin_04", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-04.png", "preloadGroup": "battle", "fallbackKey": "projectile_carrot_spin_03" },
-  { "key": "projectile_carrot_spin_05", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-05.png", "preloadGroup": "battle", "fallbackKey": "projectile_carrot_spin_04" },
-  { "key": "projectile_carrot_spin_06", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-06.png", "preloadGroup": "battle", "fallbackKey": "projectile_carrot_spin_05" },
-  { "key": "projectile_carrot_spin_07", "type": "image", "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-07.png", "preloadGroup": "battle", "fallbackKey": "projectile_carrot_spin_06" },
-
-  { "key": "projectile_wheat_arrow_00", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-00.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "projectile_wheat_arrow_01", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-01.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "projectile_wheat_arrow_00" },
-  { "key": "projectile_wheat_arrow_02", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-02.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "projectile_wheat_arrow_01" },
-  { "key": "projectile_wheat_arrow_03", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-03.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "projectile_wheat_arrow_02" },
-  { "key": "projectile_wheat_arrow_04", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-04.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "projectile_wheat_arrow_03" },
-  { "key": "projectile_wheat_arrow_05", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-05.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "projectile_wheat_arrow_04" },
-  { "key": "projectile_wheat_arrow_06", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-06.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "projectile_wheat_arrow_05" },
-  { "key": "projectile_wheat_arrow_07", "type": "image", "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-07.png?v=wheat-new-2", "preloadGroup": "battle", "fallbackKey": "projectile_wheat_arrow_06" },
-
-  { "key": "hit_tomato_burst_00", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-00.png", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "hit_tomato_burst_01", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-01.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_burst_00" },
-  { "key": "hit_tomato_burst_02", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-02.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_burst_01" },
-  { "key": "hit_tomato_burst_03", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-03.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_burst_02" },
-  { "key": "hit_tomato_burst_04", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-04.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_burst_03" },
-  { "key": "hit_tomato_burst_05", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-05.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_burst_04" },
-  { "key": "hit_tomato_burst_06", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-06.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_burst_05" },
-  { "key": "hit_tomato_burst_07", "type": "image", "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-07.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_burst_06" },
-
-  { "key": "hit_tomato_splash_small_00", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-00.png", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "hit_tomato_splash_small_01", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-01.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_splash_small_00" },
-  { "key": "hit_tomato_splash_small_02", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-02.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_splash_small_01" },
-  { "key": "hit_tomato_splash_small_03", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-03.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_splash_small_02" },
-  { "key": "hit_tomato_splash_small_04", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-04.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_splash_small_03" },
-  { "key": "hit_tomato_splash_small_05", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-05.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_splash_small_04" },
-  { "key": "hit_tomato_splash_small_06", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-06.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_splash_small_05" },
-  { "key": "hit_tomato_splash_small_07", "type": "image", "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-07.png", "preloadGroup": "battle", "fallbackKey": "hit_tomato_splash_small_06" },
-
-  { "key": "hit_carrot_split_00", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-00.png", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "hit_carrot_split_01", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-01.png", "preloadGroup": "battle", "fallbackKey": "hit_carrot_split_00" },
-  { "key": "hit_carrot_split_02", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-02.png", "preloadGroup": "battle", "fallbackKey": "hit_carrot_split_01" },
-  { "key": "hit_carrot_split_03", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-03.png", "preloadGroup": "battle", "fallbackKey": "hit_carrot_split_02" },
-  { "key": "hit_carrot_split_04", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-04.png", "preloadGroup": "battle", "fallbackKey": "hit_carrot_split_03" },
-  { "key": "hit_carrot_split_05", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-05.png", "preloadGroup": "battle", "fallbackKey": "hit_carrot_split_04" },
-  { "key": "hit_carrot_split_06", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-06.png", "preloadGroup": "battle", "fallbackKey": "hit_carrot_split_05" },
-  { "key": "hit_carrot_split_07", "type": "image", "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-07.png", "preloadGroup": "battle", "fallbackKey": "hit_carrot_split_06" },
-
-  { "key": "hit_wheat_stuck_00", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-00.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "hit_wheat_stuck_01", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-01.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "hit_wheat_stuck_00" },
-  { "key": "hit_wheat_stuck_02", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-02.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "hit_wheat_stuck_01" },
-  { "key": "hit_wheat_stuck_03", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-03.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "hit_wheat_stuck_02" },
-  { "key": "hit_wheat_stuck_04", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-04.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "hit_wheat_stuck_03" },
-  { "key": "hit_wheat_stuck_05", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-05.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "hit_wheat_stuck_04" },
-  { "key": "hit_wheat_stuck_06", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-06.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "hit_wheat_stuck_05" },
-  { "key": "hit_wheat_stuck_07", "type": "image", "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-07.png?v=wheat-hit-new-1", "preloadGroup": "battle", "fallbackKey": "hit_wheat_stuck_06" },
-
-  { "key": "placeholder_enemy", "type": "generated", "url": "", "preloadGroup": "battle", "fallbackKey": "" },
-  { "key": "placeholder_icon", "type": "generated", "url": "", "preloadGroup": "boot", "fallbackKey": "" }
+  {
+    "key": "ui_loading_bg",
+    "type": "generated",
+    "url": "",
+    "preloadGroup": "boot",
+    "fallbackKey": ""
+  },
+  {
+    "key": "bg_grass_cartoon",
+    "type": "image",
+    "url": "/game-assets/backgrounds/grass-cartoon-base.png",
+    "preloadGroup": "boot",
+    "fallbackKey": ""
+  },
+  {
+    "key": "atlas_ui_main",
+    "type": "generated",
+    "url": "",
+    "preloadGroup": "boot",
+    "fallbackKey": ""
+  },
+  {
+    "key": "atlas_battle_main",
+    "type": "generated",
+    "url": "",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "battle_friendly_area_skin",
+    "type": "image",
+    "url": "/game-assets/battle/ui/battle-friendly-area-skin.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "battle_divider_line",
+    "type": "image",
+    "url": "/game-assets/battle/ui/battle-divider-line.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "battle_weapon_slot_box",
+    "type": "image",
+    "url": "/game-assets/battle/ui/battle-weapon-slot-box.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "ui_button_basic",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "ui",
+    "fallbackKey": ""
+  },
+  {
+    "key": "ui_button_yellow",
+    "type": "image",
+    "url": "/game-assets/ui/botton/button-wood-main.png",
+    "preloadGroup": "ui",
+    "fallbackKey": "ui_button_basic"
+  },
+  {
+    "key": "ui_button_blue",
+    "type": "image",
+    "url": "/game-assets/ui/botton/botton_blue.png",
+    "preloadGroup": "ui",
+    "fallbackKey": "ui_button_basic"
+  },
+  {
+    "key": "botton_green_png",
+    "type": "image",
+    "url": "/game-assets/ui/botton/botton_green.png",
+    "preloadGroup": "ui",
+    "fallbackKey": "ui_button_basic"
+  },
+  {
+    "key": "ui_button_green",
+    "type": "image",
+    "url": "/game-assets/ui/botton/botton_green.png",
+    "preloadGroup": "ui",
+    "fallbackKey": "ui_button_basic"
+  },
+  {
+    "key": "ui_button_white",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "ui",
+    "fallbackKey": "ui_button_basic"
+  },
+  {
+    "key": "ui_res_energy",
+    "type": "image",
+    "url": "/game-assets/ui/icon/icon-va.png",
+    "preloadGroup": "main",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "ui_res_ticket",
+    "type": "image",
+    "url": "/game-assets/ui/icon/icon-key.png",
+    "preloadGroup": "main",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "ui_res_coin",
+    "type": "image",
+    "url": "/game-assets/ui/icon/icon-coin.png",
+    "preloadGroup": "main",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "ui_side_minigame",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "ui_side_game_circle",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "ui_rogue_option",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "ui_result_exp",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "ui_result_coin",
+    "type": "image",
+    "url": "/game-assets/ui/icon-coin.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "level_map_1",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": ""
+  },
+  {
+    "key": "level_map_2",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_1"
+  },
+  {
+    "key": "level_map_3",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_1"
+  },
+  {
+    "key": "level_map_4",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_1"
+  },
+  {
+    "key": "level_map_5",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_2"
+  },
+  {
+    "key": "level_map_6",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_3"
+  },
+  {
+    "key": "level_map_2_locked",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_2"
+  },
+  {
+    "key": "level_map_3_locked",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_3"
+  },
+  {
+    "key": "level_map_4_locked",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_4"
+  },
+  {
+    "key": "level_map_5_locked",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_5"
+  },
+  {
+    "key": "level_map_6_locked",
+    "type": "image",
+    "url": "",
+    "preloadGroup": "main",
+    "fallbackKey": "level_map_6"
+  },
+  {
+    "key": "bag_farm_frame",
+    "type": "image",
+    "url": "/game-assets/bag/farm/bag-farm-frame.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
+    "key": "bag_farm_cell",
+    "type": "image",
+    "url": "/game-assets/bag/farm/bag-farm-cell.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
+    "key": "bag_farm_cell_1x2",
+    "type": "image",
+    "url": "/game-assets/bag/farm/bag-farm-cell-1x2.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
+    "key": "bag_farm_cell_2x1",
+    "type": "image",
+    "url": "/game-assets/bag/farm/bag-farm-cell-2x1.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
+    "key": "bag_farm_cell_2x2",
+    "type": "image",
+    "url": "/game-assets/bag/farm/bag-farm-cell-2x2.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
+    "key": "bag_farm_cell_l3",
+    "type": "image",
+    "url": "/game-assets/bag/farm/bag-farm-cell-l3.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
+    "key": "weapon_tomato_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv1-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_tomato_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv2-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_tomato_lv1_icon"
+  },
+  {
+    "key": "weapon_tomato_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-tomato-lv3-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_tomato_lv2_icon"
+  },
+  {
+    "key": "weapon_tomato_fruit_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-fruit-tomato-lv1-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_tomato_lv1_icon"
+  },
+  {
+    "key": "weapon_tomato_fruit_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-fruit-tomato-lv2-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_tomato_fruit_lv1_icon"
+  },
+  {
+    "key": "weapon_tomato_fruit_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-fruit-tomato-lv3-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_tomato_fruit_lv2_icon"
+  },
+  {
+    "key": "weapon_blueberry_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv1-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_blueberry_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv2-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_blueberry_lv1_icon"
+  },
+  {
+    "key": "weapon_blueberry_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv3-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_blueberry_lv2_icon"
+  },
+  {
+    "key": "weapon_carrot_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-carrot-lv1-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_carrot_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-carrot-lv2-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_carrot_lv1_icon"
+  },
+  {
+    "key": "weapon_carrot_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-carrot-lv3-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_carrot_lv2_icon"
+  },
+  {
+    "key": "weapon_carrot_fruit_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-fruit-carrot-lv1-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_carrot_lv1_icon"
+  },
+  {
+    "key": "weapon_carrot_fruit_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-fruit-carrot-lv2-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_carrot_fruit_lv1_icon"
+  },
+  {
+    "key": "weapon_carrot_fruit_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-fruit-carrot-lv3-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_carrot_fruit_lv2_icon"
+  },
+  {
+    "key": "weapon_wheat_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv1-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_wheat_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv2-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_wheat_lv1_icon"
+  },
+  {
+    "key": "weapon_wheat_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv3-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_wheat_lv2_icon"
+  },
+  {
+    "key": "weapon_ball_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-tomato-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_bat_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-carrot-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_spear_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-wheat-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_shield_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-blueberry-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_bomb_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-pepper-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_staff_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-cabbage-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "fx_merge_test_00",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-00.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "fx_merge_test_01",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-01.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": "fx_merge_test_00"
+  },
+  {
+    "key": "fx_merge_test_02",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-02.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": "fx_merge_test_01"
+  },
+  {
+    "key": "fx_merge_test_03",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-03.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": "fx_merge_test_02"
+  },
+  {
+    "key": "fx_merge_test_04",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-04.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": "fx_merge_test_03"
+  },
+  {
+    "key": "fx_merge_test_05",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-05.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": "fx_merge_test_04"
+  },
+  {
+    "key": "fx_merge_test_06",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-06.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": "fx_merge_test_05"
+  },
+  {
+    "key": "fx_merge_test_07",
+    "type": "image",
+    "url": "/game-assets/effects/generated/fx-merge-test-07.svg",
+    "preloadGroup": "battle",
+    "fallbackKey": "fx_merge_test_06"
+  },
+  {
+    "key": "wizard_attack_up_00",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-00.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "wizard_attack_up_01",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-01.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "wizard_attack_up_00"
+  },
+  {
+    "key": "wizard_attack_up_02",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-02.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "wizard_attack_up_01"
+  },
+  {
+    "key": "wizard_attack_up_03",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-03.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "wizard_attack_up_02"
+  },
+  {
+    "key": "wizard_attack_up_04",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-04.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "wizard_attack_up_03"
+  },
+  {
+    "key": "wizard_attack_up_05",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-05.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "wizard_attack_up_04"
+  },
+  {
+    "key": "wizard_attack_up_06",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-06.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "wizard_attack_up_05"
+  },
+  {
+    "key": "wizard_attack_up_07",
+    "type": "image",
+    "url": "/game-assets/characters/wizard_attack_up/frames/wizard-attack-up-07.png?v=farm-guardian-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "wizard_attack_up_06"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_00",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-00.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_01",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-01.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_00"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_02",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-02.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_01"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_03",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-03.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_02"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_04",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-04.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_03"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_05",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-05.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_04"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_06",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-06.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_05"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_07",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-07.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_06"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_08",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-08.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_07"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_09",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-09.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_08"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_10",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-10.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_09"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_11",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-11.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_10"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_12",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-12.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_11"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_13",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-13.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_12"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_14",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-14.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_13"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_15",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-15.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_14"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_16",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-16.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_15"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_17",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-17.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_16"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_18",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-18.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_17"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_19",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-19.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_18"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_20",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-20.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_19"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_21",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-21.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_20"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_22",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-22.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_21"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_23",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-23.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_22"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_24",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-24.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_23"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_25",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-25.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_24"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_26",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-26.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_25"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_27",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-27.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_26"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_28",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-28.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_27"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_29",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-29.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_28"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_30",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-30.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_29"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_31",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-31.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_30"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_32",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-32.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_31"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_33",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-33.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_32"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_34",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-34.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_33"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_35",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-35.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_34"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_36",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-36.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_35"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_37",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-37.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_36"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_38",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-38.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_37"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_39",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-39.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_38"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_40",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-40.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_39"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_41",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-41.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_40"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_42",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-42.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_41"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_43",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-43.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_42"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_44",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-44.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_43"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_45",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-45.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_44"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_46",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-46.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_45"
+  },
+  {
+    "key": "hero_pumpkin_slingshot_attack_up_47",
+    "type": "image",
+    "url": "/game-assets/characters/hero_pumpkin_slingshot_attack_up/frames/hero-pumpkin-slingshot-attack-up-47.png?v=pumpkin-slingshot-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hero_pumpkin_slingshot_attack_up_46"
+  },
+  {
+    "key": "zombie_walk_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-00.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "zombie_walk_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-01.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_00"
+  },
+  {
+    "key": "zombie_walk_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-02.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_01"
+  },
+  {
+    "key": "zombie_walk_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-03.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_02"
+  },
+  {
+    "key": "zombie_walk_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-04.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_03"
+  },
+  {
+    "key": "zombie_walk_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-05.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_04"
+  },
+  {
+    "key": "zombie_walk_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-06.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_05"
+  },
+  {
+    "key": "zombie_walk_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-07.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_06"
+  },
+  {
+    "key": "zombie_walk_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-08.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_07"
+  },
+  {
+    "key": "zombie_walk_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-09.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_08"
+  },
+  {
+    "key": "zombie_walk_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-10.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_09"
+  },
+  {
+    "key": "zombie_walk_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-11.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_10"
+  },
+  {
+    "key": "zombie_walk_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-12.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_11"
+  },
+  {
+    "key": "zombie_walk_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-13.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_12"
+  },
+  {
+    "key": "zombie_walk_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-14.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_13"
+  },
+  {
+    "key": "zombie_walk_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-15.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_14"
+  },
+  {
+    "key": "zombie_walk_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_walk_down/frames/zombie-walk-down-16.png?v=miner-zombie-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_walk_down_15"
+  },
+  {
+    "key": "zombie_death_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-00.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "zombie_death_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-01.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_00"
+  },
+  {
+    "key": "zombie_death_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-02.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_01"
+  },
+  {
+    "key": "zombie_death_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-03.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_02"
+  },
+  {
+    "key": "zombie_death_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-04.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_03"
+  },
+  {
+    "key": "zombie_death_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-05.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_04"
+  },
+  {
+    "key": "zombie_death_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-06.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_05"
+  },
+  {
+    "key": "zombie_death_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-07.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_06"
+  },
+  {
+    "key": "zombie_death_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-08.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_07"
+  },
+  {
+    "key": "zombie_death_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-09.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_08"
+  },
+  {
+    "key": "zombie_death_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-10.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_09"
+  },
+  {
+    "key": "zombie_death_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-11.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_10"
+  },
+  {
+    "key": "zombie_death_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-12.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_11"
+  },
+  {
+    "key": "zombie_death_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-13.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_12"
+  },
+  {
+    "key": "zombie_death_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-14.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_13"
+  },
+  {
+    "key": "zombie_death_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-15.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_14"
+  },
+  {
+    "key": "zombie_death_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-16.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_15"
+  },
+  {
+    "key": "zombie_death_down_17",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-17.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_16"
+  },
+  {
+    "key": "zombie_death_down_18",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_death_down/frames/zombie-death-down-18.png?v=zombie-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_death_down_17"
+  },
+  {
+    "key": "poison_bat_fly_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-00.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "poison_bat_fly_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-01.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_00"
+  },
+  {
+    "key": "poison_bat_fly_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-02.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_01"
+  },
+  {
+    "key": "poison_bat_fly_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-03.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_02"
+  },
+  {
+    "key": "poison_bat_fly_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-04.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_03"
+  },
+  {
+    "key": "poison_bat_fly_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-05.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_04"
+  },
+  {
+    "key": "poison_bat_fly_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-06.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_05"
+  },
+  {
+    "key": "poison_bat_fly_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-07.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_06"
+  },
+  {
+    "key": "poison_bat_fly_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-08.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_07"
+  },
+  {
+    "key": "poison_bat_fly_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-09.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_08"
+  },
+  {
+    "key": "poison_bat_fly_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-10.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_09"
+  },
+  {
+    "key": "poison_bat_fly_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-11.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_10"
+  },
+  {
+    "key": "poison_bat_fly_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-12.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_11"
+  },
+  {
+    "key": "poison_bat_fly_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-13.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_12"
+  },
+  {
+    "key": "poison_bat_fly_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-14.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_13"
+  },
+  {
+    "key": "poison_bat_fly_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-15.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_14"
+  },
+  {
+    "key": "poison_bat_fly_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-16.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_15"
+  },
+  {
+    "key": "poison_bat_fly_down_17",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_fly_down/frames/poison-bat-fly-down-17.png?v=poison-bat-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_fly_down_16"
+  },
+  {
+    "key": "poison_bat_death_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-00.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "poison_bat_death_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-01.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_00"
+  },
+  {
+    "key": "poison_bat_death_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-02.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_01"
+  },
+  {
+    "key": "poison_bat_death_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-03.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_02"
+  },
+  {
+    "key": "poison_bat_death_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-04.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_03"
+  },
+  {
+    "key": "poison_bat_death_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-05.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_04"
+  },
+  {
+    "key": "poison_bat_death_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-06.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_05"
+  },
+  {
+    "key": "poison_bat_death_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-07.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_06"
+  },
+  {
+    "key": "poison_bat_death_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-08.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_07"
+  },
+  {
+    "key": "poison_bat_death_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-09.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_08"
+  },
+  {
+    "key": "poison_bat_death_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-10.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_09"
+  },
+  {
+    "key": "poison_bat_death_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-11.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_10"
+  },
+  {
+    "key": "poison_bat_death_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-12.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_11"
+  },
+  {
+    "key": "poison_bat_death_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-13.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_12"
+  },
+  {
+    "key": "poison_bat_death_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-14.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_13"
+  },
+  {
+    "key": "poison_bat_death_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-15.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_14"
+  },
+  {
+    "key": "poison_bat_death_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_death_down/frames/poison-bat-death-down-16.png?v=poison-bat-death-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_death_down_15"
+  },
+  {
+    "key": "projectile_tomato_spin_00",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-00.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "projectile_tomato_spin_01",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-01.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_tomato_spin_00"
+  },
+  {
+    "key": "projectile_tomato_spin_02",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-02.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_tomato_spin_01"
+  },
+  {
+    "key": "projectile_tomato_spin_03",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-03.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_tomato_spin_02"
+  },
+  {
+    "key": "projectile_tomato_spin_04",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-04.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_tomato_spin_03"
+  },
+  {
+    "key": "projectile_tomato_spin_05",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-05.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_tomato_spin_04"
+  },
+  {
+    "key": "projectile_tomato_spin_06",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-06.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_tomato_spin_05"
+  },
+  {
+    "key": "projectile_tomato_spin_07",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/tomato_spin/frames/projectile-tomato-spin-07.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_tomato_spin_06"
+  },
+  {
+    "key": "projectile_carrot_spin_00",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-00.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "projectile_carrot_spin_01",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-01.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_carrot_spin_00"
+  },
+  {
+    "key": "projectile_carrot_spin_02",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-02.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_carrot_spin_01"
+  },
+  {
+    "key": "projectile_carrot_spin_03",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-03.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_carrot_spin_02"
+  },
+  {
+    "key": "projectile_carrot_spin_04",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-04.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_carrot_spin_03"
+  },
+  {
+    "key": "projectile_carrot_spin_05",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-05.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_carrot_spin_04"
+  },
+  {
+    "key": "projectile_carrot_spin_06",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-06.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_carrot_spin_05"
+  },
+  {
+    "key": "projectile_carrot_spin_07",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/carrot_spin/frames/projectile-carrot-spin-07.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_carrot_spin_06"
+  },
+  {
+    "key": "projectile_wheat_arrow_00",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-00.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "projectile_wheat_arrow_01",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-01.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_wheat_arrow_00"
+  },
+  {
+    "key": "projectile_wheat_arrow_02",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-02.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_wheat_arrow_01"
+  },
+  {
+    "key": "projectile_wheat_arrow_03",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-03.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_wheat_arrow_02"
+  },
+  {
+    "key": "projectile_wheat_arrow_04",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-04.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_wheat_arrow_03"
+  },
+  {
+    "key": "projectile_wheat_arrow_05",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-05.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_wheat_arrow_04"
+  },
+  {
+    "key": "projectile_wheat_arrow_06",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-06.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_wheat_arrow_05"
+  },
+  {
+    "key": "projectile_wheat_arrow_07",
+    "type": "image",
+    "url": "/game-assets/effects/projectiles/wheat_arrow/frames/projectile-wheat-arrow-07.png?v=wheat-new-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "projectile_wheat_arrow_06"
+  },
+  {
+    "key": "hit_tomato_burst_00",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-00.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "hit_tomato_burst_01",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-01.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_burst_00"
+  },
+  {
+    "key": "hit_tomato_burst_02",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-02.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_burst_01"
+  },
+  {
+    "key": "hit_tomato_burst_03",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-03.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_burst_02"
+  },
+  {
+    "key": "hit_tomato_burst_04",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-04.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_burst_03"
+  },
+  {
+    "key": "hit_tomato_burst_05",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-05.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_burst_04"
+  },
+  {
+    "key": "hit_tomato_burst_06",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-06.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_burst_05"
+  },
+  {
+    "key": "hit_tomato_burst_07",
+    "type": "image",
+    "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-07.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_burst_06"
+  },
+  {
+    "key": "hit_tomato_splash_small_00",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-00.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "hit_tomato_splash_small_01",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-01.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_splash_small_00"
+  },
+  {
+    "key": "hit_tomato_splash_small_02",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-02.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_splash_small_01"
+  },
+  {
+    "key": "hit_tomato_splash_small_03",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-03.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_splash_small_02"
+  },
+  {
+    "key": "hit_tomato_splash_small_04",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-04.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_splash_small_03"
+  },
+  {
+    "key": "hit_tomato_splash_small_05",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-05.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_splash_small_04"
+  },
+  {
+    "key": "hit_tomato_splash_small_06",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-06.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_splash_small_05"
+  },
+  {
+    "key": "hit_tomato_splash_small_07",
+    "type": "image",
+    "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-07.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_tomato_splash_small_06"
+  },
+  {
+    "key": "hit_carrot_split_00",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-00.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "hit_carrot_split_01",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-01.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_carrot_split_00"
+  },
+  {
+    "key": "hit_carrot_split_02",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-02.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_carrot_split_01"
+  },
+  {
+    "key": "hit_carrot_split_03",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-03.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_carrot_split_02"
+  },
+  {
+    "key": "hit_carrot_split_04",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-04.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_carrot_split_03"
+  },
+  {
+    "key": "hit_carrot_split_05",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-05.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_carrot_split_04"
+  },
+  {
+    "key": "hit_carrot_split_06",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-06.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_carrot_split_05"
+  },
+  {
+    "key": "hit_carrot_split_07",
+    "type": "image",
+    "url": "/game-assets/effects/hit/carrot_split/frames/hit-carrot-split-07.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_carrot_split_06"
+  },
+  {
+    "key": "hit_wheat_stuck_00",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-00.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "hit_wheat_stuck_01",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-01.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_wheat_stuck_00"
+  },
+  {
+    "key": "hit_wheat_stuck_02",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-02.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_wheat_stuck_01"
+  },
+  {
+    "key": "hit_wheat_stuck_03",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-03.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_wheat_stuck_02"
+  },
+  {
+    "key": "hit_wheat_stuck_04",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-04.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_wheat_stuck_03"
+  },
+  {
+    "key": "hit_wheat_stuck_05",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-05.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_wheat_stuck_04"
+  },
+  {
+    "key": "hit_wheat_stuck_06",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-06.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_wheat_stuck_05"
+  },
+  {
+    "key": "hit_wheat_stuck_07",
+    "type": "image",
+    "url": "/game-assets/effects/hit/wheat_stuck/frames/hit-wheat-stuck-07.png?v=wheat-hit-new-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_wheat_stuck_06"
+  },
+  {
+    "key": "placeholder_enemy",
+    "type": "generated",
+    "url": "",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "placeholder_icon",
+    "type": "generated",
+    "url": "",
+    "preloadGroup": "boot",
+    "fallbackKey": ""
+  },
+  {
+    "key": "boss_walk_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-00.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "boss_walk_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-01.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_00"
+  },
+  {
+    "key": "boss_walk_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-02.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_01"
+  },
+  {
+    "key": "boss_walk_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-03.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_02"
+  },
+  {
+    "key": "boss_walk_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-04.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_03"
+  },
+  {
+    "key": "boss_walk_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-05.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_04"
+  },
+  {
+    "key": "boss_walk_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-06.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_05"
+  },
+  {
+    "key": "boss_walk_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-07.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_06"
+  },
+  {
+    "key": "boss_walk_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-08.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_07"
+  },
+  {
+    "key": "boss_walk_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-09.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_08"
+  },
+  {
+    "key": "boss_walk_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-10.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_09"
+  },
+  {
+    "key": "boss_walk_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-11.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_10"
+  },
+  {
+    "key": "boss_walk_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-12.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_11"
+  },
+  {
+    "key": "boss_walk_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-13.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_12"
+  },
+  {
+    "key": "boss_walk_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-14.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_13"
+  },
+  {
+    "key": "boss_walk_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-15.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_14"
+  },
+  {
+    "key": "boss_walk_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-16.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_15"
+  },
+  {
+    "key": "boss_walk_down_17",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_walk_down/frames/boss-walk-down-17.png?v=boss-walk-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_walk_down_16"
+  },
+  {
+    "key": "boss_roar_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-00.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "boss_roar_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-01.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_00"
+  },
+  {
+    "key": "boss_roar_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-02.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_01"
+  },
+  {
+    "key": "boss_roar_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-03.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_02"
+  },
+  {
+    "key": "boss_roar_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-04.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_03"
+  },
+  {
+    "key": "boss_roar_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-05.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_04"
+  },
+  {
+    "key": "boss_roar_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-06.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_05"
+  },
+  {
+    "key": "boss_roar_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-07.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_06"
+  },
+  {
+    "key": "boss_roar_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-08.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_07"
+  },
+  {
+    "key": "boss_roar_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-09.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_08"
+  },
+  {
+    "key": "boss_roar_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-10.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_09"
+  },
+  {
+    "key": "boss_roar_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-11.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_10"
+  },
+  {
+    "key": "boss_roar_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-12.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_11"
+  },
+  {
+    "key": "boss_roar_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-13.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_12"
+  },
+  {
+    "key": "boss_roar_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-14.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_13"
+  },
+  {
+    "key": "boss_roar_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-15.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_14"
+  },
+  {
+    "key": "boss_roar_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-16.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_15"
+  },
+  {
+    "key": "boss_roar_down_17",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-17.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_16"
+  },
+  {
+    "key": "boss_roar_down_18",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_roar_down/frames/boss-roar-down-18.png?v=boss-roar-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_roar_down_17"
+  },
+  {
+    "key": "zombie_attack_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-00.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "zombie_attack_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-01.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_00"
+  },
+  {
+    "key": "zombie_attack_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-02.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_01"
+  },
+  {
+    "key": "zombie_attack_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-03.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_02"
+  },
+  {
+    "key": "zombie_attack_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-04.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_03"
+  },
+  {
+    "key": "zombie_attack_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-05.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_04"
+  },
+  {
+    "key": "zombie_attack_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-06.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_05"
+  },
+  {
+    "key": "zombie_attack_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-07.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_06"
+  },
+  {
+    "key": "zombie_attack_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-08.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_07"
+  },
+  {
+    "key": "zombie_attack_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-09.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_08"
+  },
+  {
+    "key": "zombie_attack_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-10.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_09"
+  },
+  {
+    "key": "zombie_attack_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-11.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_10"
+  },
+  {
+    "key": "zombie_attack_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/zombie_attack_down/frames/zombie-attack-down-12.png?v=zombie-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "zombie_attack_down_11"
+  },
+  {
+    "key": "poison_bat_attack_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-00.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "placeholder_enemy"
+  },
+  {
+    "key": "poison_bat_attack_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-01.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_00"
+  },
+  {
+    "key": "poison_bat_attack_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-02.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_01"
+  },
+  {
+    "key": "poison_bat_attack_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-03.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_02"
+  },
+  {
+    "key": "poison_bat_attack_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-04.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_03"
+  },
+  {
+    "key": "poison_bat_attack_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-05.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_04"
+  },
+  {
+    "key": "poison_bat_attack_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-06.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_05"
+  },
+  {
+    "key": "poison_bat_attack_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-07.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_06"
+  },
+  {
+    "key": "poison_bat_attack_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-08.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_07"
+  },
+  {
+    "key": "poison_bat_attack_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-09.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_08"
+  },
+  {
+    "key": "poison_bat_attack_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-10.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_09"
+  },
+  {
+    "key": "poison_bat_attack_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-11.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_10"
+  },
+  {
+    "key": "poison_bat_attack_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-12.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_11"
+  },
+  {
+    "key": "poison_bat_attack_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-13.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_12"
+  },
+  {
+    "key": "poison_bat_attack_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-14.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_13"
+  },
+  {
+    "key": "poison_bat_attack_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-15.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_14"
+  },
+  {
+    "key": "poison_bat_attack_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-16.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_15"
+  },
+  {
+    "key": "poison_bat_attack_down_17",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-17.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_16"
+  },
+  {
+    "key": "poison_bat_attack_down_18",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-18.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_17"
+  },
+  {
+    "key": "poison_bat_attack_down_19",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-19.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_18"
+  },
+  {
+    "key": "poison_bat_attack_down_20",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-20.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_19"
+  },
+  {
+    "key": "poison_bat_attack_down_21",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-21.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_20"
+  },
+  {
+    "key": "poison_bat_attack_down_22",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-22.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_21"
+  },
+  {
+    "key": "poison_bat_attack_down_23",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-23.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_22"
+  },
+  {
+    "key": "poison_bat_attack_down_24",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-24.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_23"
+  },
+  {
+    "key": "poison_bat_attack_down_25",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-25.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_24"
+  },
+  {
+    "key": "poison_bat_attack_down_26",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-26.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_25"
+  },
+  {
+    "key": "poison_bat_attack_down_27",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-27.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_26"
+  },
+  {
+    "key": "poison_bat_attack_down_28",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-28.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_27"
+  },
+  {
+    "key": "poison_bat_attack_down_29",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-29.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_28"
+  },
+  {
+    "key": "poison_bat_attack_down_30",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-30.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_29"
+  },
+  {
+    "key": "poison_bat_attack_down_31",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-31.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_30"
+  },
+  {
+    "key": "poison_bat_attack_down_32",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-32.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_31"
+  },
+  {
+    "key": "poison_bat_attack_down_33",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-33.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_32"
+  },
+  {
+    "key": "poison_bat_attack_down_34",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-34.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_33"
+  },
+  {
+    "key": "poison_bat_attack_down_35",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-35.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_34"
+  },
+  {
+    "key": "poison_bat_attack_down_36",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-36.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_35"
+  },
+  {
+    "key": "poison_bat_attack_down_37",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-37.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_36"
+  },
+  {
+    "key": "poison_bat_attack_down_38",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-38.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_37"
+  },
+  {
+    "key": "poison_bat_attack_down_39",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-39.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_38"
+  },
+  {
+    "key": "poison_bat_attack_down_40",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-40.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_39"
+  },
+  {
+    "key": "poison_bat_attack_down_41",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-41.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_40"
+  },
+  {
+    "key": "poison_bat_attack_down_42",
+    "type": "image",
+    "url": "/game-assets/enemies/poison_bat_attack_down/frames/poison-bat-attack-down-42.png?v=poison-bat-attack-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "poison_bat_attack_down_41"
+  },
+  {
+    "key": "boss_attack_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-00.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "enemy_zombie_body",
+    "desc": "boss_attack_down_00"
+  },
+  {
+    "key": "boss_attack_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-01.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_00",
+    "desc": "boss_attack_down_01"
+  },
+  {
+    "key": "boss_attack_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-02.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_01",
+    "desc": "boss_attack_down_02"
+  },
+  {
+    "key": "boss_attack_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-03.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_02",
+    "desc": "boss_attack_down_03"
+  },
+  {
+    "key": "boss_attack_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-04.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_03",
+    "desc": "boss_attack_down_04"
+  },
+  {
+    "key": "boss_attack_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-05.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_04",
+    "desc": "boss_attack_down_05"
+  },
+  {
+    "key": "boss_attack_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-06.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_05",
+    "desc": "boss_attack_down_06"
+  },
+  {
+    "key": "boss_attack_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-07.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_06",
+    "desc": "boss_attack_down_07"
+  },
+  {
+    "key": "boss_attack_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-08.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_07",
+    "desc": "boss_attack_down_08"
+  },
+  {
+    "key": "boss_attack_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-09.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_08",
+    "desc": "boss_attack_down_09"
+  },
+  {
+    "key": "boss_attack_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-10.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_09",
+    "desc": "boss_attack_down_10"
+  },
+  {
+    "key": "boss_attack_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-11.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_10",
+    "desc": "boss_attack_down_11"
+  },
+  {
+    "key": "boss_attack_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-12.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_11",
+    "desc": "boss_attack_down_12"
+  },
+  {
+    "key": "boss_attack_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-13.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_12",
+    "desc": "boss_attack_down_13"
+  },
+  {
+    "key": "boss_attack_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-14.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_13",
+    "desc": "boss_attack_down_14"
+  },
+  {
+    "key": "boss_attack_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-15.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_14",
+    "desc": "boss_attack_down_15"
+  },
+  {
+    "key": "boss_attack_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-16.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_15",
+    "desc": "boss_attack_down_16"
+  },
+  {
+    "key": "boss_attack_down_17",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-17.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_16",
+    "desc": "boss_attack_down_17"
+  },
+  {
+    "key": "boss_attack_down_18",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_attack_down/frames/boss-attack-down-18.png?v=boss-attack-3",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_attack_down_17",
+    "desc": "boss_attack_down_18"
+  },
+  {
+    "key": "boss_death_down_00",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-00.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "enemy_zombie_body",
+    "desc": "boss_death_down_00"
+  },
+  {
+    "key": "boss_death_down_01",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-01.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_00",
+    "desc": "boss_death_down_01"
+  },
+  {
+    "key": "boss_death_down_02",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-02.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_01",
+    "desc": "boss_death_down_02"
+  },
+  {
+    "key": "boss_death_down_03",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-03.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_02",
+    "desc": "boss_death_down_03"
+  },
+  {
+    "key": "boss_death_down_04",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-04.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_03",
+    "desc": "boss_death_down_04"
+  },
+  {
+    "key": "boss_death_down_05",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-05.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_04",
+    "desc": "boss_death_down_05"
+  },
+  {
+    "key": "boss_death_down_06",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-06.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_05",
+    "desc": "boss_death_down_06"
+  },
+  {
+    "key": "boss_death_down_07",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-07.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_06",
+    "desc": "boss_death_down_07"
+  },
+  {
+    "key": "boss_death_down_08",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-08.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_07",
+    "desc": "boss_death_down_08"
+  },
+  {
+    "key": "boss_death_down_09",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-09.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_08",
+    "desc": "boss_death_down_09"
+  },
+  {
+    "key": "boss_death_down_10",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-10.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_09",
+    "desc": "boss_death_down_10"
+  },
+  {
+    "key": "boss_death_down_11",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-11.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_10",
+    "desc": "boss_death_down_11"
+  },
+  {
+    "key": "boss_death_down_12",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-12.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_11",
+    "desc": "boss_death_down_12"
+  },
+  {
+    "key": "boss_death_down_13",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-13.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_12",
+    "desc": "boss_death_down_13"
+  },
+  {
+    "key": "boss_death_down_14",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-14.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_13",
+    "desc": "boss_death_down_14"
+  },
+  {
+    "key": "boss_death_down_15",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-15.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_14",
+    "desc": "boss_death_down_15"
+  },
+  {
+    "key": "boss_death_down_16",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-16.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_15",
+    "desc": "boss_death_down_16"
+  },
+  {
+    "key": "boss_death_down_17",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-17.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_16",
+    "desc": "boss_death_down_17"
+  },
+  {
+    "key": "boss_death_down_18",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-18.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_17",
+    "desc": "boss_death_down_18"
+  },
+  {
+    "key": "boss_death_down_19",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-19.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_18",
+    "desc": "boss_death_down_19"
+  },
+  {
+    "key": "boss_death_down_20",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-20.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_19",
+    "desc": "boss_death_down_20"
+  },
+  {
+    "key": "boss_death_down_21",
+    "type": "image",
+    "url": "/game-assets/enemies/boss_death_down/frames/boss-death-down-21.png?v=boss-death-2",
+    "preloadGroup": "battle",
+    "fallbackKey": "boss_death_down_20",
+    "desc": "boss_death_down_21"
+  }
 ]

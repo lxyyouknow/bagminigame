@@ -1,0 +1,15 @@
+[
+  {
+    "key": "steel_captain_roar",
+    "monsterId": 5,
+    "trigger": "afterSpawn",
+    "animKey": "boss_roar_down",
+    "cd": 40,
+    "delay": 5,
+    "duration": 8,
+    "speedMul": 1.35,
+    "attackMul": 1.25,
+    "target": "otherMonsters",
+    "desc": "Boss 出生 5 秒后怒吼，8 秒内让其他怪物移动速度提高 35%、攻击力提高 25%。"
+  }
+]

@@ -106,9 +106,25 @@ export interface MonsterDef {
   color: string;
   boss: boolean;
   layerType?: "ground" | "flying" | "boss";
+  attackDistance?: number;
   runAnimKey?: string;
   attackAnimKey?: string;
   deathAnimKey?: string;
+  roarSkillKey?: string;
+}
+
+export interface BossSkillDef {
+  key: string;
+  monsterId: number;
+  trigger: "onHit" | "afterSpawn";
+  animKey: string;
+  cd: number;
+  delay?: number;
+  duration: number;
+  speedMul: number;
+  attackMul: number;
+  target: "otherMonsters";
+  desc: string;
 }
 
 export interface BattleTuningDef {
@@ -339,6 +355,7 @@ export interface MonsterRuntime {
   uid: number;
   def: MonsterDef;
   view: Container;
+  hpBarTrack?: Graphics;
   hpBarFill?: Graphics;
   hp: number;
   maxHp: number;
@@ -347,6 +364,16 @@ export interface MonsterRuntime {
   slowTimer: number;
   hitStopTimer: number;
   attackCooldown: number;
+  attackWindupTimer?: number;
+  attackDamagePending?: boolean;
+  speedBuffMul?: number;
+  attackBuffMul?: number;
+  bossBuffTimer?: number;
+  bossRoarCooldown?: number;
+  bossRoarTimer?: number;
+  spawnAge?: number;
+  lastContactY?: number;
+  lastBaseHitY?: number;
   dead: boolean;
   deathVisualDone?: boolean;
   animationKey?: string;

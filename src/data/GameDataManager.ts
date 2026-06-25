@@ -1,4 +1,4 @@
-import type { AnimationDef, AssetDef, AudioDef, AudioEventDef, BattleFieldDef, BattleTuningDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
+import type { AnimationDef, AssetDef, AudioDef, AudioEventDef, BattleFieldDef, BattleTuningDef, BossSkillDef, ComStrDef, EconomyDef, EffectDef, ItemDef, ItemShapeDef, LevelDef, MonsterDef, QualityDef, RogueOptionDef, SkillDef, UiLayoutDef, UiSkinDef, WaveDef } from "../types";
 
 export class GameDataManager {
   levels: LevelDef[] = [];
@@ -9,6 +9,7 @@ export class GameDataManager {
   effects: EffectDef[] = [];
   monsters: MonsterDef[] = [];
   battleFields: BattleFieldDef[] = [];
+  bossSkills: BossSkillDef[] = [];
   battleTunings: BattleTuningDef[] = [];
   waves: WaveDef[] = [];
   rogueOptions: RogueOptionDef[] = [];
@@ -31,6 +32,7 @@ export class GameDataManager {
       effects,
       monsters,
       battleFields,
+      bossSkills,
       battleTunings,
       waves,
       rogueOptions,
@@ -51,6 +53,7 @@ export class GameDataManager {
       this.fetchTable<EffectDef>("s_effect"),
       this.fetchTable<MonsterDef>("s_monster"),
       this.fetchTable<BattleFieldDef>("s_battle_field"),
+      this.fetchTable<BossSkillDef>("s_boss_skill"),
       this.fetchTable<BattleTuningDef>("s_battle_tuning"),
       this.fetchTable<WaveDef>("s_wave"),
       this.fetchTable<RogueOptionDef>("s_rogue_option"),
@@ -72,6 +75,7 @@ export class GameDataManager {
     this.effects = effects;
     this.monsters = monsters;
     this.battleFields = battleFields;
+    this.bossSkills = bossSkills;
     this.battleTunings = battleTunings;
     this.waves = waves;
     this.rogueOptions = rogueOptions;
@@ -116,6 +120,11 @@ export class GameDataManager {
   getBattleField(key: string | undefined): BattleFieldDef {
     const fieldKey = key || "farm_fence_field";
     return this.must(this.battleFields.find((row) => row.key === fieldKey), `战场皮肤 ${fieldKey}`);
+  }
+
+  getBossSkill(key: string | undefined): BossSkillDef | undefined {
+    if (!key) return undefined;
+    return this.bossSkills.find((row) => row.key === key);
   }
 
   getBattleTuning(id: number | undefined): BattleTuningDef {

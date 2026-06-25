@@ -1,0 +1,35 @@
+{
+  "frames": {
+    "043.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 720,
+        "h": 896
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 331,
+        "w": 720,
+        "h": 896
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 1280
+      }
+    }
+  },
+  "meta": {
+    "app": "FramePacker",
+    "version": "1.0",
+    "image": "spritesheet_22.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 720,
+      "h": 1210
+    },
+    "scale": "1"
+  }
+}
