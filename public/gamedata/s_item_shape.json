@@ -1,8 +1,134 @@
 [
-  { "id": "single", "name": "单格", "cells": [[0, 0]], "allowRotate": false, "previewScale": 1 },
-  { "id": "h2", "name": "横二", "cells": [[0, 0], [1, 0]], "allowRotate": false, "previewScale": 1 },
-  { "id": "v2", "name": "竖二", "cells": [[0, 0], [0, 1]], "allowRotate": false, "previewScale": 1 },
-  { "id": "l3", "name": "L型", "cells": [[0, 0], [0, 1], [1, 1]], "allowRotate": false, "previewScale": 1 },
-  { "id": "t4", "name": "T型", "cells": [[0, 0], [1, 0], [2, 0], [1, 1]], "allowRotate": false, "previewScale": 1 },
-  { "id": "h3", "name": "横三", "cells": [[0, 0], [1, 0], [2, 0]], "allowRotate": false, "previewScale": 1 }
+  {
+    "id": "single",
+    "name": "单格",
+    "cells": [
+      [
+        0,
+        0
+      ]
+    ],
+    "allowRotate": false,
+    "previewScale": 1
+  },
+  {
+    "id": "h2",
+    "name": "横二",
+    "cells": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "allowRotate": false,
+    "previewScale": 1
+  },
+  {
+    "id": "v2",
+    "name": "竖二",
+    "cells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "allowRotate": false,
+    "previewScale": 1
+  },
+  {
+    "id": "l3",
+    "name": "L型",
+    "cells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "allowRotate": false,
+    "previewScale": 1
+  },
+  {
+    "id": "t4",
+    "name": "T型",
+    "cells": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "allowRotate": false,
+    "previewScale": 1
+  },
+  {
+    "id": "h3",
+    "name": "横三",
+    "cells": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ]
+    ],
+    "allowRotate": false,
+    "previewScale": 1
+  },
+  {
+    "id": "square2",
+    "name": "2x2方形",
+    "cells": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "allowRotate": false,
+    "previewScale": 1
+  }
 ]

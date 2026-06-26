@@ -54,6 +54,7 @@ export interface ItemDef {
   shapeId: string;
   icon: string;
   iconAssetKey?: string;
+  bagIconMode?: "repeat" | "single";
   battleIconAssetKey?: string;
   projectileAssetKey?: string;
   skillId: number;

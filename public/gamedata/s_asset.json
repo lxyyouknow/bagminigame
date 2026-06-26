@@ -520,7 +520,28 @@
   {
     "key": "weapon_staff_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-cabbage-icon.png",
+    "url": "/game-assets/weapons/plants/weapon-plant-cabbage-lv1-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_cabbage_lv1_icon"
+  },
+  {
+    "key": "weapon_cabbage_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-cabbage-lv3-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_cabbage_lv2_icon"
+  },
+  {
+    "key": "weapon_cabbage_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-cabbage-lv2-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_cabbage_lv1_icon"
+  },
+  {
+    "key": "weapon_cabbage_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-cabbage-lv1-icon.png",
     "preloadGroup": "bag",
     "fallbackKey": "placeholder_icon"
   },

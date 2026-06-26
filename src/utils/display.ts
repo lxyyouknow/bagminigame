@@ -292,6 +292,21 @@ export function createItemShapeView(item: ItemDef, shape: ItemShapeDef, _quality
   const texture = assetManager.texture(assetKey);
   const textureAspect = texture ? texture.width / texture.height : 1;
   const shapeAspect = widthCells / heightCells;
+  if (texture && item.bagIconMode === "single") {
+    const totalW = widthCells * cellSize + (widthCells - 1) * cellGap;
+    const totalH = heightCells * cellSize + (heightCells - 1) * cellGap;
+    const fitScale = Math.min((totalW * 0.96 * iconScale) / texture.width, (totalH * 0.96 * iconScale) / texture.height);
+    const art = spriteFromAsset(assetKey, texture.width * fitScale, texture.height * fitScale);
+    if (art) {
+      art.anchor.set(0.5);
+      art.position.set(
+        minX * (cellSize + cellGap) + totalW * 0.5,
+        minY * (cellSize + cellGap) + totalH * 0.5 - 18 * iconScale,
+      );
+      c.addChild(art);
+      return c;
+    }
+  }
   if (texture && widthCells > 1 && textureAspect > 1.25 && Math.abs(textureAspect - shapeAspect) < 0.35) {
     const totalW = widthCells * cellSize + (widthCells - 1) * cellGap;
     const totalH = heightCells * cellSize + (heightCells - 1) * cellGap;

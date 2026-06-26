@@ -258,32 +258,52 @@
   {
     "id": 151,
     "baseId": "staff",
-    "name": "卷心菜",
-    "quality": 2,
-    "shapeId": "t4",
+    "name": "甘蓝",
+    "quality": 1,
+    "shapeId": "square2",
     "icon": "staff",
-    "iconAssetKey": "weapon_staff_icon",
-    "skillId": 251,
+    "iconAssetKey": "weapon_cabbage_lv1_icon",
+    "skillId": 250,
     "mergeToId": 152,
-    "weight": 4,
+    "weight": 6,
     "pools": [
       101,
+      102,
       103
-    ]
+    ],
+    "bagIconMode": "single"
   },
   {
     "id": 152,
     "baseId": "staff",
-    "name": "史诗卷心菜",
-    "quality": 3,
-    "shapeId": "t4",
+    "name": "精良甘蓝",
+    "quality": 2,
+    "shapeId": "square2",
     "icon": "staff",
-    "iconAssetKey": "weapon_staff_icon",
+    "iconAssetKey": "weapon_cabbage_lv2_icon",
+    "skillId": 251,
+    "mergeToId": 153,
+    "weight": 4,
+    "pools": [
+      101,
+      103
+    ],
+    "bagIconMode": "single"
+  },
+  {
+    "id": 153,
+    "baseId": "staff",
+    "name": "史诗甘蓝",
+    "quality": 3,
+    "shapeId": "square2",
+    "icon": "staff",
+    "iconAssetKey": "weapon_cabbage_lv3_icon",
     "skillId": 252,
     "mergeToId": 0,
     "weight": 2,
     "pools": [
       103
-    ]
+    ],
+    "bagIconMode": "single"
   }
 ]
