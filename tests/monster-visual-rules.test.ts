@@ -1,5 +1,5 @@
 import type { MonsterDef } from "../src/types.js";
-import { getMonsterAnimationKey, getMonsterDeathAnimationKey } from "../src/scenes/monsterVisualRules.js";
+import { getMonsterAnimationKey, getMonsterDeathAnimationKey, shouldKeepPendingAttackAnimation } from "../src/scenes/monsterVisualRules.js";
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) throw new Error(`${message}，期望 ${String(expected)}，实际 ${String(actual)}`);
@@ -47,5 +47,21 @@ const poisonBat = {
 } satisfies MonsterDef;
 
 assertEqual(getMonsterAnimationKey(poisonBat, false), "poison_bat_fly_down", "移动中的毒蝠应播放向下飞行动画");
+
+assertEqual(
+  shouldKeepPendingAttackAnimation(true, "boss_attack_down", "boss_attack_down", "boss_walk_down"),
+  true,
+  "Boss 攻击前摇已经开始时，受击停顿不能把攻击动画切回移动动画，否则 damageFrame/shakeFrame 回调会丢失",
+);
+assertEqual(
+  shouldKeepPendingAttackAnimation(false, "boss_attack_down", "boss_attack_down", "boss_walk_down"),
+  false,
+  "没有待结算攻击时，动画可按接触状态正常切换",
+);
+assertEqual(
+  shouldKeepPendingAttackAnimation(true, "boss_roar_down", "boss_attack_down", "boss_walk_down"),
+  false,
+  "当前不是攻击动画时，不应强行保留攻击动作",
+);
 
 console.log("monster-visual-rules tests ok");

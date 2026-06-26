@@ -504,6 +504,8 @@
     "anchorX": 0.5,
     "anchorY": 0.92,
     "scale": 0.9,
+    "damageFrame": 15,
+    "shakeFrame": 15,
     "hitFrame": 15
   },
   {

@@ -234,6 +234,9 @@ export interface AnimationDef {
   anchorX: number;
   anchorY: number;
   scale: number;
+  damageFrame?: number;
+  shakeFrame?: number;
+  fxFrame?: number;
   hitFrame?: number;
   hitHoldFrame?: number;
   hitHoldDuration?: number;

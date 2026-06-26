@@ -17,8 +17,8 @@ import { isWaveCombatSettled } from "./battleWaveClearRules";
 import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, type WaveSpawnEvent } from "./battleWaveRules";
 import { createEffectiveMonster, getBaseArmor, getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
 import { stepMonsterContact } from "./monsterContactRules";
-import { getMonsterAnimationKey, getMonsterDeathAnimationKey } from "./monsterVisualRules";
-import { resolveAnimatedMonsterAttackTiming, stepAnimatedMonsterAttack } from "./monsterAttackAnimationRules";
+import { getMonsterAnimationKey, getMonsterDeathAnimationKey, shouldKeepPendingAttackAnimation } from "./monsterVisualRules";
+import { getAnimationEventFrameIndex, resolveAnimatedMonsterAttackTiming, stepAnimatedMonsterAttack } from "./monsterAttackAnimationRules";
 import { resolveMonsterAttackContactY } from "./monsterAttackDistanceRules";
 import { applyBossRoarBuff, stepBossRoarCooldown } from "./bossSkillRules";
 import { shouldPreserveMonsterOverlayChild } from "./monsterViewRules";
@@ -706,12 +706,15 @@ export class BattleScene extends BaseScene {
           armorBonus: this.buffs.armorBonus,
           animation: attackAnim,
           fallbackHitTime: data.getBattleField(this.level.battleFieldKey).monsterAttackHitTime,
+          useFrameEvent: true,
         });
         monster.attackCooldown = animatedAttack.attackCooldown;
         monster.attackWindupTimer = animatedAttack.attackWindupTimer;
         monster.attackDamagePending = animatedAttack.attackDamagePending;
         damage = animatedAttack.damage;
-        if (animatedAttack.startedAttack) this.restartMonsterAnimation(monster, monster.def.attackAnimKey, this.getMonsterAttackAnimationSpeedMul(monster, attackAnim));
+        if (animatedAttack.startedAttack) {
+          this.restartMonsterAnimation(monster, monster.def.attackAnimKey, this.getMonsterAttackAnimationSpeedMul(monster, attackAnim), attackAnim, animatedAttack.frameEventDamage);
+        }
       }
       if (damage > 0) {
         this.applyBaseDamage(monster, damage);
@@ -745,19 +748,48 @@ export class BattleScene extends BaseScene {
     if (monster.bossRoarTimer && monster.bossRoarTimer > 0) return;
     const nextKey = getMonsterAnimationKey(monster.def, contacted);
     if (!nextKey || nextKey === monster.animationKey) return;
+    if (shouldKeepPendingAttackAnimation(monster.attackDamagePending ?? false, monster.animationKey, monster.def.attackAnimKey, nextKey)) return;
     const animated = assetManager.animation(nextKey);
     if (!animated) return;
     this.replaceMonsterLiveVisual(monster, animated, this.getMonsterAnimationSpeedMul(monster, nextKey));
     monster.animationKey = nextKey;
   }
 
-  private restartMonsterAnimation(monster: MonsterRuntime, animationKey: string | undefined, animationSpeedMul = 1): void {
+  private restartMonsterAnimation(
+    monster: MonsterRuntime,
+    animationKey: string | undefined,
+    animationSpeedMul = 1,
+    animation?: AnimationDef,
+    frameEventDamage = 0,
+  ): void {
     if (!animationKey) return;
     const animated = assetManager.animation(animationKey);
     if (!animated) return;
+    if (frameEventDamage > 0 && animation) this.bindMonsterAttackFrameEvents(monster, animated, animation, frameEventDamage);
     this.replaceMonsterLiveVisual(monster, animated, animationSpeedMul);
     monster.animationKey = animationKey;
     monster.view.zIndex = getMonsterDepthZIndex(monster.y, monster.uid, monster.def.layerType);
+  }
+
+  private bindMonsterAttackFrameEvents(monster: MonsterRuntime, animated: AnimatedSprite, animation: AnimationDef, damage: number): void {
+    const frameCount = Math.max(1, animation.frames.length);
+    const damageFrame = animation.damageFrame ?? (animation.hitFrame === undefined ? undefined : animation.hitFrame + 1);
+    const damageIndex = getAnimationEventFrameIndex(damageFrame, frameCount);
+    const shakeIndex = animation.shakeFrame === undefined ? damageIndex : getAnimationEventFrameIndex(animation.shakeFrame, frameCount);
+    let damageDone = false;
+    let shakeDone = false;
+    animated.onFrameChange = (currentFrame) => {
+      if (!shakeDone && currentFrame >= shakeIndex) {
+        shakeDone = true;
+        const shake = getBaseShakeFeedback(monster.def.boss);
+        if (shake) this.startBaseShake(shake.duration, shake.amplitude);
+      }
+      if (!damageDone && currentFrame >= damageIndex) {
+        damageDone = true;
+        monster.attackDamagePending = false;
+        this.applyBaseDamage(monster, damage, !shakeDone);
+      }
+    };
   }
 
   private replaceMonsterLiveVisual(monster: MonsterRuntime, animated: AnimatedSprite, animationSpeedMul = 1): void {
@@ -788,13 +820,13 @@ export class BattleScene extends BaseScene {
     }).animationSpeedMul;
   }
 
-  private applyBaseDamage(monster: MonsterRuntime, damage: number): void {
+  private applyBaseDamage(monster: MonsterRuntime, damage: number, includeShake = true): void {
     this.baseHp -= damage;
     this.bag.baseHp = Math.max(0, this.baseHp);
     this.syncSessionProgress();
     this.addBaseDamageFloating(monster.x, (monster.lastBaseHitY ?? this.baseFenceContactY(monster)) - 18, damage);
     const shake = getBaseShakeFeedback(monster.def.boss);
-    if (shake) this.startBaseShake(shake.duration, shake.amplitude);
+    if (includeShake && shake) this.startBaseShake(shake.duration, shake.amplitude);
   }
 
   private baseContactY(monster: MonsterRuntime): number {
@@ -964,6 +996,7 @@ export class BattleScene extends BaseScene {
 
   private tryTriggerBossRoar(monster: MonsterRuntime, bossWasHit: boolean, dt: number): void {
     if (!monster.def.boss || monster.dead) return;
+    if (monster.attackDamagePending) return;
     const skill = data.getBossSkill(monster.def.roarSkillKey);
     const targets = this.monsters.filter((other) => other.uid !== monster.uid && !other.dead);
     const result = stepBossRoarCooldown({

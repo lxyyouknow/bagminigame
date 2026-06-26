@@ -14,6 +14,7 @@ export interface AnimatedMonsterAttackInput {
   armorBonus: number;
   animation?: AnimationDef;
   fallbackHitTime?: number;
+  useFrameEvent?: boolean;
 }
 
 export interface AnimatedMonsterAttackTiming {
@@ -27,10 +28,22 @@ export interface AnimatedMonsterAttackResult {
   attackWindupTimer: number;
   attackDamagePending: boolean;
   damage: number;
+  frameEventDamage: number;
   startedAttack: boolean;
 }
 
+export function getAnimationEventFrameIndex(frame: number | undefined, frameCount = Number.POSITIVE_INFINITY): number {
+  if (frame === undefined) return 0;
+  return Math.min(Math.max(0, Math.max(1, frame) - 1), Math.max(0, frameCount - 1));
+}
+
+export function getAnimationEventFrameTime(frame: number | undefined, fps: number): number {
+  if (frame === undefined) return 0;
+  return getAnimationEventFrameIndex(frame) / Math.max(1, fps);
+}
+
 export function getMonsterAttackHitTime(animation: AnimationDef | undefined, fallbackHitTime = 0): number {
+  if (animation?.damageFrame !== undefined) return getAnimationEventFrameTime(animation.damageFrame, animation.fps);
   if (animation?.hitFrame !== undefined) return Math.max(0, animation.hitFrame) / Math.max(1, animation.fps);
   if (fallbackHitTime > 0) return fallbackHitTime;
   const frameCount = animation?.frames.length ?? 1;
@@ -60,9 +73,10 @@ export function stepAnimatedMonsterAttack(input: AnimatedMonsterAttackInput): An
   let attackDamagePending = input.attackDamagePending;
   let startedAttack = false;
   let damage = 0;
+  let frameEventDamage = 0;
 
   if (!input.contacted) {
-    return { attackCooldown, attackWindupTimer: 0, attackDamagePending: false, damage: 0, startedAttack: false };
+    return { attackCooldown, attackWindupTimer: 0, attackDamagePending: false, damage: 0, frameEventDamage: 0, startedAttack: false };
   }
 
   if (!attackDamagePending && attackCooldown <= 0) {
@@ -71,9 +85,12 @@ export function stepAnimatedMonsterAttack(input: AnimatedMonsterAttackInput): An
     attackDamagePending = true;
     attackCooldown = timing.attackInterval;
     startedAttack = true;
+    if (input.useFrameEvent) {
+      frameEventDamage = computeMonsterBaseDamage(input.attack, input.armor, input.armorBonus);
+    }
   }
 
-  if (attackDamagePending) {
+  if (attackDamagePending && !input.useFrameEvent) {
     attackWindupTimer = Math.max(0, attackWindupTimer - input.dt);
     if (attackWindupTimer <= 0) {
       damage = computeMonsterBaseDamage(input.attack, input.armor, input.armorBonus);
@@ -81,5 +98,5 @@ export function stepAnimatedMonsterAttack(input: AnimatedMonsterAttackInput): An
     }
   }
 
-  return { attackCooldown, attackWindupTimer, attackDamagePending, damage, startedAttack };
+  return { attackCooldown, attackWindupTimer, attackDamagePending, damage, frameEventDamage, startedAttack };
 }

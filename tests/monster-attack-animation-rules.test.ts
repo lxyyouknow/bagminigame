@@ -1,5 +1,5 @@
 import type { AnimationDef } from "../src/types.js";
-import { getMonsterAttackHitTime, resolveAnimatedMonsterAttackTiming, stepAnimatedMonsterAttack } from "../src/scenes/monsterAttackAnimationRules.js";
+import { getAnimationEventFrameIndex, getAnimationEventFrameTime, getMonsterAttackHitTime, resolveAnimatedMonsterAttackTiming, stepAnimatedMonsterAttack } from "../src/scenes/monsterAttackAnimationRules.js";
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) throw new Error(`${message}，期望 ${String(expected)}，实际 ${String(actual)}`);
@@ -18,6 +18,18 @@ const attackAnim: AnimationDef = {
 };
 
 assertEqual(getMonsterAttackHitTime(attackAnim), 0.25, "攻击动画命中时间应由 hitFrame/fps 决定");
+assertEqual(getAnimationEventFrameIndex(15, 19), 14, "美术配置第 15 帧应转换为动画当前帧索引 14");
+assertEqual(getAnimationEventFrameTime(15, 12), 14 / 12, "美术配置的第 15 帧应按 1 起始帧数换算为第 14 个索引时间");
+
+const bossAttackAnim: AnimationDef = {
+  ...attackAnim,
+  frames: Array.from({ length: 19 }, (_, index) => `boss_attack_down_${String(index).padStart(2, "0")}`),
+  fps: 12,
+  hitFrame: 18,
+  damageFrame: 15,
+  shakeFrame: 15,
+};
+assertEqual(getMonsterAttackHitTime(bossAttackAnim), 14 / 12, "damageFrame 应优先于旧 hitFrame，用于对齐 Boss 实际扣血帧");
 assertEqual(
   resolveAnimatedMonsterAttackTiming({ animation: attackAnim, attackInterval: 0.2 }).animationSpeedMul,
   1.25,
@@ -73,5 +85,22 @@ const boosted = stepAnimatedMonsterAttack({
   animation: attackAnim,
 });
 assertEqual(boosted.attackCooldown, 1, "攻速倍率提升时，攻击 CD 应按倍率缩短");
+
+const frameDriven = stepAnimatedMonsterAttack({
+  contacted: true,
+  attackCooldown: 0,
+  attackWindupTimer: 0,
+  attackDamagePending: false,
+  dt: 0.5,
+  attack: 100,
+  attackInterval: 2,
+  armor: 10,
+  armorBonus: 0,
+  animation: bossAttackAnim,
+  useFrameEvent: true,
+});
+assertEqual(frameDriven.startedAttack, true, "帧事件模式下仍应正常启动攻击");
+assertEqual(frameDriven.damage, 0, "帧事件模式下不应通过倒计时提前扣血");
+assertEqual(frameDriven.frameEventDamage, 95.5, "帧事件模式下应把待扣伤害交给动画帧回调");
 
 console.log("monster-attack-animation-rules tests ok");
