@@ -171,7 +171,7 @@
     "loop": true,
     "anchorX": 0.5,
     "anchorY": 0.92,
-    "scale": 0.5
+    "scale": 0.58
   },
   {
     "key": "zombie_death_down",
@@ -201,7 +201,7 @@
     "loop": false,
     "anchorX": 0.5,
     "anchorY": 0.92,
-    "scale": 0.5
+    "scale": 0.58
   },
   {
     "key": "poison_bat_fly_down",
@@ -230,7 +230,7 @@
     "loop": true,
     "anchorX": 0.5,
     "anchorY": 0.55,
-    "scale": 0.45
+    "scale": 0.65
   },
   {
     "key": "poison_bat_death_down",
@@ -258,7 +258,7 @@
     "loop": false,
     "anchorX": 0.5,
     "anchorY": 0.55,
-    "scale": 0.45
+    "scale": 0.65
   },
   {
     "key": "projectile_tomato_spin",
@@ -473,7 +473,7 @@
     "loop": true,
     "anchorX": 0.5,
     "anchorY": 0.92,
-    "scale": 0.9
+    "scale": 1
   },
   {
     "key": "boss_attack_down",
@@ -503,7 +503,7 @@
     "loop": false,
     "anchorX": 0.5,
     "anchorY": 0.92,
-    "scale": 0.9,
+    "scale": 1,
     "damageFrame": 15,
     "shakeFrame": 15,
     "hitFrame": 15
@@ -536,7 +536,7 @@
     "loop": false,
     "anchorX": 0.5,
     "anchorY": 0.92,
-    "scale": 0.9,
+    "scale": 1,
     "hitFrame": 6
   },
   {
@@ -561,7 +561,7 @@
     "loop": false,
     "anchorX": 0.5,
     "anchorY": 0.92,
-    "scale": 0.5,
+    "scale": 0.58,
     "hitFrame": 6
   },
   {
@@ -616,7 +616,7 @@
     "loop": false,
     "anchorX": 0.5,
     "anchorY": 0.31,
-    "scale": 0.45,
+    "scale": 0.65,
     "hitFrame": 22
   },
   {
@@ -650,6 +650,6 @@
     "loop": false,
     "anchorX": 0.5,
     "anchorY": 0.92,
-    "scale": 0.9
+    "scale": 1
   }
 ]

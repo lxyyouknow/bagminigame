@@ -32,7 +32,7 @@
     "color": "#51d98b",
     "boss": false,
     "layerType": "flying",
-    "attackDistance": 110,
+    "attackDistance": 150,
     "runAnimKey": "poison_bat_fly_down",
     "attackAnimKey": "poison_bat_attack_down",
     "deathAnimKey": "poison_bat_death_down"

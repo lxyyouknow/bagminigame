@@ -1,7 +1,8 @@
 [
   { "event": "music_main", "audioKey": "bgm_main", "category": "music", "cooldownMs": 0, "desc": "进入选关/主界面" },
+  { "event": "music_bag", "audioKey": "bgm_bag", "category": "music", "cooldownMs": 0, "desc": "进入背包/备战界面" },
   { "event": "music_battle", "audioKey": "bgm_battle", "category": "music", "cooldownMs": 0, "desc": "进入普通战斗" },
-  { "event": "music_boss", "audioKey": "bgm_boss", "category": "music", "cooldownMs": 0, "desc": "进入 Boss 战，当前预留" },
+  { "event": "music_boss", "audioKey": "bgm_boss", "category": "music", "cooldownMs": 0, "desc": "Boss 出现后切换音乐" },
 
   { "event": "ui_click", "audioKey": "sfx_ui_click", "category": "sfx", "cooldownMs": 35, "desc": "所有按钮点击" },
   { "event": "bag_place", "audioKey": "sfx_bag_place", "category": "sfx", "cooldownMs": 60, "desc": "背包放置成功" },
@@ -14,6 +15,10 @@
   { "event": "battle_hit", "audioKey": "sfx_battle_hit", "category": "sfx", "cooldownMs": 70, "desc": "命中怪物" },
   { "event": "battle_cast", "audioKey": "sfx_battle_cast", "category": "sfx", "cooldownMs": 120, "desc": "范围技能释放" },
   { "event": "battle_level_up", "audioKey": "sfx_battle_level_up", "category": "sfx", "cooldownMs": 300, "desc": "升级三选一弹窗" },
+  { "event": "monster_zombie_attack", "audioKey": "sfx_zombie_attack", "category": "sfx", "cooldownMs": 180, "desc": "小僵尸攻击基地/栏杆" },
+  { "event": "monster_bat_attack", "audioKey": "sfx_bat_attack", "category": "sfx", "cooldownMs": 150, "desc": "毒蝠攻击基地/栏杆" },
+  { "event": "monster_boss_attack", "audioKey": "sfx_boss_attack", "category": "sfx", "cooldownMs": 260, "desc": "Boss 攻击基地/栏杆" },
+  { "event": "monster_boss_roar", "audioKey": "sfx_boss_roar", "category": "sfx", "cooldownMs": 500, "desc": "Boss 怒吼强化怪群" },
   { "event": "result_win", "audioKey": "sfx_result_win", "category": "sfx", "cooldownMs": 500, "desc": "胜利结算" },
   { "event": "result_lose", "audioKey": "sfx_result_lose", "category": "sfx", "cooldownMs": 500, "desc": "失败结算" }
 ]

@@ -10,6 +10,7 @@ import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
 import { getBaseDamageFeedback, getBaseShakeFeedback } from "./baseDamageFeedbackRules";
+import { getBossArrivalWarningFrame } from "./bossArrivalWarningRules";
 import { getDamageNumberFeedback } from "./battleDamageFeedbackRules";
 import { resolveMonsterContactY } from "./battleContactLineRules";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
@@ -17,6 +18,7 @@ import { isWaveCombatSettled } from "./battleWaveClearRules";
 import { applyWaveCheckpointToBag, buildSingleWaveSpawnQueue, type WaveSpawnEvent } from "./battleWaveRules";
 import { createEffectiveMonster, getBaseArmor, getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
 import { stepMonsterContact } from "./monsterContactRules";
+import { shouldFreezeMonsterMovement } from "./monsterCastRules";
 import { getMonsterAnimationKey, getMonsterDeathAnimationKey, shouldKeepPendingAttackAnimation } from "./monsterVisualRules";
 import { getAnimationEventFrameIndex, resolveAnimatedMonsterAttackTiming, stepAnimatedMonsterAttack } from "./monsterAttackAnimationRules";
 import { resolveMonsterAttackContactY } from "./monsterAttackDistanceRules";
@@ -54,6 +56,12 @@ interface FadeReleaseRuntime {
   duration: number;
   elapsed: number;
   onComplete?: () => void;
+}
+
+interface BossArrivalWarningRuntime {
+  view: Container;
+  elapsed: number;
+  duration: number;
 }
 
 interface DelayedImpactRuntime {
@@ -107,6 +115,7 @@ export class BattleScene extends BaseScene {
   private damageTextLayer = new Container();
   private heroLayer = new Container();
   private uiLayer = new Container();
+  private bossWarningLayer = new Container();
   private topHudLayer: Container | undefined;
   private topHudRevealProgress = 1;
   private fenceLeft?: Sprite;
@@ -122,6 +131,7 @@ export class BattleScene extends BaseScene {
   private baseShakeTimer = 0;
   private baseShakeDuration = 0;
   private baseShakeAmplitude = 0;
+  private bossArrivalWarning?: BossArrivalWarningRuntime;
   private readonly heroAnimKey = "hero_pumpkin_slingshot_attack_up";
   private readonly animationPlayback = new AnimationPlaybackController();
   private readonly tuning: BattleTuningDef;
@@ -150,7 +160,7 @@ export class BattleScene extends BaseScene {
     this.initializeWeaponCooldowns();
     this.buildSpawnQueue();
     analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
-    this.container.addChild(this.battleLayer, this.groundFxLayer, this.monsterLayer, this.fieldForegroundLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.damageTextLayer, this.uiLayer);
+    this.container.addChild(this.battleLayer, this.groundFxLayer, this.monsterLayer, this.fieldForegroundLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.damageTextLayer, this.uiLayer, this.bossWarningLayer);
     this.drawStatic();
   }
 
@@ -170,6 +180,7 @@ export class BattleScene extends BaseScene {
     this.updateHero(dt);
     this.drawStatic();
     this.updateBaseShake(dt);
+    this.updateBossArrivalWarning(dt);
     if (this.ending) return;
     if (this.baseHp <= 0) {
       this.showResult(false);
@@ -231,7 +242,7 @@ export class BattleScene extends BaseScene {
       desc: "战斗左上暂停按钮",
     });
     const pauseScale = pauseLayout.scale ?? 1;
-    const pause = uiButton("battle_pause_button", "", pauseLayout.width * pauseScale, pauseLayout.height * pauseScale, 0x2b3441, () => this.openPause(), pauseLayout.fontSize ?? 16);
+    const pause = uiButton("battle_pause_button", "", pauseLayout.width * pauseScale, pauseLayout.height * pauseScale, 0x2b3441, () => this.openPause(), pauseLayout.fontSize ?? 16, undefined, true);
     const pausePos = resolveUiLayoutPosition(pauseLayout, w, h);
     pause.position.set(pausePos.x, pausePos.y);
 
@@ -693,6 +704,10 @@ export class BattleScene extends BaseScene {
     view.position.set(x, y);
     this.monsterLayer.addChild(view);
     this.monsters.push({ uid: nextUid(), def, view, hpBarTrack: hpBar?.track, hpBarFill: hpBar?.fill, hp: def.hp, maxHp: def.hp, x, y, slowTimer: 0, hitStopTimer: 0, attackCooldown: 0, dead: false, deathVisualDone: false, animationKey, spawnAge: 0 });
+    if (def.boss) {
+      audio.playMusicEvent("music_boss");
+      this.showBossArrivalWarning();
+    }
   }
 
   private createMonsterView(def: MonsterDef, animationKey?: string): Container {
@@ -865,12 +880,18 @@ export class BattleScene extends BaseScene {
       }
       monster.bossRoarTimer = Math.max(0, (monster.bossRoarTimer ?? 0) - dt);
       this.tryTriggerBossRoar(monster, false, dt);
+      const freezeForCast = shouldFreezeMonsterMovement(monster.bossRoarTimer);
       const attackAnim = monster.bossRoarTimer && monster.bossRoarTimer > 0 ? undefined : monster.def.attackAnimKey ? data.getAnimation(monster.def.attackAnimKey) : undefined;
       const hasAnimatedAttack = Boolean(attackAnim);
       const baseHitY = this.baseFenceContactY(monster);
       const contactY = this.baseContactY(monster);
       monster.lastBaseHitY = baseHitY;
       monster.lastContactY = contactY;
+      if (freezeForCast) {
+        monster.view.position.set(monster.x, monster.y + Math.sin(this.time * 8 + monster.uid) * 2);
+        monster.view.scale.set(1 + Math.sin(this.time * 9 + monster.uid) * 0.035, 1 - Math.sin(this.time * 9 + monster.uid) * 0.025);
+        continue;
+      }
       const contact = stepMonsterContact({
         y: monster.y,
         speed: monster.def.speed * speedMul,
@@ -1021,9 +1042,16 @@ export class BattleScene extends BaseScene {
     this.baseHp -= damage;
     this.bag.baseHp = Math.max(0, this.baseHp);
     this.syncSessionProgress();
+    audio.playSfxEvent(this.monsterAttackSfxEvent(monster));
     this.addBaseDamageFloating(monster.x, (monster.lastBaseHitY ?? this.baseFenceContactY(monster)) - 18, damage);
     const shake = getBaseShakeFeedback(monster.def.boss);
     if (includeShake && shake) this.startBaseShake(shake.duration, shake.amplitude);
+  }
+
+  private monsterAttackSfxEvent(monster: MonsterRuntime): string {
+    if (monster.def.boss) return "monster_boss_attack";
+    if (monster.def.id === 2 || monster.def.layerType === "flying") return "monster_bat_attack";
+    return "monster_zombie_attack";
   }
 
   private baseContactY(monster: MonsterRuntime): number {
@@ -1206,6 +1234,7 @@ export class BattleScene extends BaseScene {
     });
     monster.bossRoarCooldown = result.cooldown;
     if (!result.shouldCast || !skill) return;
+    audio.playSfxEvent("monster_boss_roar");
     this.restartMonsterAnimation(monster, skill.animKey);
     const anim = data.getAnimation(skill.animKey);
     monster.bossRoarTimer = (anim?.frames.length ?? 1) / Math.max(1, anim?.fps ?? 12);
@@ -1674,11 +1703,59 @@ export class BattleScene extends BaseScene {
     session.kills = this.kills;
   }
 
+  private showBossArrivalWarning(): void {
+    this.bossArrivalWarning?.view.destroy({ children: true } as DestroyOptions);
+    const w = app.screen.width;
+    const h = app.screen.height;
+    const view = new Container();
+    view.eventMode = "none";
+    view.pivot.set(w / 2, h / 2);
+    view.position.set(w / 2, h / 2);
+
+    const warning = spriteFromAsset("ui_boss_arrival_warning", w, h);
+    if (warning) {
+      view.addChild(warning);
+    } else {
+      const fallback = new Graphics();
+      fallback.rect(0, 0, w, h).fill({ color: 0x5a0000, alpha: 0.62 });
+      const title = text("BOSS 来袭", 60, "#ffd66f", "700", { strokeColor: "#5b0000", strokeWidth: 8 });
+      title.anchor.set(0.5);
+      title.position.set(w / 2, h * 0.34);
+      view.addChild(fallback, title);
+    }
+
+    this.bossWarningLayer.addChild(view);
+    this.bossArrivalWarning = { view, elapsed: 0, duration: 1.22 };
+    this.applyBossArrivalWarningFrame();
+  }
+
+  private applyBossArrivalWarningFrame(): void {
+    if (!this.bossArrivalWarning) return;
+    const frame = getBossArrivalWarningFrame(this.bossArrivalWarning.elapsed, this.bossArrivalWarning.duration);
+    const w = app.screen.width;
+    const h = app.screen.height;
+    this.bossArrivalWarning.view.alpha = frame.alpha;
+    this.bossArrivalWarning.view.scale.set(frame.scale);
+    this.bossArrivalWarning.view.position.set(w / 2 + frame.offsetX, h / 2 + frame.offsetY);
+    if (frame.done) {
+      this.bossArrivalWarning.view.destroy({ children: true } as DestroyOptions);
+      this.bossArrivalWarning = undefined;
+    }
+  }
+
+  private updateBossArrivalWarning(dt: number): void {
+    if (!this.bossArrivalWarning) return;
+    this.bossArrivalWarning.elapsed += Math.max(0, dt);
+    this.applyBossArrivalWarningFrame();
+  }
+
   private setBattlePaused(paused: boolean): void {
     this.paused = paused;
     if (paused) {
+      audio.pauseMusic();
       this.animationPlayback.pause([this.battleLayer, this.groundFxLayer, this.monsterLayer, this.fieldForegroundLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.damageTextLayer, this.heroLayer]);
     } else {
+      audio.resumeMusic();
       this.animationPlayback.resume();
     }
   }
@@ -1694,6 +1771,8 @@ export class BattleScene extends BaseScene {
     this.hitHolds = [];
     for (const fade of [...this.fadeReleases]) this.releaseCombatVisual(fade.view);
     this.fadeReleases = [];
+    this.bossArrivalWarning?.view.destroy({ children: true } as DestroyOptions);
+    this.bossArrivalWarning = undefined;
     super.destroy();
   }
 }

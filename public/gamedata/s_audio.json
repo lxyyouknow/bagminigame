@@ -1,7 +1,8 @@
 [
-  { "key": "bgm_main", "type": "music", "url": "", "preloadGroup": "main", "loop": true, "volume": 0.75, "maxConcurrent": 1, "generatedFreq": 0, "desc": "选关/主界面背景音乐" },
-  { "key": "bgm_battle", "type": "music", "url": "", "preloadGroup": "battle", "loop": true, "volume": 0.72, "maxConcurrent": 1, "generatedFreq": 0, "desc": "普通战斗背景音乐" },
-  { "key": "bgm_boss", "type": "music", "url": "", "preloadGroup": "battle", "loop": true, "volume": 0.78, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Boss 战背景音乐，当前预留" },
+  { "key": "bgm_main", "type": "music", "url": "", "preloadGroup": "main", "loop": true, "volume": 0.54, "maxConcurrent": 1, "generatedFreq": 0, "desc": "选关/主界面背景音乐，未接正式资源时静音" },
+  { "key": "bgm_bag", "type": "music", "url": "", "preloadGroup": "bag", "loop": true, "volume": 0.5, "maxConcurrent": 1, "generatedFreq": 0, "desc": "背包/备战界面背景音乐，未接正式资源时静音" },
+  { "key": "bgm_battle", "type": "music", "url": "", "preloadGroup": "battle", "loop": true, "volume": 0.48, "maxConcurrent": 1, "generatedFreq": 0, "desc": "普通波次战斗背景音乐，未接正式资源时静音" },
+  { "key": "bgm_boss", "type": "music", "url": "", "preloadGroup": "battle", "loop": true, "volume": 0.55, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Boss 来临后背景音乐，未接正式资源时静音" },
 
   { "key": "sfx_ui_click", "type": "sfx", "url": "", "preloadGroup": "ui", "loop": false, "volume": 0.7, "maxConcurrent": 4, "generatedFreq": 880, "desc": "通用按钮点击音" },
   { "key": "sfx_bag_place", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.75, "maxConcurrent": 3, "generatedFreq": 620, "desc": "武器放入背包" },
@@ -14,6 +15,10 @@
   { "key": "sfx_battle_hit", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.38, "maxConcurrent": 6, "generatedFreq": 260, "desc": "命中怪物" },
   { "key": "sfx_battle_cast", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.5, "maxConcurrent": 3, "generatedFreq": 420, "desc": "范围技能释放" },
   { "key": "sfx_battle_level_up", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.9, "maxConcurrent": 1, "generatedFreq": 1180, "desc": "升级三选一出现" },
+  { "key": "sfx_zombie_attack", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.56, "maxConcurrent": 4, "generatedFreq": 210, "desc": "小僵尸攻击栏杆，偏软的咚声测试音" },
+  { "key": "sfx_bat_attack", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.48, "maxConcurrent": 4, "generatedFreq": 640, "desc": "毒蝠俯冲攻击，短促尖声测试音" },
+  { "key": "sfx_boss_attack", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.78, "maxConcurrent": 2, "generatedFreq": 120, "desc": "Boss 重击基地，低频重击测试音" },
+  { "key": "sfx_boss_roar", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.72, "maxConcurrent": 1, "generatedFreq": 150, "desc": "Boss 怒吼强化怪群测试音" },
   { "key": "sfx_result_win", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.9, "maxConcurrent": 1, "generatedFreq": 1320, "desc": "挑战成功结算" },
   { "key": "sfx_result_lose", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.8, "maxConcurrent": 1, "generatedFreq": 160, "desc": "挑战失败结算" }
 ]

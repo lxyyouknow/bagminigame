@@ -20,24 +20,19 @@ function assertNear(actual: number, expected: number, message: string): void {
 }
 
 function run(): void {
-  const flow = createRunFlow(0.4, 0.6, 0.2);
+  const flow = createRunFlow(0.4, 0.6, 0);
   assertEqual(flow.phase, "preparing", "整局创建后应停在背包备战态");
 
   assertEqual(beginBattleTransition(flow), true, "备战态应允许开始战斗转场");
   assertEqual(beginBattleTransition(flow), false, "转场过程中必须拒绝重复开战");
   assertEqual(flow.phase, "toBattle", "开战后应进入向战场转场态");
 
-  stepRunFlow(flow, 0.4);
-  const battleSplit = getRunViewOffsets(flow, 1440);
-  assertNear(battleSplit.bagY, 864, "开战转场中间镜头应露出下方 40% 背包");
-  assertNear(battleSplit.battleY, -576, "开战转场中间镜头应露出上方 60% 战场");
+  assertEqual(stepRunFlow(flow, 0.2), false, "开战转场中途不应提前完成");
+  const battleMid = getRunViewOffsets(flow, 1440);
+  if (!(battleMid.bagY > 0 && battleMid.bagY < 1440)) throw new Error("开战转场中途背包应连续向下移动，不应定格");
+  if (!(battleMid.battleY < 0 && battleMid.battleY > -1440)) throw new Error("开战转场中途战场应连续向下移动，不应定格");
 
-  assertEqual(stepRunFlow(flow, 0.1), false, "开战转场中间镜头停顿期间不能立刻完成");
-  const heldSplit = getRunViewOffsets(flow, 1440);
-  assertNear(heldSplit.bagY, 864, "开战转场停顿期间背包位置应保持 40% 可见");
-  assertNear(heldSplit.battleY, -576, "开战转场停顿期间战场位置应保持 60% 可见");
-
-  assertEqual(stepRunFlow(flow, 0.11), true, "移动和中间镜头停顿结束后应报告完成");
+  assertEqual(stepRunFlow(flow, 0.2), true, "开战转场无中途停顿时应按移动时长完成");
   assertEqual(flow.phase, "fighting", "开战转场结束后才进入战斗态");
   const battleReady = getRunViewOffsets(flow, 1440);
   assertNear(battleReady.bagY, 1440, "战斗态背包应位于屏幕下方");

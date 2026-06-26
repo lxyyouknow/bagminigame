@@ -7,7 +7,7 @@
   { "key": "exp_need_base", "value": 12, "adPlacement": "", "desc": "升级经验基础值" },
   { "key": "run_transition_seconds", "value": 0.42, "adPlacement": "", "desc": "背包与战场双向滑屏移动时长（秒）" },
   { "key": "run_transition_split_progress", "value": 0.6, "adPlacement": "", "desc": "开战转场中间镜头比例，0.6 表示上方 60% 战斗、下方 40% 背包" },
-  { "key": "run_transition_split_hold_seconds", "value": 0.3, "adPlacement": "", "desc": "开战转场停在 60/40 镜头的时长（秒）" },
+  { "key": "run_transition_split_hold_seconds", "value": 0, "adPlacement": "", "desc": "开战转场停在 60/40 镜头的时长（秒），0 表示不中途停顿" },
   { "key": "run_bag_top_hud_exit_seconds", "value": 0.28, "adPlacement": "", "desc": "点击 start 后背包顶部信息栏先上滑收起的时长（秒）" },
   { "key": "run_battle_top_hud_enter_seconds", "value": 0.28, "adPlacement": "", "desc": "切到战斗背景后战斗顶部信息栏下滑出现的时长（秒）" },
   { "key": "battle_initial_cd_stagger", "value": 0.08, "adPlacement": "", "desc": "开战时不同武器初始 CD 的确定性错峰秒数" }

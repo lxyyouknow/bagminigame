@@ -30,12 +30,12 @@ export class RunScene extends BaseScene {
   constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string) {
     super();
     this.flow = createRunFlow(
-      data.getEconomy("run_transition_seconds") || 0.42,
-      data.getEconomy("run_transition_split_progress") || 0.6,
-      data.getEconomy("run_transition_split_hold_seconds") || 0.28,
+      data.getEconomy("run_transition_seconds") ?? 0.42,
+      data.getEconomy("run_transition_split_progress") ?? 0.6,
+      data.getEconomy("run_transition_split_hold_seconds") ?? 0.28,
     );
-    this.startingBattleUiDuration = data.getEconomy("run_bag_top_hud_exit_seconds") || 0.28;
-    this.battleHudEnterDuration = data.getEconomy("run_battle_top_hud_enter_seconds") || 0.28;
+    this.startingBattleUiDuration = data.getEconomy("run_bag_top_hud_exit_seconds") ?? 0.28;
+    this.battleHudEnterDuration = data.getEconomy("run_battle_top_hud_enter_seconds") ?? 0.28;
     this.bagScene = new BagScene(level, initialState, entryToast, () => this.startBattle());
     this.session = createRunSessionState(level, this.bagScene.getState());
     this.bagScene.attachRunSession(this.session);
@@ -43,7 +43,7 @@ export class RunScene extends BaseScene {
     this.container.addChild(this.bagScene.container);
     this.applyViewOffsets();
     this.applyUiTransition();
-    audio.playMusicEvent("music_main");
+    audio.playMusicEvent("music_bag");
   }
 
   override update(dt: number): void {
@@ -153,7 +153,7 @@ export class RunScene extends BaseScene {
       this.battleScene.destroy();
       this.battleScene = undefined;
     }
-    audio.playMusicEvent("music_main");
+    audio.playMusicEvent("music_bag");
     this.applyViewOffsets();
     this.applyUiTransition();
   }

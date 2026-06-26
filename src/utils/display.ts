@@ -72,7 +72,7 @@ export function button(label: string, width: number, height: number, bg: number,
   return c;
 }
 
-export function uiButton(uiKey: string, label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20, pressScale?: number): Container {
+export function uiButton(uiKey: string, label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20, pressScale?: number, triggerOnDown = false): Container {
   const c = new Container();
   c.eventMode = "static";
   c.cursor = "pointer";
@@ -104,10 +104,15 @@ export function uiButton(uiKey: string, label: string, width: number, height: nu
     pressed = true;
     content.scale.set(downScale);
     audio.playSfxEvent("ui_click");
+    if (triggerOnDown) {
+      pressed = false;
+      content.scale.set(1);
+      onTap();
+    }
   });
   c.on("pointerup", (event) => {
     event.stopPropagation();
-    if (!pressed) return;
+    if (!pressed || triggerOnDown) return;
     pressed = false;
     content.scale.set(1);
     onTap();

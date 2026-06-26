@@ -10,6 +10,14 @@ export class AudioManager {
   private currentMusic: HTMLAudioElement | undefined;
   private currentMusicKey = "";
   private context: AudioContext | undefined;
+  private generatedMusic:
+    | {
+        key: string;
+        osc: OscillatorNode;
+        gain: GainNode;
+      }
+    | undefined;
+  private musicPausedByGame = false;
   constructor(private readonly data: GameDataManager) {}
 
   settings: AudioSettings = {
@@ -39,6 +47,18 @@ export class AudioManager {
     const def = this.data.getAudio(event.audioKey);
     if (!def || def.type !== "music") return;
     this.playMusic(def);
+  }
+
+  pauseMusic(): void {
+    this.musicPausedByGame = true;
+    this.currentMusic?.pause();
+    this.applyGeneratedMusicVolume();
+  }
+
+  resumeMusic(): void {
+    this.musicPausedByGame = false;
+    this.applyMusicVolume();
+    if (this.currentMusic && !this.settings.mutedMusic) void this.currentMusic.play().catch(() => {});
   }
 
   playSfxEvent(eventKey: string): void {
@@ -88,6 +108,7 @@ export class AudioManager {
     this.settings.mutedMusic = !this.settings.mutedMusic;
     this.persist();
     this.applyMusicVolume();
+    this.applyGeneratedMusicVolume();
   }
 
   toggleSfx(): void {
@@ -102,18 +123,24 @@ export class AudioManager {
 
   resumeFromLifecycle(): void {
     if (this.context?.state === "suspended") void this.context.resume().catch(() => {});
-    if (this.currentMusic && !this.settings.mutedMusic) void this.currentMusic.play().catch(() => {});
+    if (this.currentMusic && !this.settings.mutedMusic && !this.musicPausedByGame) void this.currentMusic.play().catch(() => {});
   }
 
   private playMusic(def: AudioDef): void {
-    if (this.currentMusicKey === def.key && this.currentMusic) {
+    if (this.currentMusicKey === def.key && (this.currentMusic || this.generatedMusic)) {
       this.applyMusicVolume();
+      this.applyGeneratedMusicVolume();
       return;
     }
     this.currentMusic?.pause();
     this.currentMusic = undefined;
+    this.stopGeneratedMusic();
     this.currentMusicKey = def.key;
-    if (!def.url) return;
+    this.musicPausedByGame = false;
+    if (!def.url) {
+      this.playGeneratedMusic(def);
+      return;
+    }
     const clip = this.ensureClip(def);
     if (!clip) return;
     clip.loop = def.loop;
@@ -124,9 +151,10 @@ export class AudioManager {
   }
 
   private applyMusicVolume(): void {
+    this.applyGeneratedMusicVolume();
     if (!this.currentMusic) return;
     this.currentMusic.volume = this.calcVolume(this.data.getAudio(this.currentMusicKey), "music");
-    if (this.settings.mutedMusic || this.currentMusic.volume <= 0) {
+    if (this.settings.mutedMusic || this.musicPausedByGame || this.currentMusic.volume <= 0) {
       this.currentMusic.pause();
     } else {
       void this.currentMusic.play().catch(() => {});
@@ -163,6 +191,46 @@ export class AudioManager {
     osc.stop(ctx.currentTime + 0.1);
   }
 
+  private playGeneratedMusic(def: AudioDef): void {
+    if (!def.generatedFreq) return;
+    const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Ctor) return;
+    this.context ??= new Ctor();
+    const ctx = this.context;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = def.generatedFreq;
+    gain.gain.value = 0;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    this.generatedMusic = { key: def.key, osc, gain };
+    this.applyGeneratedMusicVolume();
+  }
+
+  private stopGeneratedMusic(): void {
+    if (!this.generatedMusic) return;
+    try {
+      this.generatedMusic.osc.stop();
+    } catch {
+      // 已停止的测试 BGM 节点直接忽略。
+    }
+    this.generatedMusic.osc.disconnect();
+    this.generatedMusic.gain.disconnect();
+    this.generatedMusic = undefined;
+  }
+
+  private applyGeneratedMusicVolume(): void {
+    if (!this.generatedMusic) return;
+    const def = this.data.getAudio(this.generatedMusic.key);
+    const target = this.musicPausedByGame ? 0 : this.calcVolume(def, "music") * 0.06;
+    const ctx = this.context;
+    if (!ctx) return;
+    this.generatedMusic.gain.gain.cancelScheduledValues(ctx.currentTime);
+    this.generatedMusic.gain.gain.setTargetAtTime(target, ctx.currentTime, 0.035);
+  }
+
   private calcVolume(def: AudioDef | undefined, type: "music" | "sfx"): number {
     if (!def) return 0;
     const muted = type === "music" ? this.settings.mutedMusic : this.settings.mutedSfx;
@@ -173,7 +241,7 @@ export class AudioManager {
 
   private async unlock(): Promise<void> {
     if (this.context?.state === "suspended") await this.context.resume();
-    if (this.currentMusic && !this.settings.mutedMusic) void this.currentMusic.play().catch(() => {});
+    if (this.currentMusic && !this.settings.mutedMusic && !this.musicPausedByGame) void this.currentMusic.play().catch(() => {});
   }
 
   private loadSettings(): void {

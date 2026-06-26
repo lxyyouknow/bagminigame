@@ -34,8 +34,8 @@ if (yellowMonster.deathAnimKey !== "zombie_death_down") {
   throw new Error(`小僵尸应绑定 zombie_death_down 死亡动画，实际为 ${yellowMonster.deathAnimKey ?? "未配置"}`);
 }
 if (!zombieWalk) throw new Error("缺少小僵尸行走动画配置：zombie_walk_down");
-if (zombieWalk.scale !== 0.5) {
-  throw new Error(`小僵尸显示缩放应保持为 0.5，实际为 ${zombieWalk.scale}`);
+if (zombieWalk.scale !== 0.58) {
+  throw new Error(`小僵尸显示缩放应为 0.58，实际为 ${zombieWalk.scale}`);
 }
 if (!zombieAttack) throw new Error("缺少小僵尸攻击动画配置：zombie_attack_down");
 if (zombieAttack.loop !== false) throw new Error("小僵尸攻击动画不应循环");
@@ -74,13 +74,16 @@ if (poisonBat.runAnimKey !== "poison_bat_fly_down") {
 if (poisonBat.attackAnimKey !== "poison_bat_attack_down") {
   throw new Error(`毒蝠应绑定 poison_bat_attack_down 攻击动画，实际为 ${poisonBat.attackAnimKey ?? "未配置"}`);
 }
-if ((poisonBat.attackDistance ?? 0) <= 80) {
-  throw new Error(`毒蝠应配置更远攻击距离，避免贴到栏杆脸上，实际为 ${poisonBat.attackDistance ?? "未配置"}`);
+if (poisonBat.attackDistance !== 150) {
+  throw new Error(`毒蝠放大后应使用 150 攻击距离校准喷射落点，实际为 ${poisonBat.attackDistance ?? "未配置"}`);
 }
 if (poisonBat.deathAnimKey !== "poison_bat_death_down") {
   throw new Error(`毒蝠应绑定 poison_bat_death_down 死亡动画，实际为 ${poisonBat.deathAnimKey ?? "未配置"}`);
 }
 if (!poisonBatFly) throw new Error("缺少毒蝠飞行动画配置：poison_bat_fly_down");
+if (poisonBatFly.scale !== 0.65) {
+  throw new Error(`毒蝠显示缩放应为 0.65，实际为 ${poisonBatFly.scale}`);
+}
 if (!poisonBatAttack) throw new Error("缺少毒蝠攻击动画配置：poison_bat_attack_down");
 if (poisonBatAttack.loop !== false) throw new Error("毒蝠攻击动画不应循环");
 if (poisonBatAttack.frames.length !== 43) {
@@ -131,6 +134,7 @@ if (boss.deathAnimKey !== "boss_death_down") {
   throw new Error(`Boss 应绑定 boss_death_down 死亡动画，实际为 ${boss.deathAnimKey ?? "未配置"}`);
 }
 if (!bossWalk) throw new Error("缺少 Boss 行走动画配置：boss_walk_down");
+if (bossWalk.scale !== 1) throw new Error(`Boss 显示缩放应为 1，实际为 ${bossWalk.scale}`);
 if (!bossAttack) throw new Error("缺少 Boss 攻击动画配置：boss_attack_down");
 if (!bossRoar) throw new Error("缺少 Boss 怒吼动画配置：boss_roar_down");
 if (!bossDeath) throw new Error("缺少 Boss 死亡动画配置：boss_death_down");

@@ -175,6 +175,13 @@
     "fallbackKey": "ui_button_basic"
   },
   {
+    "key": "ui_boss_arrival_warning",
+    "type": "image",
+    "url": "/game-assets/ui/boss-arrival-warning.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
     "key": "ui_res_energy",
     "type": "image",
     "url": "/game-assets/ui/icon/icon-va.png",
