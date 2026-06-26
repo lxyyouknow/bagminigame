@@ -6,11 +6,18 @@ import { color, clamp01, weightedPick } from "./math";
 
 export { color, clamp01, weightedPick };
 
-export function text(content: string, size: number, fill = "#ffffff", weight: "400" | "700" = "400"): Text {
+export interface TextPaintOptions {
+  strokeColor?: string;
+  strokeWidth?: number;
+}
+
+export function text(content: string, size: number, fill = "#ffffff", weight: "400" | "700" = "400", paint: TextPaintOptions = {}): Text {
+  const strokeWidth = paint.strokeWidth ?? 0;
   return new Text({
     text: content,
     style: new TextStyle({
       fill,
+      stroke: strokeWidth > 0 ? { color: paint.strokeColor ?? "#000000", width: strokeWidth } : undefined,
       fontFamily: "Arial, PingFang SC, sans-serif",
       fontSize: size,
       fontWeight: weight,

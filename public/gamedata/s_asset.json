@@ -126,6 +126,13 @@
     "fallbackKey": "ui_button_yellow"
   },
   {
+    "key": "ui_bag_top_resource_bar",
+    "type": "image",
+    "url": "/game-assets/ui/bag/bag-top-resource-bar.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
     "key": "ui_res_energy",
     "type": "image",
     "url": "/game-assets/ui/icon/icon-va.png",

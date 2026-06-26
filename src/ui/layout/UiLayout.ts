@@ -50,6 +50,7 @@ export function scaleUiLayoutSize(layout: UiLayoutDef): UiLayoutDef {
     height: Math.round(layout.height * scale),
     iconSize: layout.iconSize === undefined ? undefined : Math.round(layout.iconSize * scale),
     fontSize: layout.fontSize === undefined ? undefined : Math.round(layout.fontSize * scale),
+    strokeWidth: layout.strokeWidth === undefined ? undefined : Math.round(layout.strokeWidth * scale),
     gap: layout.gap === undefined ? undefined : Math.round(layout.gap * scale),
   };
 }

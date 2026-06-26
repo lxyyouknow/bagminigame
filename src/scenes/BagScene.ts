@@ -2,7 +2,7 @@ import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, ItemShapeDef, LevelDef, PlacedItem } from "../types";
 import { ads, app, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
-import { addImageOrFallback, createItemShapeView, drawAssetBg, screenPoint, text, uiButton, weightedPick, color, spriteFromAsset, spriteFromUi } from "../utils/display";
+import { addImageOrFallback, createItemShapeView, drawAssetBg, screenPoint, text, uiButton, weightedPick, color, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
 import {
   findNearestDragTarget,
@@ -15,7 +15,7 @@ import {
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
 import { refreshWaveCandidates } from "./battleWaveRules";
-import { getBaseMaxHp, getExpNeed } from "./battleDifficultyRules";
+import { getBaseMaxHp } from "./battleDifficultyRules";
 import { shouldShowBagTextFeedback } from "./bagTextFeedbackRules";
 
 interface Point {
@@ -180,119 +180,83 @@ export class BagScene extends BaseScene {
     this.gridLeft = boardCenterX - boardW / 2;
     this.gridTop = boardCenterY - boardFrameH / 2 + this.boardPadding;
 
-    const titleLayout = this.layout("title", {
+    const topBarLayout = scaleUiLayoutSize(this.layout("top_bar", {
       scene: "bag",
-      key: "title",
+      key: "top_bar",
       anchor: "topCenter",
       x: 0,
-      y: 38,
-      width: 320,
-      height: 34,
+      y: 0,
+      width: 686,
+      height: 204,
+      scale: 1,
+      visible: true,
+      desc: "战前背包顶部道具栏图片",
+    }));
+    const topBarRect = resolveUiLayoutRect(topBarLayout, w, h);
+    const topBar = spriteFromAsset("ui_bag_top_resource_bar", topBarRect.width, topBarRect.height);
+    if (topBar) topBar.position.set(topBarRect.x, topBarRect.y);
+
+    const currentWave = this.runSession?.currentWave ?? this.state.currentWave ?? 1;
+    const waveValueLayout = this.layout("wave_value", {
+      scene: "bag",
+      key: "wave_value",
+      anchor: "topCenter",
+      x: 135,
+      y: 108,
+      width: 80,
+      height: 32,
+      fontSize: 30,
+      visible: true,
+      desc: "顶部道具栏内波次数字",
+    });
+    const waveValuePos = resolveUiLayoutPosition(waveValueLayout, w, h);
+    const waveValueText = text(String(currentWave), waveValueLayout.fontSize ?? 30, waveValueLayout.textColor ?? "#ffffff", "700", {
+      strokeColor: waveValueLayout.strokeColor,
+      strokeWidth: waveValueLayout.strokeWidth,
+    });
+    waveValueText.anchor.set(0.5);
+    waveValueText.position.set(waveValuePos.x, waveValuePos.y);
+
+    const hpValueLayout = this.layout("hp_value", {
+      scene: "bag",
+      key: "hp_value",
+      anchor: "topCenter",
+      x: 245,
+      y: 108,
+      width: 100,
+      height: 32,
+      fontSize: 30,
+      visible: true,
+      desc: "顶部道具栏内基地血量数字",
+    });
+    const hpValuePos = resolveUiLayoutPosition(hpValueLayout, w, h);
+    const hpValue = Math.round(this.runSession?.baseHp ?? this.state.baseHp ?? getBaseMaxHp(this.level, data.getBattleTuning(this.level.battleTuningId)));
+    const hpValueText = text(String(hpValue), hpValueLayout.fontSize ?? 30, hpValueLayout.textColor ?? "#ffffff", "700", {
+      strokeColor: hpValueLayout.strokeColor,
+      strokeWidth: hpValueLayout.strokeWidth,
+    });
+    hpValueText.anchor.set(0, 0.5);
+    hpValueText.position.set(hpValuePos.x, hpValuePos.y);
+
+    const bagSizeValueLayout = this.layout("bag_size_value", {
+      scene: "bag",
+      key: "bag_size_value",
+      anchor: "topCenter",
+      x: 118,
+      y: 165,
+      width: 90,
+      height: 28,
       fontSize: 24,
       visible: true,
-      desc: "背包界面关卡标题",
+      desc: "顶部道具栏内田野布局数字",
     });
-    const title = text(this.level.name, titleLayout.fontSize ?? 24, "#ffffff", "700");
-    title.anchor.set(0.5);
-    const titlePos = resolveUiLayoutPosition(titleLayout, w, h);
-    title.position.set(titlePos.x, titlePos.y);
-    const goldLayout = this.layout("gold", {
-      scene: "bag",
-      key: "gold",
-      anchor: "topLeft",
-      x: 24,
-      y: 78,
-      width: 150,
-      height: 28,
-      fontSize: 18,
-      visible: true,
-      desc: "背包界面金币文本",
+    const bagSizeValuePos = resolveUiLayoutPosition(bagSizeValueLayout, w, h);
+    const bagSizeValueText = text(`${this.state.rows}×${this.state.cols}`, bagSizeValueLayout.fontSize ?? 24, bagSizeValueLayout.textColor ?? "#6b3a16", "700", {
+      strokeColor: bagSizeValueLayout.strokeColor,
+      strokeWidth: bagSizeValueLayout.strokeWidth,
     });
-    const goldIcon = spriteFromUi("resource_coin_icon", 24, 24);
-    const gold = text(String(this.state.gold), goldLayout.fontSize ?? 18, "#ffe67b", "700");
-    gold.anchor.set(0, 0.5);
-    const goldPos = resolveUiLayoutPosition(goldLayout, w, h);
-    if (goldIcon) {
-      goldIcon.anchor.set(0.5);
-      goldIcon.position.set(goldPos.x + 12, goldPos.y);
-    }
-    gold.position.set(goldPos.x + (goldIcon ? 30 : 0), goldPos.y);
-    const sizeLayout = this.layout("bag_size", {
-      scene: "bag",
-      key: "bag_size",
-      anchor: "topRight",
-      x: -24,
-      y: 78,
-      width: 150,
-      height: 28,
-      fontSize: 16,
-      visible: true,
-      desc: "背包行列文本",
-    });
-    const hp = text(`背包 ${this.state.rows}x${this.state.cols}`, sizeLayout.fontSize ?? 16, "#ffffff", "700");
-    hp.anchor.set(1, 0.5);
-    const sizePos = resolveUiLayoutPosition(sizeLayout, w, h);
-    hp.position.set(sizePos.x, sizePos.y);
-    const expLayout = this.layout("exp_bar", {
-      scene: "bag",
-      key: "exp_bar",
-      anchor: "topCenter",
-      x: 0,
-      y: 58,
-      width: 300,
-      height: 16,
-      fontSize: 14,
-      visible: true,
-      desc: "背包局内经验条",
-    });
-    const expRect = resolveUiLayoutRect(expLayout, w, h);
-    const levelNo = this.runSession?.levelNo ?? 1;
-    const exp = this.runSession?.exp ?? 0;
-    const expNeed = getExpNeed(levelNo, data.getBattleTuning(this.level.battleTuningId));
-    const expRate = Math.max(0, Math.min(1, exp / Math.max(1, expNeed)));
-    const expBar = new Graphics();
-    expBar.roundRect(expRect.x, expRect.y, expRect.width, expRect.height, 8).fill({ color: 0x1a2428, alpha: 0.9 });
-    expBar.roundRect(expRect.x + 2, expRect.y + 2, Math.max(0, (expRect.width - 4) * expRate), expRect.height - 4, 6).fill({ color: 0x39e58a });
-    expBar.stroke({ color: 0xffffff, width: 1, alpha: 0.5 });
-    const levelBadge = new Graphics();
-    levelBadge.circle(expRect.x + expRect.width + 18, expRect.y + expRect.height / 2, 18).fill({ color: 0x7c4f27 }).stroke({ color: 0xffd36a, width: 3 });
-    const levelText = text(String(levelNo), expLayout.fontSize ?? 14, "#ffffff", "700");
-    levelText.anchor.set(0.5);
-    levelText.position.set(expRect.x + expRect.width + 18, expRect.y + expRect.height / 2);
-
-    const waveLayout = this.layout("wave", {
-      scene: "bag",
-      key: "wave",
-      anchor: "topCenter",
-      x: 0,
-      y: 94,
-      width: 180,
-      height: 26,
-      fontSize: 18,
-      visible: true,
-      desc: "背包局内波次文本",
-    });
-    const wavePos = resolveUiLayoutPosition(waveLayout, w, h);
-    const waveText = text(`波次 ${this.runSession?.currentWave ?? this.state.currentWave ?? 1}/${this.level.winWave}`, waveLayout.fontSize ?? 18, "#ffffff", "700");
-    waveText.anchor.set(0.5);
-    waveText.position.set(wavePos.x, wavePos.y);
-
-    const hpLayout = this.layout("hp", {
-      scene: "bag",
-      key: "hp",
-      anchor: "topRight",
-      x: -24,
-      y: 94,
-      width: 130,
-      height: 28,
-      fontSize: 18,
-      visible: true,
-      desc: "背包局内基地血量",
-    });
-    const hpPos = resolveUiLayoutPosition(hpLayout, w, h);
-    const hpText = text(`♥ ${Math.round(this.runSession?.baseHp ?? this.state.baseHp ?? getBaseMaxHp(this.level, data.getBattleTuning(this.level.battleTuningId)))}`, hpLayout.fontSize ?? 18, "#ff6b78", "700");
-    hpText.anchor.set(1, 0.5);
-    hpText.position.set(hpPos.x, hpPos.y);
+    bagSizeValueText.anchor.set(0, 0.5);
+    bagSizeValueText.position.set(bagSizeValuePos.x, bagSizeValuePos.y);
 
     const boardBg = new Container();
     boardBg.position.set(this.gridLeft - this.boardPadding, this.gridTop - this.boardPadding);
@@ -369,15 +333,10 @@ export class BagScene extends BaseScene {
 
     this.drawCandidateArea();
     this.drawActions(w, h);
-    if (titleLayout.visible) this.container.addChild(title);
-    if (goldLayout.visible) {
-      if (goldIcon) this.container.addChild(goldIcon);
-      this.container.addChild(gold);
-    }
-    if (sizeLayout.visible) this.container.addChild(hp);
-    if (expLayout.visible) this.container.addChild(expBar, levelBadge, levelText);
-    if (waveLayout.visible) this.container.addChild(waveText);
-    if (hpLayout.visible) this.container.addChild(hpText);
+    if (topBarLayout.visible && topBar) this.container.addChild(topBar);
+    if (waveValueLayout.visible) this.container.addChild(waveValueText);
+    if (hpValueLayout.visible) this.container.addChild(hpValueText);
+    if (bagSizeValueLayout.visible) this.container.addChild(bagSizeValueText);
 
     if (this.toast && shouldShowBagTextFeedback()) {
       const toastLayout = this.layout("toast", {

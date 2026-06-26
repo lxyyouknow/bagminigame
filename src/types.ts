@@ -284,6 +284,9 @@ export interface UiLayoutDef {
   iconSize?: number;
   labelOffsetY?: number;
   fontSize?: number;
+  textColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
   scale?: number;
   gap?: number;
   visible: boolean;
