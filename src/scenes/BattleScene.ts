@@ -1,10 +1,10 @@
-import { AnimatedSprite, Container, Graphics, type DestroyOptions } from "pixi.js";
+import { AnimatedSprite, Container, Graphics, Sprite, type DestroyOptions } from "pixi.js";
 import type { AnimationDef, BagState, BattleTuningDef, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
 import { showBag, showMain } from "../core/navigation";
-import { color, drawAssetBg, text, button, weightedPick, spriteFromAsset, spriteFromUi } from "../utils/display";
-import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
+import { color, text, uiButton, weightedPick, spriteFromAsset, spriteFromUi } from "../utils/display";
+import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
 import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
@@ -107,6 +107,13 @@ export class BattleScene extends BaseScene {
   private damageTextLayer = new Container();
   private heroLayer = new Container();
   private uiLayer = new Container();
+  private topHudLayer: Container | undefined;
+  private topHudRevealProgress = 1;
+  private fenceLeft?: Sprite;
+  private fenceRight?: Sprite;
+  private fenceRevealProgress = 1;
+  private baseHpLayer?: Container;
+  private baseHpLayerHomeX = 0;
   private modalWindow: GameWindow | undefined;
   private hero?: AnimatedSprite;
   private heroAttackTimer = 0;
@@ -184,6 +191,16 @@ export class BattleScene extends BaseScene {
     // 市面小游戏常见处理：回到前台只恢复音频，不自动继续战斗，等待玩家点“继续挑战”。
   }
 
+  setTopHudRevealProgress(progress: number): void {
+    this.topHudRevealProgress = Math.max(0, Math.min(1, progress));
+    this.applyTopHudTransition();
+  }
+
+  setFenceRevealProgress(progress: number): void {
+    this.fenceRevealProgress = Math.max(0, Math.min(1, progress));
+    this.applyFenceTransition();
+  }
+
   private buildSpawnQueue(): void {
     this.spawnQueue = buildSingleWaveSpawnQueue(data.getWaves(this.level.waveGroupId), this.currentWave, this.tuning);
     this.waveDuration = Math.max(1, (this.spawnQueue.at(-1)?.time ?? 0.2) + 2.8);
@@ -191,11 +208,13 @@ export class BattleScene extends BaseScene {
 
   private drawStatic(): void {
     this.uiLayer.removeChildren();
+    this.topHudLayer = undefined;
+    this.baseHpLayer = undefined;
     const w = app.screen.width;
     const h = app.screen.height;
     if (this.battleLayer.children.length === 0) {
       const field = data.getBattleField(this.level.battleFieldKey);
-      drawAssetBg(this.battleLayer, field.bgAssetKey, this.level.theme);
+      this.drawSplitBattleBackground(field.bgAssetKey);
       this.drawBattleMapDecor();
     }
 
@@ -211,9 +230,53 @@ export class BattleScene extends BaseScene {
       visible: true,
       desc: "战斗左上暂停按钮",
     });
-    const pause = button("Ⅱ", pauseLayout.width, pauseLayout.height, 0x2b3441, () => this.openPause());
+    const pauseScale = pauseLayout.scale ?? 1;
+    const pause = uiButton("battle_pause_button", "", pauseLayout.width * pauseScale, pauseLayout.height * pauseScale, 0x2b3441, () => this.openPause(), pauseLayout.fontSize ?? 16);
     const pausePos = resolveUiLayoutPosition(pauseLayout, w, h);
     pause.position.set(pausePos.x, pausePos.y);
+
+    const infoLayout = this.layout("info_bar", {
+      scene: "battle",
+      key: "info_bar",
+      anchor: "topCenter",
+      x: 0,
+      y: 0,
+      width: 407,
+      height: 207,
+      scale: 1,
+      visible: true,
+      desc: "战斗顶部信息栏图片",
+    });
+    const infoScale = infoLayout.scale ?? 1;
+    const infoBar = spriteFromUi("battle_info_bar", infoLayout.width * infoScale, infoLayout.height * infoScale);
+    if (infoBar) {
+      infoBar.anchor.set(0.5, 0);
+      const infoPos = resolveUiLayoutPosition(infoLayout, w, h);
+      infoBar.position.set(infoPos.x, infoPos.y);
+    }
+
+    const waveValueLayout = this.layout("wave_value", {
+      scene: "battle",
+      key: "wave_value",
+      anchor: "topCenter",
+      x: 20,
+      y: 128,
+      width: 120,
+      height: 34,
+      fontSize: 24,
+      textColor: "#fff4c2",
+      strokeColor: "#274a1c",
+      strokeWidth: 4,
+      visible: true,
+      desc: "战斗信息栏僵尸头右侧怪物波次数值",
+    });
+    const waveValue = text(`${this.currentWave}/${this.level.winWave}`, waveValueLayout.fontSize ?? 24, waveValueLayout.textColor ?? "#fff4c2", "700", {
+      strokeColor: waveValueLayout.strokeColor ?? "#274a1c",
+      strokeWidth: waveValueLayout.strokeWidth ?? 4,
+    });
+    waveValue.anchor.set(0.5);
+    const waveValuePos = resolveUiLayoutPosition(waveValueLayout, w, h);
+    waveValue.position.set(waveValuePos.x, waveValuePos.y);
     const titleLayout = this.layout("title", {
       scene: "battle",
       key: "title",
@@ -320,48 +383,54 @@ export class BattleScene extends BaseScene {
       desc: "战斗底部基地区域",
     });
     const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipPanelWidth, equipPanelHeight, equipLayout.y);
-    const { base: baseRect, equip: equipRect, hpBar: hpRect } = hud;
+    const { base: baseRect, equip: equipRect } = hud;
 
     const baseTop = baseRect.y + 10;
     const turretX = baseRect.x + baseRect.width / 2;
     this.positionHero(turretX, this.friendlyAreaCenterY(baseTop + 24) - this.friendlyAreaHeight() * 0.2 - 120);
 
-    const guardLabel = text("守卫基地", baseLayout.fontSize ?? 16, "#ffdf83", "700");
-    guardLabel.anchor.set(0, 0.5);
-    guardLabel.position.set(baseRect.x + 30, baseTop + 34);
+    const hpLayout = scaleUiLayoutSize(this.layout("base_hp_bar", {
+      scene: "battle",
+      key: "base_hp_bar",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -198,
+      width: 360,
+      height: 88,
+      scale: 1,
+      fontSize: 22,
+      textColor: "#ffffff",
+      strokeColor: "#3b1c06",
+      strokeWidth: 4,
+      barOffsetX: 88,
+      barOffsetY: 20,
+      barWidth: 230,
+      barHeight: 41,
+      textOffsetX: 0,
+      textOffsetY: 0,
+      visible: true,
+      desc: "战斗基地血条位置和尺寸",
+    }));
+    const hpPos = resolveUiLayoutPosition(hpLayout, w, h);
+    const baseHpUi = this.createBaseHpBar(hpPos.x, hpPos.y, hpLayout.width, hpLayout);
+    this.baseHpLayer = baseHpUi;
+    this.baseHpLayerHomeX = baseHpUi.x;
+    this.applyFenceTransition();
 
-    const statusBack = new Graphics();
-    const statusX = Math.max(baseRect.x + 118, baseRect.x + baseRect.width - 162);
-    const statusY = baseTop + 34;
-    statusBack.roundRect(statusX - 10, statusY - 20, 148, 40, 18).fill({ color: 0x40372b, alpha: 0.72 });
-    statusBack.stroke({ color: 0xa58b55, width: 1, alpha: 0.38 });
-
-    const armorIcon = new Graphics();
-    armorIcon.moveTo(0, -11).lineTo(11, -4).lineTo(8, 10).lineTo(0, 16).lineTo(-8, 10).lineTo(-11, -4).closePath();
-    armorIcon.fill({ color: 0x6db9ff }).stroke({ color: 0xffffff, width: 2, alpha: 0.45 });
-    armorIcon.position.set(statusX + 12, statusY);
-    const armorText = text(String(this.armor + this.buffs.armorBonus), 18, "#ffffff", "700");
-    armorText.anchor.set(0, 0.5);
-    armorText.position.set(armorIcon.x + 18, armorIcon.y + 1);
-
-    const hpIcon = new Graphics();
-    hpIcon.moveTo(0, 12).bezierCurveTo(-15, 1, -13, -12, 0, -5).bezierCurveTo(13, -12, 15, 1, 0, 12).fill({ color: 0xff5e70 });
-    hpIcon.position.set(statusX + 72, statusY + 1);
-    const hpText = text(String(Math.max(0, Math.round(this.baseHp))), 18, "#ffffff", "700");
-    hpText.anchor.set(0, 0.5);
-    hpText.position.set(hpIcon.x + 18, hpIcon.y + 1);
-
-    const hpTrack = new Graphics();
-    hpTrack.roundRect(hpRect.x, hpRect.y, hpRect.width, hpRect.height, 7).fill({ color: 0x11181f, alpha: 0.96 });
-    hpTrack.stroke({ color: 0x0a0e12, width: 2, alpha: 0.72 });
-    const hpFill = new Graphics();
-    hpFill.roundRect(hpRect.x + 3, hpRect.y + 3, Math.max(0, (hpRect.width - 6) * Math.max(0, this.baseHp / this.baseMaxHp)), hpRect.height - 6, 5).fill({ color: 0x2ff16b });
-
-    if (pauseLayout.visible) this.uiLayer.addChild(pause);
+    const topHud = new Container();
+    if (pauseLayout.visible) topHud.addChild(pause);
+    if (infoLayout.visible && infoBar) topHud.addChild(infoBar);
+    if (waveValueLayout.visible) topHud.addChild(waveValue);
+    if (topHud.children.length > 0) {
+      this.topHudLayer = topHud;
+      this.applyTopHudTransition();
+      this.uiLayer.addChild(topHud);
+    }
     if (titleLayout.visible) this.uiLayer.addChild(title);
     if (waveLayout.visible) this.uiLayer.addChild(waveBar, levelBadge, levelText);
     if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon ?? goldIconFallback, goldText, killText, topHp);
-    if (baseLayout.visible) this.uiLayer.addChild(this.heroLayer, guardLabel, statusBack, armorIcon, armorText, hpIcon, hpText, hpTrack, hpFill);
+    if (baseLayout.visible) this.uiLayer.addChild(this.heroLayer);
+    if (hpLayout.visible) this.uiLayer.addChild(baseHpUi);
 
     this.bag.placed.slice(0, 10).forEach((placed, index) => {
       const item = data.getItem(placed.itemId);
@@ -382,44 +451,172 @@ export class BattleScene extends BaseScene {
     });
   }
 
+  private applyTopHudTransition(): void {
+    if (!this.topHudLayer) return;
+    this.topHudLayer.y = -Math.round(220 * (1 - this.topHudRevealProgress));
+    this.topHudLayer.alpha = this.topHudRevealProgress;
+  }
+
+  private createBaseHpBar(centerX: number, centerY: number, width: number, layout?: { fontSize?: number; textColor?: string; strokeColor?: string; strokeWidth?: number; barOffsetX?: number; barOffsetY?: number; barWidth?: number; barHeight?: number; textOffsetX?: number; textOffsetY?: number }): Container {
+    const c = new Container();
+    const frameTexture = assetManager.texture("battle_base_hp_frame");
+    const barTexture = assetManager.texture("battle_base_hp_bar");
+    const frameW = width;
+    const frameH = frameTexture ? (frameTexture.height / frameTexture.width) * frameW : 88;
+    c.position.set(centerX - frameW / 2, centerY - frameH / 2);
+
+    const frame = spriteFromAsset("battle_base_hp_frame", frameW, frameH);
+    if (frame) {
+      c.addChild(frame);
+    } else {
+      c.addChild(new Graphics().roundRect(0, 0, frameW, frameH, 18).fill({ color: 0x5c2f08 }).stroke({ color: 0xffd36a, width: 3 }));
+    }
+
+    const hpRate = Math.max(0, Math.min(1, this.baseHp / Math.max(1, this.baseMaxHp)));
+    const scale = frameW / 360;
+    const barX = layout?.barOffsetX ?? 88 * scale;
+    const barY = layout?.barOffsetY ?? 20 * scale;
+    const barW = layout?.barWidth ?? 230 * scale;
+    const barH = layout?.barHeight ?? 41 * scale;
+    const bar = spriteFromAsset("battle_base_hp_bar", barW, barH);
+    if (bar && barTexture) {
+      bar.position.set(barX, barY);
+      const mask = new Graphics().rect(barX, barY, barW * hpRate, barH).fill({ color: 0xffffff });
+      bar.mask = mask;
+      c.addChild(bar, mask);
+    } else {
+      c.addChild(new Graphics().roundRect(barX, barY, barW * hpRate, barH, 8 * scale).fill({ color: 0x6cc83a }));
+    }
+
+    const hpValue = text(String(Math.max(0, Math.round(this.baseHp))), layout?.fontSize ?? Math.max(16, Math.round(22 * scale)), layout?.textColor ?? "#ffffff", "700", {
+      strokeColor: layout?.strokeColor ?? "#3b1c06",
+      strokeWidth: layout?.strokeWidth ?? Math.max(2, Math.round(4 * scale)),
+    });
+    hpValue.anchor.set(0.5);
+    hpValue.position.set(barX + barW / 2 + (layout?.textOffsetX ?? 0), barY + barH / 2 + (layout?.textOffsetY ?? 0));
+    c.addChild(hpValue);
+    return c;
+  }
+
+  private drawSplitBattleBackground(battleBgAssetKey: string): void {
+    const w = app.screen.width;
+    const h = app.screen.height;
+    const split = Math.max(0.05, Math.min(0.95, data.getEconomy("run_transition_split_progress") || 0.6));
+    const battleHeight = Math.round(h * split);
+    const bagHeight = h - battleHeight;
+    const battleTexture = assetManager.texture(battleBgAssetKey);
+    const bagTexture = assetManager.texture("bg_bag_prebattle");
+
+    if (battleTexture) {
+      const battleBg = new Sprite(battleTexture);
+      battleBg.width = w;
+      battleBg.height = h;
+      battleBg.y = -bagHeight;
+      const battleMask = new Graphics().rect(0, 0, w, battleHeight).fill({ color: 0xffffff });
+      battleBg.mask = battleMask;
+      this.battleLayer.addChild(battleBg, battleMask);
+    } else {
+      this.battleLayer.addChild(new Graphics().rect(0, 0, w, battleHeight).fill({ color: color(this.level.theme) }));
+    }
+
+    if (bagTexture) {
+      const bagBg = new Sprite(bagTexture);
+      bagBg.width = w;
+      bagBg.height = h;
+      bagBg.y = battleHeight;
+      const bagMask = new Graphics().rect(0, battleHeight, w, bagHeight).fill({ color: 0xffffff });
+      bagBg.mask = bagMask;
+      this.battleLayer.addChild(bagBg, bagMask);
+    } else {
+      this.battleLayer.addChild(new Graphics().rect(0, battleHeight, w, bagHeight).fill({ color: 0x93d56a }));
+    }
+  }
+
   private drawBattleMapDecor(): void {
     const w = app.screen.width;
     const h = app.screen.height;
-    const skinTexture = assetManager.texture("battle_friendly_area_skin");
-    if (!skinTexture) return;
-
-    const skinScale = w / skinTexture.width;
-    const skinW = skinTexture.width * skinScale;
-    const skinH = skinTexture.height * skinScale;
-    const skin = spriteFromAsset("battle_friendly_area_skin", skinW, skinH);
-    if (!skin) return;
-    skin.position.set((w - skinW) / 2, h - skinH);
-    this.battleLayer.addChild(skin);
-
     const field = data.getBattleField(this.level.battleFieldKey);
-    const lineAssetKey = field.fenceForegroundAssetKey || field.fenceAssetKey || "battle_divider_line";
-    const lineTexture = assetManager.texture(lineAssetKey);
-    if (!lineTexture) return;
-    const lineScale = w / lineTexture.width;
-    const lineW = lineTexture.width * lineScale;
-    const lineH = lineTexture.height * lineScale;
-    const line = spriteFromAsset(lineAssetKey, lineW, lineH);
-    if (!line) return;
-    line.position.set((w - lineW) / 2, this.resolveFenceForegroundY(field));
+    const fenceLayout = scaleUiLayoutSize(this.layout("fence", {
+      scene: "battle",
+      key: "fence",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -430,
+      width: 720,
+      height: 109,
+      scale: 1,
+      visible: true,
+      desc: "战斗左右栅栏位置和尺寸",
+    }));
+    if (!fenceLayout.visible) return;
+    const leftTexture = assetManager.texture("battle_fence_left");
+    const rightTexture = assetManager.texture("battle_fence_right");
+    if (!leftTexture || !rightTexture) return;
+    const fenceScale = fenceLayout.width / (leftTexture.width + rightTexture.width);
+    const leftW = leftTexture.width * fenceScale;
+    const rightW = rightTexture.width * fenceScale;
+    const fenceH = fenceLayout.height;
+    const left = spriteFromAsset("battle_fence_left", leftW, fenceH);
+    const right = spriteFromAsset("battle_fence_right", rightW, fenceH);
+    if (!left || !right) return;
+    const fenceRect = resolveUiLayoutRect(fenceLayout, w, h);
+    left.y = fenceRect.y;
+    right.y = fenceRect.y;
+    this.fenceLeft = left;
+    this.fenceRight = right;
+    this.applyFenceTransition();
     const targetLayer = field.fenceCoversMonsters === false ? this.battleLayer : this.fieldForegroundLayer;
-    targetLayer.addChild(line);
+    targetLayer.addChild(left, right);
   }
 
   private resolveFenceForegroundY(field = data.getBattleField(this.level.battleFieldKey)): number | undefined {
     if (field.fenceForegroundY && field.fenceForegroundY > 0) return field.fenceForegroundY;
+    const layout = data.getUiLayout("battle", "fence");
+    if (layout?.visible !== false) {
+      const scaled = scaleUiLayoutSize(
+        layout ?? {
+          scene: "battle",
+          key: "fence",
+          anchor: "bottomCenter",
+          x: 0,
+          y: -430,
+          width: 720,
+          height: 109,
+          scale: 1,
+          visible: true,
+          desc: "战斗左右栅栏位置和尺寸",
+        },
+      );
+      return resolveUiLayoutRect(scaled, app.screen.width, app.screen.height).y;
+    }
     const skinTexture = assetManager.texture("battle_friendly_area_skin");
-    const fenceAssetKey = field.fenceForegroundAssetKey || field.fenceAssetKey || "battle_divider_line";
-    const fenceTexture = assetManager.texture(fenceAssetKey);
+    const fenceTexture = assetManager.texture("battle_fence_left") || assetManager.texture(field.fenceForegroundAssetKey || field.fenceAssetKey || "battle_divider_line");
     if (!skinTexture || !fenceTexture) return undefined;
     const skinScale = app.screen.width / skinTexture.width;
-    const fenceScale = app.screen.width / fenceTexture.width;
+    const rightTexture = assetManager.texture("battle_fence_right");
+    const totalFenceWidth = fenceTexture.width + (rightTexture?.width ?? fenceTexture.width);
+    const fenceScale = app.screen.width / totalFenceWidth;
     const skinY = app.screen.height - skinTexture.height * skinScale;
     return Math.round(skinY - fenceTexture.height * fenceScale);
+  }
+
+  private applyFenceTransition(): void {
+    const progress = this.easeOutCubic(this.fenceRevealProgress);
+    const leftOffset = this.fenceLeft ? -this.fenceLeft.width * (1 - progress) : -app.screen.width * 0.5 * (1 - progress);
+    if (this.fenceLeft && this.fenceRight) {
+      const w = app.screen.width;
+      this.fenceLeft.x = leftOffset;
+      this.fenceRight.x = w - this.fenceRight.width * progress;
+    }
+    if (this.baseHpLayer) {
+      const hiddenX = -this.baseHpLayer.width - 4;
+      this.baseHpLayer.x = hiddenX + (this.baseHpLayerHomeX - hiddenX) * progress;
+      this.baseHpLayer.alpha = progress;
+    }
+  }
+
+  private easeOutCubic(value: number): number {
+    return 1 - Math.pow(1 - Math.min(1, Math.max(0, value)), 3);
   }
 
   private friendlyAreaCenterY(fallbackY: number): number {

@@ -75,6 +75,10 @@ export class BagScene extends BaseScene {
   private candidateMotions: CandidateMotion[] = [];
   private pendingCandidateStarts = new Map<string, Point>();
   private runSession?: RunSessionState;
+  private topHudLayer: Container | undefined;
+  private refreshActionLayer: Container | undefined;
+  private refreshActionExitDistance = 0;
+  private topHudExitProgress = 0;
 
   constructor(
     private readonly level: LevelDef,
@@ -132,6 +136,12 @@ export class BagScene extends BaseScene {
     this.refresh(entryToast);
   }
 
+  setTopHudExitProgress(progress: number): void {
+    this.topHudExitProgress = Math.max(0, Math.min(1, progress));
+    this.applyTopHudTransition();
+    this.applyRefreshActionTransition();
+  }
+
   override update(dt: number): void {
     this.updateCandidateMotions(dt);
     if (this.toastTimer > 0) {
@@ -152,6 +162,9 @@ export class BagScene extends BaseScene {
   private draw(): void {
     this.candidateViews.clear();
     this.candidateMotions = [];
+    this.topHudLayer = undefined;
+    this.refreshActionLayer = undefined;
+    this.refreshActionExitDistance = 0;
     this.container.removeChildren();
     drawAssetBg(this.container, "bg_bag_prebattle");
     const w = app.screen.width;
@@ -333,10 +346,16 @@ export class BagScene extends BaseScene {
 
     this.drawCandidateArea();
     this.drawActions(w, h);
-    if (topBarLayout.visible && topBar) this.container.addChild(topBar);
-    if (waveValueLayout.visible) this.container.addChild(waveValueText);
-    if (hpValueLayout.visible) this.container.addChild(hpValueText);
-    if (bagSizeValueLayout.visible) this.container.addChild(bagSizeValueText);
+    const topHud = new Container();
+    if (topBarLayout.visible && topBar) topHud.addChild(topBar);
+    if (waveValueLayout.visible) topHud.addChild(waveValueText);
+    if (hpValueLayout.visible) topHud.addChild(hpValueText);
+    if (bagSizeValueLayout.visible) topHud.addChild(bagSizeValueText);
+    if (topHud.children.length > 0) {
+      this.topHudLayer = topHud;
+      this.applyTopHudTransition();
+      this.container.addChild(topHud);
+    }
 
     if (this.toast && shouldShowBagTextFeedback()) {
       const toastLayout = this.layout("toast", {
@@ -423,6 +442,18 @@ export class BagScene extends BaseScene {
     this.pendingCandidateStarts.clear();
   }
 
+  private applyTopHudTransition(): void {
+    if (!this.topHudLayer) return;
+    this.topHudLayer.y = -Math.round(220 * this.topHudExitProgress);
+    this.topHudLayer.alpha = 1 - this.topHudExitProgress;
+  }
+
+  private applyRefreshActionTransition(): void {
+    if (!this.refreshActionLayer) return;
+    this.refreshActionLayer.y = Math.round(this.refreshActionExitDistance * this.topHudExitProgress);
+    this.refreshActionLayer.alpha = 1 - this.topHudExitProgress;
+  }
+
   private drawActions(w: number, h: number): void {
     const refreshLayout = this.layout("action_refresh", {
       scene: "bag",
@@ -472,8 +503,19 @@ export class BagScene extends BaseScene {
     refresh.position.set(refreshPos.x, refreshPos.y);
     expand.position.set(expandRect.x, expandRect.y);
     start.position.set(startRect.x, startRect.y);
-    if (refreshLayout.visible) this.container.addChild(refresh);
-    if (expandLayout.visible) this.container.addChild(expand);
+    const refreshActions = new Container();
+    if (refreshLayout.visible) refreshActions.addChild(refresh);
+    if (expandLayout.visible) refreshActions.addChild(expand);
+    if (refreshActions.children.length > 0) {
+      this.refreshActionLayer = refreshActions;
+      const minActionTop = Math.min(
+        refreshLayout.visible ? refreshPos.y : h,
+        expandLayout.visible ? expandRect.y : h,
+      );
+      this.refreshActionExitDistance = Math.max(80, h - minActionTop + 24);
+      this.applyRefreshActionTransition();
+      this.container.addChild(refreshActions);
+    }
     if (startLayout.visible) this.container.addChild(start);
   }
 

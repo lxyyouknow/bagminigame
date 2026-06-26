@@ -56,9 +56,37 @@
     "fallbackKey": ""
   },
   {
+    "key": "battle_fence_left",
+    "type": "image",
+    "url": "/game-assets/battle/ui/battle-fence-left.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "battle_divider_line"
+  },
+  {
+    "key": "battle_fence_right",
+    "type": "image",
+    "url": "/game-assets/battle/ui/battle-fence-right.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "battle_divider_line"
+  },
+  {
     "key": "battle_weapon_slot_box",
     "type": "image",
     "url": "/game-assets/battle/ui/battle-weapon-slot-box.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "battle_base_hp_frame",
+    "type": "image",
+    "url": "/game-assets/battle/ui/battle-base-hp-frame.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "battle_base_hp_bar",
+    "type": "image",
+    "url": "/game-assets/battle/ui/battle-base-hp-bar.png",
     "preloadGroup": "battle",
     "fallbackKey": ""
   },
@@ -131,6 +159,20 @@
     "url": "/game-assets/ui/bag/bag-top-resource-bar.png",
     "preloadGroup": "bag",
     "fallbackKey": ""
+  },
+  {
+    "key": "ui_battle_info_bar",
+    "type": "image",
+    "url": "/game-assets/ui/battle-info-bar.png",
+    "preloadGroup": "battle",
+    "fallbackKey": ""
+  },
+  {
+    "key": "ui_battle_pause_button",
+    "type": "image",
+    "url": "/game-assets/ui/battle-pause-button.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "ui_button_basic"
   },
   {
     "key": "ui_res_energy",

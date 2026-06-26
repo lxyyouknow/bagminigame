@@ -287,6 +287,12 @@ export interface UiLayoutDef {
   textColor?: string;
   strokeColor?: string;
   strokeWidth?: number;
+  barOffsetX?: number;
+  barOffsetY?: number;
+  barWidth?: number;
+  barHeight?: number;
+  textOffsetX?: number;
+  textOffsetY?: number;
   scale?: number;
   gap?: number;
   visible: boolean;

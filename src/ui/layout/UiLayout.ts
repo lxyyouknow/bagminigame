@@ -51,6 +51,12 @@ export function scaleUiLayoutSize(layout: UiLayoutDef): UiLayoutDef {
     iconSize: layout.iconSize === undefined ? undefined : Math.round(layout.iconSize * scale),
     fontSize: layout.fontSize === undefined ? undefined : Math.round(layout.fontSize * scale),
     strokeWidth: layout.strokeWidth === undefined ? undefined : Math.round(layout.strokeWidth * scale),
+    barOffsetX: layout.barOffsetX === undefined ? undefined : Math.round(layout.barOffsetX * scale),
+    barOffsetY: layout.barOffsetY === undefined ? undefined : Math.round(layout.barOffsetY * scale),
+    barWidth: layout.barWidth === undefined ? undefined : Math.round(layout.barWidth * scale),
+    barHeight: layout.barHeight === undefined ? undefined : Math.round(layout.barHeight * scale),
+    textOffsetX: layout.textOffsetX === undefined ? undefined : Math.round(layout.textOffsetX * scale),
+    textOffsetY: layout.textOffsetY === undefined ? undefined : Math.round(layout.textOffsetY * scale),
     gap: layout.gap === undefined ? undefined : Math.round(layout.gap * scale),
   };
 }
