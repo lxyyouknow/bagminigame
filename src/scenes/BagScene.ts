@@ -433,8 +433,6 @@ export class BagScene extends BaseScene {
       group.hitArea = new Rectangle(-target.width / 2, -target.height / 2, target.width, target.height);
       const hit = new Graphics();
       hit.roundRect(-target.width / 2, -target.height / 2, target.width, target.height, 14).fill({ color: 0xffffff, alpha: 0 });
-      const shadow = new Graphics();
-      shadow.ellipse(0, target.height * 0.42, Math.min(target.width * 0.42, 54), this.cellSize * 0.1).fill({ color: 0x163024, alpha: 0.24 });
       const icon = createItemShapeView(item, shape, data.getQuality(item.quality), this.cellSize, this.cellGap, 0.9);
       const visualOffset = this.dragVisualCenterOffset(shape, this.cellSize);
       icon.position.set(-visualOffset.x, -visualOffset.y);
@@ -447,7 +445,7 @@ export class BagScene extends BaseScene {
       const label = text(item.name, layout.fontSize ?? 12, "#ffffff", "700");
       label.anchor.set(0.5);
       label.position.set(0, target.labelOffsetY);
-      group.addChild(hit, shadow, icon);
+      group.addChild(hit, icon);
       group.position.set(target.x, target.y);
 
       const key = keys[index];
