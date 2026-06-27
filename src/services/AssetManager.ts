@@ -9,10 +9,16 @@ export class AssetManager {
   async preloadGroups(groups: string[]): Promise<void> {
     const targetGroups = new Set(groups);
     const rows = this.data.assets.filter((asset) => asset.url && asset.type !== "generated" && targetGroups.has(asset.preloadGroup));
+    const loadingByUrl = new Map<string, Promise<unknown>>();
     await Promise.all(
       rows.map(async (asset) => {
         try {
-          this.resources.set(asset.key, await Assets.load(asset.url));
+          let loading = loadingByUrl.get(asset.url);
+          if (!loading) {
+            loading = Assets.load(asset.url);
+            loadingByUrl.set(asset.url, loading);
+          }
+          this.resources.set(asset.key, await loading);
         } catch (error) {
           console.warn(`资源加载失败，使用占位表现：${asset.key} -> ${asset.url}`, error);
         }

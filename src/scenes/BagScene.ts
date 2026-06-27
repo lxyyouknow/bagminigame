@@ -1,6 +1,6 @@
 import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, ItemShapeDef, LevelDef, PlacedItem } from "../types";
-import { ads, app, audio, data, nextUid } from "../core/runtime";
+import { ads, app, assetManager, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
 import { addImageOrFallback, createItemShapeView, drawAssetBg, screenPoint, text, uiButton, weightedPick, color, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
@@ -167,6 +167,7 @@ export class BagScene extends BaseScene {
     this.refreshActionExitDistance = 0;
     this.container.removeChildren();
     drawAssetBg(this.container, "bg_bag_prebattle");
+    this.drawMushroomWorkerIdle();
     const w = app.screen.width;
     const h = app.screen.height;
     const boardLayout = this.layout("board", {
@@ -382,6 +383,29 @@ export class BagScene extends BaseScene {
 
     if (this.hintLayer) this.container.addChild(this.hintLayer);
     if (this.dragView) this.container.addChild(this.dragView);
+  }
+
+  private drawMushroomWorkerIdle(): void {
+    const layout = this.layout("mushroom_worker_idle", {
+      scene: "bag",
+      key: "mushroom_worker_idle",
+      anchor: "bottomCenter",
+      x: -246,
+      y: -500,
+      width: 512,
+      height: 512,
+      scale: 0.42,
+      visible: true,
+      desc: "战前背包界面蘑菇小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
+    });
+    if (!layout.visible) return;
+    const worker = assetManager.animation("mushroom_worker_idle");
+    if (!worker) return;
+    const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
+    worker.position.set(pos.x, pos.y);
+    worker.scale.set(layout.scale ?? 1);
+    worker.play();
+    this.container.addChild(worker);
   }
 
   private drawCandidateArea(): void {

@@ -309,6 +309,18 @@
   },
   {
     "scene": "bag",
+    "key": "mushroom_worker_idle",
+    "anchor": "topCenter",
+    "x": 278,
+    "y": 290,
+    "width": 512,
+    "height": 512,
+    "scale": 0.45,
+    "visible": true,
+    "desc": "Bag prebattle mushroom worker idle loop. x/y are center position, scale controls display size. Original atlas frames stay 512x512."
+  },
+  {
+    "scene": "bag",
     "key": "board",
     "anchor": "topCenter",
     "x": 0,
@@ -336,7 +348,7 @@
     "key": "candidates",
     "anchor": "bottomCenter",
     "x": 0,
-    "y": -405,
+    "y": -445,
     "width": 120,
     "height": 120,
     "gap": 24,

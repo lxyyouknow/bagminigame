@@ -651,5 +651,59 @@
     "anchorX": 0.5,
     "anchorY": 0.92,
     "scale": 1
+  },
+  {
+    "key": "mushroom_worker_idle",
+    "assetKey": "loose_frames",
+    "frames": [
+      "mushroom_worker_idle_00",
+      "mushroom_worker_idle_01",
+      "mushroom_worker_idle_02",
+      "mushroom_worker_idle_03",
+      "mushroom_worker_idle_04",
+      "mushroom_worker_idle_05",
+      "mushroom_worker_idle_06",
+      "mushroom_worker_idle_07",
+      "mushroom_worker_idle_08",
+      "mushroom_worker_idle_09",
+      "mushroom_worker_idle_10",
+      "mushroom_worker_idle_11",
+      "mushroom_worker_idle_12",
+      "mushroom_worker_idle_13",
+      "mushroom_worker_idle_14",
+      "mushroom_worker_idle_15",
+      "mushroom_worker_idle_16",
+      "mushroom_worker_idle_17",
+      "mushroom_worker_idle_18",
+      "mushroom_worker_idle_19",
+      "mushroom_worker_idle_20",
+      "mushroom_worker_idle_21",
+      "mushroom_worker_idle_22",
+      "mushroom_worker_idle_23"
+    ],
+    "fps": 12,
+    "loop": true,
+    "anchorX": 0.5,
+    "anchorY": 0.5,
+    "scale": 1
+  },
+  {
+    "key": "mushroom_worker_work",
+    "assetKey": "loose_frames",
+    "frames": [
+      "mushroom_worker_work_00",
+      "mushroom_worker_work_01",
+      "mushroom_worker_work_02",
+      "mushroom_worker_work_03",
+      "mushroom_worker_work_04",
+      "mushroom_worker_work_05",
+      "mushroom_worker_work_06",
+      "mushroom_worker_work_07"
+    ],
+    "fps": 12,
+    "loop": false,
+    "anchorX": 0.5,
+    "anchorY": 0.5,
+    "scale": 1
   }
 ]
