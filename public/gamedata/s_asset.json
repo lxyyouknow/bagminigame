@@ -399,6 +399,48 @@
     "fallbackKey": "weapon_tomato_fruit_lv2_icon"
   },
   {
+    "key": "weapon_chili_projectile_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-projectile-chili-lv1-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_chili_lv1_icon"
+  },
+  {
+    "key": "weapon_chili_projectile_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-projectile-chili-lv2-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_chili_projectile_lv1_icon"
+  },
+  {
+    "key": "weapon_chili_projectile_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-projectile-chili-lv3-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_chili_projectile_lv2_icon"
+  },
+  {
+    "key": "weapon_cabbage_projectile_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-projectile-cabbage-lv1-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_cabbage_lv1_icon"
+  },
+  {
+    "key": "weapon_cabbage_projectile_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-projectile-cabbage-lv2-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_cabbage_projectile_lv1_icon"
+  },
+  {
+    "key": "weapon_cabbage_projectile_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/weapon-projectile-cabbage-lv3-icon.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_cabbage_projectile_lv2_icon"
+  },
+  {
     "key": "weapon_blueberry_lv1_icon",
     "type": "image",
     "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv1-icon.png",
@@ -1734,6 +1776,61 @@
     "url": "/game-assets/effects/hit/tomato_burst/frames/hit-tomato-burst-07.png",
     "preloadGroup": "battle",
     "fallbackKey": "hit_tomato_burst_06"
+  },
+  {
+    "key": "hit_chili_burst_00",
+    "type": "image",
+    "url": "/game-assets/effects/hit/chili_burst/sheet/chili-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "",
+    "frameX": 0,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_chili_burst_01",
+    "type": "image",
+    "url": "/game-assets/effects/hit/chili_burst/sheet/chili-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_chili_burst_00",
+    "frameX": 512,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_chili_burst_02",
+    "type": "image",
+    "url": "/game-assets/effects/hit/chili_burst/sheet/chili-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_chili_burst_01",
+    "frameX": 1024,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_chili_burst_03",
+    "type": "image",
+    "url": "/game-assets/effects/hit/chili_burst/sheet/chili-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_chili_burst_02",
+    "frameX": 1536,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_chili_burst_04",
+    "type": "image",
+    "url": "/game-assets/effects/hit/chili_burst/sheet/chili-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_chili_burst_03",
+    "frameX": 2048,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
   },
   {
     "key": "hit_tomato_splash_small_00",

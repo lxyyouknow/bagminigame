@@ -800,9 +800,10 @@ export class BattleScene extends BaseScene {
       const start = this.getHeroCastPoint(placed.uid);
       const startX = start.x;
       const startY = start.y;
-    if ((skill.type === "projectile" || shouldUseVisualProjectile(skill)) && target) {
+    const projectileAssetKey = this.visualProjectileAssetKey(item);
+    if ((skill.type === "projectile" || shouldUseVisualProjectile(skill) || projectileAssetKey) && target) {
       audio.playSfxEvent("battle_shoot");
-      const view = this.createProjectileView(color(skill.color), skill.projectileAnimKey);
+      const view = this.createProjectileView(color(skill.color), projectileAssetKey ? undefined : skill.projectileAnimKey, projectileAssetKey);
       view.position.set(startX, startY);
       this.projectileLayer.addChild(view);
       this.projectiles.push({
@@ -816,7 +817,7 @@ export class BattleScene extends BaseScene {
         radius: skill.radius,
         color: color(skill.color),
         hitDistance: 24,
-        rotateToTarget: skill.projectileRotateToTarget ?? !skill.projectileAnimKey,
+        rotateToTarget: skill.projectileRotateToTarget ?? (!skill.projectileAnimKey && !projectileAssetKey),
       });
     } else if ((skill.type === "aoe" || skill.type === "dot") && target) {
       audio.playSfxEvent("battle_cast");
@@ -835,6 +836,11 @@ export class BattleScene extends BaseScene {
       this.syncSessionProgress();
       this.addFloating(app.screen.width / 2 + 82, app.screen.height - 156, `+${effect?.value ?? 40}`, 0x45ff99);
     }
+  }
+
+  private visualProjectileAssetKey(item: ItemDef): string | undefined {
+    if (item.baseId !== "bomb" && item.baseId !== "staff") return undefined;
+    return item.projectileAssetKey;
   }
 
   private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef): void {

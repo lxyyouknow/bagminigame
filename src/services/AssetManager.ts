@@ -1,4 +1,4 @@
-import { AnimatedSprite, Assets, Sprite, Texture } from "pixi.js";
+import { AnimatedSprite, Assets, Rectangle, Sprite, Texture } from "pixi.js";
 import { GameDataManager } from "../data/GameDataManager";
 
 export class AssetManager {
@@ -30,7 +30,15 @@ export class AssetManager {
     if (!assetKey) return undefined;
     const asset = this.data.getAsset(assetKey);
     const resource = this.resources.get(assetKey);
-    if (resource instanceof Texture) return resource;
+    if (resource instanceof Texture) {
+      if (asset?.frameWidth && asset.frameHeight) {
+        return new Texture({
+          source: resource.source,
+          frame: new Rectangle(asset.frameX ?? 0, asset.frameY ?? 0, asset.frameWidth, asset.frameHeight),
+        });
+      }
+      return resource;
+    }
     if (asset?.frame && typeof resource === "object" && resource && "textures" in resource) {
       const textures = (resource as { textures?: Record<string, Texture> }).textures;
       return textures?.[asset.frame];

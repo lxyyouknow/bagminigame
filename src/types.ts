@@ -252,6 +252,10 @@ export interface AssetDef {
   preloadGroup: string;
   fallbackKey: string;
   frame?: string;
+  frameX?: number;
+  frameY?: number;
+  frameWidth?: number;
+  frameHeight?: number;
 }
 
 export interface UiSkinDef {
