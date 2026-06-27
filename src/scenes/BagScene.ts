@@ -442,9 +442,6 @@ export class BagScene extends BaseScene {
         event.stopPropagation();
         this.startDrag(itemId, { type: "candidate", index }, event.global.x, event.global.y);
       });
-      const label = text(item.name, layout.fontSize ?? 12, "#ffffff", "700");
-      label.anchor.set(0.5);
-      label.position.set(0, target.labelOffsetY);
       group.addChild(hit, icon);
       group.position.set(target.x, target.y);
 
@@ -452,14 +449,11 @@ export class BagScene extends BaseScene {
       const start = this.pendingCandidateStarts.get(key);
       if (start && (Math.abs(start.x - target.x) > 1 || Math.abs(start.y - target.y) > 1)) {
         group.position.set(start.x, start.y);
-        label.position.set(start.x, start.y + target.labelOffsetY);
-        this.candidateMotions.push({ view: group, label, from: start, to: target, labelOffsetY: target.labelOffsetY, elapsed: 0, duration: 0.18 });
-      } else {
-        label.position.set(target.x, target.y + target.labelOffsetY);
+        this.candidateMotions.push({ view: group, from: start, to: target, labelOffsetY: target.labelOffsetY, elapsed: 0, duration: 0.18 });
       }
 
-      this.candidateViews.set(key, { view: group, label });
-      this.container.addChild(group, label);
+      this.candidateViews.set(key, { view: group });
+      this.container.addChild(group);
     });
     this.pendingCandidateStarts.clear();
   }
@@ -1019,11 +1013,12 @@ export class BagScene extends BaseScene {
       const gap = this.compressedGap(rowSizes, maxWidth, baseGap);
       const rowWidth = rowSizes.reduce((sum, size) => sum + size.width, 0) + gap * Math.max(0, rowSizes.length - 1);
       const crowded = rows.length > 1 || !oneRowNaturallyFits;
+      const rowBottomY = centerLines[rowIndex] + Math.max(...rowSizes.map((size) => size.height)) / 2;
       let cursorX = pos.x - rowWidth / 2 + (rowIndex === 0 && rows.length > 1 ? -18 : rows.length > 1 ? 18 : 0);
       row.forEach((candidateIndex, localIndex) => {
         const size = sizes[candidateIndex];
         const x = cursorX + size.width / 2 + (crowded ? jitterX[candidateIndex % jitterX.length] : 0);
-        const y = centerLines[rowIndex] + (crowded ? jitterY[candidateIndex % jitterY.length] : 0);
+        const y = rowBottomY - size.height / 2 + (crowded ? jitterY[candidateIndex % jitterY.length] : 0);
         targets[candidateIndex] = {
           x,
           y,
