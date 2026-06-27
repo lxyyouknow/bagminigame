@@ -464,21 +464,21 @@
   {
     "key": "weapon_wheat_lv1_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv1-icon.png",
+    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv1-plant-icon.png",
     "preloadGroup": "bag",
     "fallbackKey": "placeholder_icon"
   },
   {
     "key": "weapon_wheat_lv2_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv2-icon.png",
+    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv2-plant-icon.png",
     "preloadGroup": "bag",
     "fallbackKey": "weapon_wheat_lv1_icon"
   },
   {
     "key": "weapon_wheat_lv3_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv3-icon.png",
+    "url": "/game-assets/weapons/plants/weapon-plant-wheat-lv3-plant-icon.png",
     "preloadGroup": "bag",
     "fallbackKey": "weapon_wheat_lv2_icon"
   },
@@ -516,6 +516,27 @@
     "url": "/game-assets/weapons/plants/weapon-plant-pepper-icon.png",
     "preloadGroup": "bag",
     "fallbackKey": "placeholder_icon"
+  },
+  {
+    "key": "weapon_chili_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-chili-lv1-plant-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_bomb_icon"
+  },
+  {
+    "key": "weapon_chili_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-chili-lv2-plant-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_chili_lv1_icon"
+  },
+  {
+    "key": "weapon_chili_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/plants/weapon-plant-chili-lv3-plant-icon.png",
+    "preloadGroup": "bag",
+    "fallbackKey": "weapon_chili_lv2_icon"
   },
   {
     "key": "weapon_staff_icon",
