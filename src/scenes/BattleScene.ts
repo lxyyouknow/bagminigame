@@ -1441,7 +1441,7 @@ export class BattleScene extends BaseScene {
     const trail = new Graphics();
     trail.moveTo(-34, 0).lineTo(-8, 0).stroke({ color: fill, width: 8, alpha: 0.34 });
     trail.moveTo(-26, 0).lineTo(-6, 0).stroke({ color: 0xffffff, width: 3, alpha: 0.38 });
-    const art = spriteFromAsset(assetKey, 42, 42);
+    const art = spriteFromAsset(assetKey, 150, 150);
     if (art) {
       art.anchor.set(0.5);
       c.addChild(trail, art);
