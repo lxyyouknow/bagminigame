@@ -29,13 +29,13 @@ function run(): void {
 
   assertEqual(stepRunFlow(flow, 0.2), false, "开战转场中途不应提前完成");
   const battleMid = getRunViewOffsets(flow, 1440);
-  if (!(battleMid.bagY > 0 && battleMid.bagY < 1440)) throw new Error("开战转场中途背包应连续向下移动，不应定格");
-  if (!(battleMid.battleY < 0 && battleMid.battleY > -1440)) throw new Error("开战转场中途战场应连续向下移动，不应定格");
+  if (!(battleMid.bagY > 0 && battleMid.bagY < 720)) throw new Error("开战转场中途镜头上移时背包场景应连续下移");
+  assertNear(battleMid.battleY, 0, "农田基地模式下战斗层应叠在当前屏幕，不做整屏滑入");
 
   assertEqual(stepRunFlow(flow, 0.2), true, "开战转场无中途停顿时应按移动时长完成");
   assertEqual(flow.phase, "fighting", "开战转场结束后才进入战斗态");
   const battleReady = getRunViewOffsets(flow, 1440);
-  assertNear(battleReady.bagY, 1440, "战斗态背包应位于屏幕下方");
+  assertNear(battleReady.bagY, 720, "战斗态镜头上移时背包场景应下移到目标位置");
   assertNear(battleReady.battleY, 0, "战斗态战场应位于屏幕内");
 
   assertEqual(beginBagTransition(flow), true, "战斗态应允许清波返回背包");
@@ -44,7 +44,7 @@ function run(): void {
   assertEqual(flow.phase, "preparing", "返回转场结束后应恢复备战态");
   const bagReady = getRunViewOffsets(flow, 1440);
   assertNear(bagReady.bagY, 0, "备战态背包应位于屏幕内");
-  assertNear(bagReady.battleY, -1440, "备战态战场应位于屏幕上方");
+  assertNear(bagReady.battleY, 0, "农田基地模式下战斗层不再使用屏幕外初始位置");
 
   finishRun(flow);
   assertEqual(flow.phase, "ended", "结算后整局应进入结束态");

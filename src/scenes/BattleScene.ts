@@ -33,10 +33,13 @@ import { getMonsterHpFillWidth } from "./monsterHpBarRules";
 import { getMonsterDepthZIndex, separateMonsterCrowd } from "./monsterDepthRules";
 import { BaseScene } from "./BaseScene";
 import type { RunSessionState } from "./runSessionState";
+import type { FarmBoardMetrics } from "./BagScene";
 
 export interface BattleSceneOptions {
   session?: RunSessionState;
   onWaveClear?: (message: string) => void;
+  farmBaseMode?: boolean;
+  farmBoard?: FarmBoardMetrics;
 }
 
 interface HitHoldRuntime {
@@ -121,6 +124,7 @@ export class BattleScene extends BaseScene {
   private fenceLeft?: Sprite;
   private fenceRight?: Sprite;
   private fenceRevealProgress = 1;
+  private mapDecorDrawn = false;
   private baseHpLayer?: Container;
   private baseHpLayerHomeX = 0;
   private modalWindow: GameWindow | undefined;
@@ -135,11 +139,13 @@ export class BattleScene extends BaseScene {
   private readonly heroAnimKey = "hero_pumpkin_slingshot_attack_up";
   private readonly animationPlayback = new AnimationPlaybackController();
   private readonly tuning: BattleTuningDef;
+  private readonly farmBaseMode: boolean;
 
   private waveClearTimer: number | undefined;
 
   constructor(private readonly level: LevelDef, private readonly bag: BagState, private readonly options: BattleSceneOptions = {}) {
     super();
+    this.farmBaseMode = Boolean(options.farmBaseMode);
     audio.preloadGroups(["battle"]);
     audio.playMusicEvent("music_battle");
     this.monsterLayer.sortableChildren = true;
@@ -212,6 +218,10 @@ export class BattleScene extends BaseScene {
     this.applyFenceTransition();
   }
 
+  getCooldownMultiplier(): number {
+    return this.buffs.cdMul;
+  }
+
   private buildSpawnQueue(): void {
     this.spawnQueue = buildSingleWaveSpawnQueue(data.getWaves(this.level.waveGroupId), this.currentWave, this.tuning);
     this.waveDuration = Math.max(1, (this.spawnQueue.at(-1)?.time ?? 0.2) + 2.8);
@@ -223,10 +233,11 @@ export class BattleScene extends BaseScene {
     this.baseHpLayer = undefined;
     const w = app.screen.width;
     const h = app.screen.height;
-    if (this.battleLayer.children.length === 0) {
+    if (!this.mapDecorDrawn) {
       const field = data.getBattleField(this.level.battleFieldKey);
-      this.drawSplitBattleBackground(field.bgAssetKey);
+      if (!this.farmBaseMode) this.drawSplitBattleBackground(field.bgAssetKey);
       this.drawBattleMapDecor();
+      this.mapDecorDrawn = true;
     }
 
     const pauseLayout = this.layout("pause_button", {
@@ -396,11 +407,13 @@ export class BattleScene extends BaseScene {
     const hud = computeBattleHudLayout(w, h, baseLayout.width, baseLayout.height, equipPanelWidth, equipPanelHeight, equipLayout.y);
     const { base: baseRect, equip: equipRect } = hud;
 
-    const baseTop = baseRect.y + 10;
-    const turretX = baseRect.x + baseRect.width / 2;
-    this.positionHero(turretX, this.friendlyAreaCenterY(baseTop + 24) - this.friendlyAreaHeight() * 0.2 - 120);
+    if (!this.farmBaseMode) {
+      const baseTop = baseRect.y + 10;
+      const turretX = baseRect.x + baseRect.width / 2;
+      this.positionHero(turretX, this.friendlyAreaCenterY(baseTop + 24) - this.friendlyAreaHeight() * 0.2 - 120);
+    }
 
-    const hpLayout = scaleUiLayoutSize(this.layout("base_hp_bar", {
+    const hpLayoutRaw = this.layout("base_hp_bar", {
       scene: "battle",
       key: "base_hp_bar",
       anchor: "bottomCenter",
@@ -421,8 +434,20 @@ export class BattleScene extends BaseScene {
       textOffsetY: 0,
       visible: true,
       desc: "战斗基地血条位置和尺寸",
-    }));
-    const hpPos = resolveUiLayoutPosition(hpLayout, w, h);
+    });
+    const hpLayout = this.farmBaseMode
+      ? scaleUiLayoutSize({
+          ...hpLayoutRaw,
+          width: hpLayoutRaw.farmWidth ?? hpLayoutRaw.width,
+          scale: hpLayoutRaw.farmScale ?? hpLayoutRaw.scale ?? 1,
+        })
+      : scaleUiLayoutSize(hpLayoutRaw);
+    const hpPos = this.farmBaseMode && this.options.farmBoard
+      ? {
+          x: this.options.farmBoard.gridLeft + (this.options.farmBoard.cols * this.options.farmBoard.cellSize + Math.max(0, this.options.farmBoard.cols - 1) * this.options.farmBoard.cellGap) / 2 + (hpLayoutRaw.farmOffsetX ?? 0),
+          y: Math.max(0, this.options.farmBoard.gridTop + (hpLayoutRaw.farmOffsetY ?? -46)),
+        }
+      : resolveUiLayoutPosition(hpLayout, w, h);
     const baseHpUi = this.createBaseHpBar(hpPos.x, hpPos.y, hpLayout.width, hpLayout);
     this.baseHpLayer = baseHpUi;
     this.baseHpLayerHomeX = baseHpUi.x;
@@ -440,8 +465,10 @@ export class BattleScene extends BaseScene {
     if (titleLayout.visible) this.uiLayer.addChild(title);
     if (waveLayout.visible) this.uiLayer.addChild(waveBar, levelBadge, levelText);
     if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon ?? goldIconFallback, goldText, killText, topHp);
-    if (baseLayout.visible) this.uiLayer.addChild(this.heroLayer);
+    if (!this.farmBaseMode && baseLayout.visible) this.uiLayer.addChild(this.heroLayer);
     if (hpLayout.visible) this.uiLayer.addChild(baseHpUi);
+
+    if (this.farmBaseMode) return;
 
     this.bag.placed.slice(0, 10).forEach((placed, index) => {
       const item = data.getItem(placed.itemId);
@@ -794,12 +821,12 @@ export class BattleScene extends BaseScene {
   }
 
   private fireSkill(placed: PlacedItem, item: ItemDef, skill: SkillDef, target?: MonsterRuntime): void {
-    this.playHeroAttack();
+    if (!this.farmBaseMode) this.playHeroAttack();
     const qMul = this.buffs.qualityAttack[item.quality] ?? 1;
     const damage = skill.attack * data.getQuality(item.quality).attackMul * this.buffs.attackMul * qMul * (skill.type === "dot" ? this.buffs.dotMul : 1);
-      const start = this.getHeroCastPoint(placed.uid);
-      const startX = start.x;
-      const startY = start.y;
+    const start = this.farmBaseMode ? this.getFarmCastPoint(placed) : this.getHeroCastPoint(placed.uid);
+    const startX = start.x;
+    const startY = start.y;
     const projectileAssetKey = this.visualProjectileAssetKey(item);
     if ((skill.type === "projectile" || shouldUseVisualProjectile(skill) || projectileAssetKey) && target) {
       audio.playSfxEvent("battle_shoot");
@@ -829,18 +856,32 @@ export class BattleScene extends BaseScene {
     } else if (skill.type === "shield") {
       const effect = data.getEffect(skill.effectId);
       this.buffs.armorBonus += effect?.value ?? 1;
-      this.addFloating(app.screen.width / 2 + 82, app.screen.height - 156, `护甲+${effect?.value ?? 1}`, 0x7ee08a);
+      this.addFloating(startX, startY - 20, `护甲+${effect?.value ?? 1}`, 0x7ee08a);
     } else if (skill.type === "heal") {
       const effect = data.getEffect(skill.effectId);
       this.baseHp = Math.min(this.baseMaxHp, this.baseHp + (effect?.value ?? 40));
       this.syncSessionProgress();
-      this.addFloating(app.screen.width / 2 + 82, app.screen.height - 156, `+${effect?.value ?? 40}`, 0x45ff99);
+      this.addFloating(startX, startY - 20, `+${effect?.value ?? 40}`, 0x45ff99);
     }
   }
 
   private visualProjectileAssetKey(item: ItemDef): string | undefined {
     if (item.baseId !== "bomb" && item.baseId !== "staff") return undefined;
     return item.projectileAssetKey;
+  }
+
+  private getFarmCastPoint(placed: PlacedItem): { x: number; y: number } {
+    const board = this.options.farmBoard;
+    if (!board) return this.getHeroCastPoint(placed.uid);
+    const item = data.getItem(placed.itemId);
+    const shape = data.getShape(item.shapeId);
+    const maxX = Math.max(...shape.cells.map(([x]) => x));
+    const maxY = Math.max(...shape.cells.map(([, y]) => y));
+    const pitch = board.cellSize + board.cellGap;
+    return {
+      x: board.gridLeft + placed.x * pitch + (maxX + 1) * pitch / 2 - board.cellGap / 2,
+      y: board.gridTop + placed.y * pitch + (maxY + 1) * pitch / 2 - board.cellGap / 2 - board.cellSize * 0.38,
+    };
   }
 
   private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef): void {
@@ -1068,6 +1109,9 @@ export class BattleScene extends BaseScene {
   }
 
   private baseFenceContactY(monster: MonsterRuntime): number {
+    if (this.farmBaseMode && this.options.farmBoard) {
+      return Math.max(96, this.options.farmBoard.gridTop - monster.def.radius * 0.25);
+    }
     const h = app.screen.height;
     const field = data.getBattleField(this.level.battleFieldKey);
     return resolveMonsterContactY({

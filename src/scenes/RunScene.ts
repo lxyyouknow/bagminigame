@@ -26,6 +26,7 @@ export class RunScene extends BaseScene {
   private battleHudEntering = false;
   private battleHudEnterElapsed = 0;
   private readonly battleHudEnterDuration: number;
+  private readonly farmBattleCameraShift: number;
 
   constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string) {
     super();
@@ -36,6 +37,7 @@ export class RunScene extends BaseScene {
     );
     this.startingBattleUiDuration = data.getEconomy("run_bag_top_hud_exit_seconds") ?? 0.28;
     this.battleHudEnterDuration = data.getEconomy("run_battle_top_hud_enter_seconds") ?? 0.28;
+    this.farmBattleCameraShift = data.economy.find((row) => row.key === "run_farm_battle_camera_shift")?.value ?? 0.5;
     this.bagScene = new BagScene(level, initialState, entryToast, () => this.startBattle());
     this.session = createRunSessionState(level, this.bagScene.getState());
     this.bagScene.attachRunSession(this.session);
@@ -84,7 +86,10 @@ export class RunScene extends BaseScene {
       this.bagScene.update(dt);
       return;
     }
-    if (this.flow.phase === "fighting") this.battleScene?.update(dt);
+    if (this.flow.phase === "fighting") {
+      this.battleScene?.update(dt);
+      this.bagScene.syncCombatCooldowns(this.battleScene?.getCooldownMultiplier() ?? 1);
+    }
   }
 
   override onAppPause(reason: LifecycleReason): void {
@@ -115,10 +120,14 @@ export class RunScene extends BaseScene {
 
   private beginBattleSceneTransition(): void {
     if (!beginBattleTransition(this.flow)) return;
+    const finalBagY = getRunViewOffsets({ ...this.flow, phase: "fighting", elapsed: 0 }, app.screen.height, this.farmBattleCameraShift).bagY;
+    this.bagScene.setCombatMode(true);
     this.bagScene.container.eventMode = "none";
     this.battleScene = new BattleScene(this.level, this.session.bag, {
       session: this.session,
       onWaveClear: (message) => this.returnToBag(message),
+      farmBaseMode: true,
+      farmBoard: this.bagScene.getFarmBoardMetrics(finalBagY),
     });
     this.battleScene.container.eventMode = "none";
     this.battleScene.setTopHudRevealProgress(0);
@@ -132,6 +141,7 @@ export class RunScene extends BaseScene {
     if (!beginBagTransition(this.flow)) return;
     this.battleHudEntering = false;
     this.battleHudEnterElapsed = 0;
+    this.bagScene.setCombatMode(false);
     this.bagScene.refreshAfterWave(message);
     this.bagScene.container.eventMode = "none";
     if (this.battleScene) this.battleScene.container.eventMode = "none";
@@ -159,7 +169,7 @@ export class RunScene extends BaseScene {
   }
 
   private applyViewOffsets(): void {
-    const offsets = getRunViewOffsets(this.flow, app.screen.height);
+    const offsets = getRunViewOffsets(this.flow, app.screen.height, this.farmBattleCameraShift);
     this.bagScene.container.y = offsets.bagY;
     if (this.battleScene) this.battleScene.container.y = offsets.battleY;
   }

@@ -13,6 +13,8 @@ export interface RunViewOffsets {
   battleY: number;
 }
 
+const DEFAULT_FARM_BATTLE_CAMERA_SHIFT = 0.5;
+
 export function createRunFlow(duration: number, battleSplitProgress = 0.6, battleSplitHold = 0): RunFlowState {
   return {
     phase: "preparing",
@@ -52,24 +54,25 @@ export function finishRun(flow: RunFlowState): void {
   flow.elapsed = 0;
 }
 
-export function getRunViewOffsets(flow: RunFlowState, screenHeight: number): RunViewOffsets {
+export function getRunViewOffsets(flow: RunFlowState, screenHeight: number, cameraShift = DEFAULT_FARM_BATTLE_CAMERA_SHIFT): RunViewOffsets {
+  const farmBattleBagY = screenHeight * Math.max(0, Math.min(1, cameraShift));
   if (flow.phase === "preparing" || flow.phase === "ended") {
-    return { bagY: 0, battleY: -screenHeight };
+    return { bagY: 0, battleY: 0 };
   }
   if (flow.phase === "fighting") {
-    return { bagY: screenHeight, battleY: 0 };
+    return { bagY: farmBattleBagY, battleY: 0 };
   }
 
   const progress = flow.phase === "toBattle" ? getBattleTransitionProgress(flow) : easeInOutCubic(Math.min(1, flow.elapsed / flow.duration));
   if (flow.phase === "toBattle") {
     return {
-      bagY: screenHeight * progress,
-      battleY: -screenHeight * (1 - progress),
+      bagY: farmBattleBagY * progress,
+      battleY: 0,
     };
   }
   return {
-    bagY: screenHeight * (1 - progress),
-    battleY: -screenHeight * progress,
+    bagY: farmBattleBagY * (1 - progress),
+    battleY: 0,
   };
 }
 

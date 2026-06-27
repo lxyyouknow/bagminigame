@@ -256,6 +256,10 @@ export interface AssetDef {
   frameY?: number;
   frameWidth?: number;
   frameHeight?: number;
+  bgAlignX?: "left" | "center" | "right";
+  bgAlignY?: "top" | "center" | "bottom";
+  bgOffsetX?: number;
+  bgOffsetY?: number;
 }
 
 export interface UiSkinDef {
@@ -298,6 +302,10 @@ export interface UiLayoutDef {
   barHeight?: number;
   textOffsetX?: number;
   textOffsetY?: number;
+  farmOffsetX?: number;
+  farmOffsetY?: number;
+  farmScale?: number;
+  farmWidth?: number;
   scale?: number;
   gap?: number;
   visible: boolean;

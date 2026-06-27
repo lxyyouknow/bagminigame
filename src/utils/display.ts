@@ -155,6 +155,7 @@ export function drawGradientBg(container: Container, theme: ThemeName): void {
 export function drawAssetBg(container: Container, assetKey: string, fallbackTheme: ThemeName = "green"): void {
   const w = app.screen.width;
   const h = app.screen.height;
+  const asset = data.getAsset(assetKey);
   const texture = assetManager.texture(assetKey);
   if (!texture) {
     drawGradientBg(container, fallbackTheme);
@@ -162,8 +163,14 @@ export function drawAssetBg(container: Container, assetKey: string, fallbackThem
   }
   const bg = new Sprite(texture);
   const scale = Math.max(w / texture.width, h / texture.height);
+  const bgW = texture.width * scale;
+  const bgH = texture.height * scale;
+  const alignX = asset?.bgAlignX ?? "center";
+  const alignY = asset?.bgAlignY ?? "center";
+  const x = alignX === "left" ? 0 : alignX === "right" ? w - bgW : (w - bgW) / 2;
+  const y = alignY === "top" ? 0 : alignY === "bottom" ? h - bgH : (h - bgH) / 2;
   bg.scale.set(scale);
-  bg.position.set((w - texture.width * scale) / 2, (h - texture.height * scale) / 2);
+  bg.position.set(x + (asset?.bgOffsetX ?? 0), y + (asset?.bgOffsetY ?? 0));
   container.addChildAt(bg, 0);
 }
 

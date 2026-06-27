@@ -54,6 +54,15 @@ interface FarmPlot {
   cells: [number, number][];
 }
 
+export interface FarmBoardMetrics {
+  gridLeft: number;
+  gridTop: number;
+  cellSize: number;
+  cellGap: number;
+  rows: number;
+  cols: number;
+}
+
 export class BagScene extends BaseScene {
   private state: BagState;
   private toast = "";
@@ -79,6 +88,8 @@ export class BagScene extends BaseScene {
   private refreshActionLayer: Container | undefined;
   private refreshActionExitDistance = 0;
   private topHudExitProgress = 0;
+  private combatMode = false;
+  private combatCooldownLayer: Container | undefined;
 
   constructor(
     private readonly level: LevelDef,
@@ -142,6 +153,28 @@ export class BagScene extends BaseScene {
     this.applyRefreshActionTransition();
   }
 
+  setCombatMode(enabled: boolean): void {
+    if (this.combatMode === enabled) return;
+    this.combatMode = enabled;
+    this.draw();
+  }
+
+  getFarmBoardMetrics(cameraOffsetY = this.container.y): FarmBoardMetrics {
+    return {
+      gridLeft: this.gridLeft,
+      gridTop: this.gridTop + cameraOffsetY,
+      cellSize: this.cellSize,
+      cellGap: this.cellGap,
+      rows: this.state.rows,
+      cols: this.state.cols,
+    };
+  }
+
+  syncCombatCooldowns(cdMultiplier = 1): void {
+    if (!this.combatMode || !this.combatCooldownLayer) return;
+    this.redrawCombatCooldowns(cdMultiplier);
+  }
+
   override update(dt: number): void {
     this.updateCandidateMotions(dt);
     if (this.toastTimer > 0) {
@@ -165,9 +198,10 @@ export class BagScene extends BaseScene {
     this.topHudLayer = undefined;
     this.refreshActionLayer = undefined;
     this.refreshActionExitDistance = 0;
+    this.combatCooldownLayer = undefined;
     this.container.removeChildren();
     drawAssetBg(this.container, "bg_bag_prebattle");
-    this.drawMushroomWorkerIdle();
+    if (!this.combatMode) this.drawMushroomWorkerIdle();
     const w = app.screen.width;
     const h = app.screen.height;
     const boardLayout = this.layout("board", {
@@ -316,13 +350,21 @@ export class BagScene extends BaseScene {
       const quality = data.getQuality(item.quality);
       const view = createItemShapeView(item, shape, quality, this.cellSize, this.cellGap, 0.9);
       view.position.set(this.gridLeft + placed.x * pitch, this.gridTop + placed.y * pitch);
-      view.eventMode = "static";
-      view.cursor = "grab";
-      view.on("pointerdown", (event) => {
-        event.stopPropagation();
-        this.startDrag(placed.itemId, { type: "placed", uid: placed.uid }, event.global.x, event.global.y);
-      });
+      if (!this.combatMode) {
+        view.eventMode = "static";
+        view.cursor = "grab";
+        view.on("pointerdown", (event) => {
+          event.stopPropagation();
+          this.startDrag(placed.itemId, { type: "placed", uid: placed.uid }, event.global.x, event.global.y);
+        });
+      }
       this.container.addChild(view);
+    }
+
+    if (this.combatMode) {
+      this.combatCooldownLayer = new Container();
+      this.redrawCombatCooldowns();
+      this.container.addChild(this.combatCooldownLayer);
     }
 
     const hintLayout = this.layout("hint", {
@@ -337,7 +379,7 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "背包棋盘下方提示，y 相对棋盘底部",
     });
-    if (hintLayout.visible && shouldShowBagTextFeedback()) {
+    if (!this.combatMode && hintLayout.visible && shouldShowBagTextFeedback()) {
       const hint = text("拖到空格放置，拖到同武器同品质上合成", hintLayout.fontSize ?? 14, "#244b3a", "700");
       hint.anchor.set(0.5);
       const hintPos = resolveUiLayoutPosition({ ...hintLayout, y: this.gridTop + boardH + hintLayout.y }, w, h);
@@ -345,20 +387,22 @@ export class BagScene extends BaseScene {
       this.container.addChild(hint);
     }
 
-    this.drawCandidateArea();
-    this.drawActions(w, h);
+    if (!this.combatMode) {
+      this.drawCandidateArea();
+      this.drawActions(w, h);
+    }
     const topHud = new Container();
     if (topBarLayout.visible && topBar) topHud.addChild(topBar);
     if (waveValueLayout.visible) topHud.addChild(waveValueText);
     if (hpValueLayout.visible) topHud.addChild(hpValueText);
     if (bagSizeValueLayout.visible) topHud.addChild(bagSizeValueText);
-    if (topHud.children.length > 0) {
+    if (!this.combatMode && topHud.children.length > 0) {
       this.topHudLayer = topHud;
       this.applyTopHudTransition();
       this.container.addChild(topHud);
     }
 
-    if (this.toast && shouldShowBagTextFeedback()) {
+    if (!this.combatMode && this.toast && shouldShowBagTextFeedback()) {
       const toastLayout = this.layout("toast", {
         scene: "bag",
         key: "toast",
@@ -383,6 +427,27 @@ export class BagScene extends BaseScene {
 
     if (this.hintLayer) this.container.addChild(this.hintLayer);
     if (this.dragView) this.container.addChild(this.dragView);
+  }
+
+  private redrawCombatCooldowns(cdMultiplier = 1): void {
+    if (!this.combatCooldownLayer) return;
+    this.combatCooldownLayer.removeChildren();
+    const pitch = this.cellSize + this.cellGap;
+    for (const placed of this.state.placed) {
+      const item = data.getItem(placed.itemId);
+      const shape = data.getShape(item.shapeId);
+      const skill = data.getSkill(item.skillId);
+      const fullCd = Math.max(0.1, skill.cd * Math.max(0.05, cdMultiplier));
+      const rate = Math.max(0, Math.min(1, placed.cdLeft / fullCd));
+      if (rate <= 0) continue;
+      for (const [dx, dy] of shape.cells) {
+        const x = this.gridLeft + (placed.x + dx) * pitch;
+        const y = this.gridTop + (placed.y + dy) * pitch;
+        const shade = new Graphics();
+        shade.roundRect(x, y, this.cellSize, this.cellSize * rate, 8).fill({ color: 0x000000, alpha: 0.42 });
+        this.combatCooldownLayer.addChild(shade);
+      }
+    }
   }
 
   private drawMushroomWorkerIdle(): void {

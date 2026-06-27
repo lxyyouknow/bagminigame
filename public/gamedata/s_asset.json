@@ -18,7 +18,11 @@
     "type": "image",
     "url": "/game-assets/backgrounds/bag-prebattle-background.png",
     "preloadGroup": "bag",
-    "fallbackKey": "bg_grass_cartoon"
+    "fallbackKey": "bg_grass_cartoon",
+    "bgAlignX": "center",
+    "bgAlignY": "bottom",
+    "bgOffsetX": 0,
+    "bgOffsetY": 0
   },
   {
     "key": "bg_battle_field",

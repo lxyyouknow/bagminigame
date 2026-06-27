@@ -514,14 +514,18 @@
     "barWidth": 230,
     "barHeight": 41,
     "textOffsetX": 0,
-    "textOffsetY": -1
+    "textOffsetY": -1,
+    "farmOffsetX": -220,
+    "farmOffsetY": -70,
+    "farmScale": 0.7,
+    "farmWidth": 360
   },
   {
     "scene": "battle",
     "key": "fence",
     "anchor": "bottomCenter",
     "x": 0,
-    "y": -430,
+    "y": -560,
     "width": 720,
     "height": 109,
     "scale": 1,
