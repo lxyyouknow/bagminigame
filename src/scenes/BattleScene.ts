@@ -458,14 +458,14 @@ export class BattleScene extends BaseScene {
     if (pauseLayout.visible) topHud.addChild(pause);
     if (infoLayout.visible && infoBar) topHud.addChild(infoBar);
     if (waveValueLayout.visible) topHud.addChild(waveValue);
+    if (titleLayout.visible) topHud.addChild(title);
+    if (waveLayout.visible) topHud.addChild(waveBar, levelBadge, levelText);
+    if (statLayout.visible) topHud.addChild(goldBg, goldIcon ?? goldIconFallback, goldText, killText, topHp);
     if (topHud.children.length > 0) {
       this.topHudLayer = topHud;
       this.applyTopHudTransition();
       this.uiLayer.addChild(topHud);
     }
-    if (titleLayout.visible) this.uiLayer.addChild(title);
-    if (waveLayout.visible) this.uiLayer.addChild(waveBar, levelBadge, levelText);
-    if (statLayout.visible) this.uiLayer.addChild(goldBg, goldIcon ?? goldIconFallback, goldText, killText, topHp);
     if (!this.farmBaseMode && baseLayout.visible) this.uiLayer.addChild(this.heroLayer);
     if (hpLayout.visible) this.uiLayer.addChild(baseHpUi);
 

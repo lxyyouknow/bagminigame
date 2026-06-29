@@ -23,9 +23,16 @@ export class RunScene extends BaseScene {
   private startingBattleUi = false;
   private startingBattleUiElapsed = 0;
   private readonly startingBattleUiDuration: number;
+  private bagHudEntering = false;
+  private bagHudEnterElapsed = 0;
+  private readonly bagHudEnterDuration: number;
   private battleHudEntering = false;
   private battleHudEnterElapsed = 0;
   private readonly battleHudEnterDuration: number;
+  private battleHudExiting = false;
+  private battleHudExitElapsed = 0;
+  private readonly battleHudExitDuration: number;
+  private pendingReturnMessage = "";
   private readonly farmBattleCameraShift: number;
 
   constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string) {
@@ -36,7 +43,9 @@ export class RunScene extends BaseScene {
       data.getEconomy("run_transition_split_hold_seconds") ?? 0.28,
     );
     this.startingBattleUiDuration = data.getEconomy("run_bag_top_hud_exit_seconds") ?? 0.28;
+    this.bagHudEnterDuration = data.getEconomy("run_bag_top_hud_enter_seconds") ?? this.startingBattleUiDuration;
     this.battleHudEnterDuration = data.getEconomy("run_battle_top_hud_enter_seconds") ?? 0.28;
+    this.battleHudExitDuration = data.getEconomy("run_battle_top_hud_exit_seconds") ?? this.battleHudEnterDuration;
     this.farmBattleCameraShift = data.economy.find((row) => row.key === "run_farm_battle_camera_shift")?.value ?? 0.5;
     this.bagScene = new BagScene(level, initialState, entryToast, () => this.startBattle());
     this.session = createRunSessionState(level, this.bagScene.getState());
@@ -60,6 +69,17 @@ export class RunScene extends BaseScene {
       }
       return;
     }
+    if (this.bagHudEntering) {
+      this.bagHudEnterElapsed = Math.min(this.bagHudEnterDuration, this.bagHudEnterElapsed + Math.max(0, dt));
+      const progress = 1 - this.easeOutCubic(this.bagHudEnterElapsed / Math.max(0.01, this.bagHudEnterDuration));
+      this.bagScene.setTopHudExitProgress(progress);
+      if (this.bagHudEnterElapsed >= this.bagHudEnterDuration) {
+        this.bagHudEntering = false;
+        this.bagScene.setTopHudExitProgress(0);
+        this.bagScene.container.eventMode = "auto";
+      }
+      return;
+    }
     if (this.battleHudEntering) {
       this.battleHudEnterElapsed = Math.min(this.battleHudEnterDuration, this.battleHudEnterElapsed + Math.max(0, dt));
       const progress = this.easeOutCubic(this.battleHudEnterElapsed / Math.max(0.01, this.battleHudEnterDuration));
@@ -72,6 +92,19 @@ export class RunScene extends BaseScene {
           this.battleScene.setFenceRevealProgress(1);
           this.battleScene.container.eventMode = "auto";
         }
+      }
+      return;
+    }
+    if (this.battleHudExiting) {
+      this.battleHudExitElapsed = Math.min(this.battleHudExitDuration, this.battleHudExitElapsed + Math.max(0, dt));
+      const progress = 1 - this.easeOutCubic(this.battleHudExitElapsed / Math.max(0.01, this.battleHudExitDuration));
+      this.battleScene?.setTopHudRevealProgress(progress);
+      this.battleScene?.setFenceRevealProgress(progress);
+      if (this.battleHudExitElapsed >= this.battleHudExitDuration) {
+        this.battleHudExiting = false;
+        this.battleScene?.setTopHudRevealProgress(0);
+        this.battleScene?.setFenceRevealProgress(0);
+        this.beginReturnCameraTransition(this.pendingReturnMessage);
       }
       return;
     }
@@ -110,11 +143,16 @@ export class RunScene extends BaseScene {
   }
 
   private startBattle(): void {
-    if (this.flow.phase !== "preparing" || this.startingBattleUi || this.battleHudEntering) return;
+    if (this.flow.phase !== "preparing" || this.startingBattleUi || this.bagHudEntering || this.battleHudEntering || this.battleHudExiting) return;
     this.startingBattleUi = true;
     this.startingBattleUiElapsed = 0;
+    this.bagHudEntering = false;
+    this.bagHudEnterElapsed = 0;
     this.battleHudEntering = false;
     this.battleHudEnterElapsed = 0;
+    this.battleHudExiting = false;
+    this.battleHudExitElapsed = 0;
+    this.pendingReturnMessage = "";
     this.bagScene.container.eventMode = "none";
     this.bagScene.setTopHudExitProgress(0);
   }
@@ -140,6 +178,18 @@ export class RunScene extends BaseScene {
   }
 
   private returnToBag(message: string): void {
+    if (this.flow.phase !== "fighting" || this.battleHudExiting) return;
+    this.pendingReturnMessage = message;
+    this.battleHudEntering = false;
+    this.battleHudEnterElapsed = 0;
+    this.battleHudExiting = true;
+    this.battleHudExitElapsed = 0;
+    this.battleScene?.setTopHudRevealProgress(1);
+    this.battleScene?.setFenceRevealProgress(1);
+    if (this.battleScene) this.battleScene.container.eventMode = "none";
+  }
+
+  private beginReturnCameraTransition(message: string): void {
     if (!beginBagTransition(this.flow)) return;
     this.battleHudEntering = false;
     this.battleHudEnterElapsed = 0;
@@ -160,14 +210,19 @@ export class RunScene extends BaseScene {
       return;
     }
     if (this.flow.phase !== "preparing") return;
-    this.bagScene.container.eventMode = "auto";
+    this.pendingReturnMessage = "";
+    this.battleHudExiting = false;
+    this.battleHudExitElapsed = 0;
+    this.bagHudEntering = true;
+    this.bagHudEnterElapsed = 0;
+    this.bagScene.setTopHudExitProgress(1);
+    this.bagScene.container.eventMode = "none";
     if (this.battleScene) {
       this.battleScene.destroy();
       this.battleScene = undefined;
     }
     audio.playMusicEvent("music_bag");
     this.applyViewOffsets();
-    this.applyUiTransition();
   }
 
   private applyViewOffsets(): void {
@@ -187,6 +242,12 @@ export class RunScene extends BaseScene {
       this.bagScene.setTopHudExitProgress(1);
       this.battleScene?.setTopHudRevealProgress(1);
       this.battleScene?.setFenceRevealProgress(1);
+      return;
+    }
+    if (this.flow.phase === "toBag") {
+      this.bagScene.setTopHudExitProgress(1);
+      this.battleScene?.setTopHudRevealProgress(0);
+      this.battleScene?.setFenceRevealProgress(0);
       return;
     }
     this.bagScene.setTopHudExitProgress(0);

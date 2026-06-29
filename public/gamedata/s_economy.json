@@ -10,6 +10,8 @@
   { "key": "run_farm_battle_camera_shift", "value": 0.45, "adPlacement": "", "desc": "农田基地模式开战后背包场景下移比例，0.5 表示下移 50% 屏高" },
   { "key": "run_transition_split_hold_seconds", "value": 0, "adPlacement": "", "desc": "旧分屏转场停顿时长，单位秒，农田基地模式下保留兼容" },
   { "key": "run_bag_top_hud_exit_seconds", "value": 0.28, "adPlacement": "", "desc": "点击 START 后背包顶部信息栏收起时长，单位秒" },
+  { "key": "run_bag_top_hud_enter_seconds", "value": 0.28, "adPlacement": "", "desc": "战斗结束回背包后，背包顶部信息栏和底部按钮出现时长，单位秒" },
   { "key": "run_battle_top_hud_enter_seconds", "value": 0.28, "adPlacement": "", "desc": "进入战斗后战斗顶部信息栏出现时长，单位秒" },
+  { "key": "run_battle_top_hud_exit_seconds", "value": 0.3, "adPlacement": "", "desc": "战斗结束回背包前，战斗顶部信息栏和左右栅栏收起时长，单位秒" },
   { "key": "battle_initial_cd_stagger", "value": 0.08, "adPlacement": "", "desc": "开战时不同武器初始 CD 的确定性错峰秒数" }
 ]
