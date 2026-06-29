@@ -440,14 +440,41 @@ export class BagScene extends BaseScene {
       const fullCd = Math.max(0.1, skill.cd * Math.max(0.05, cdMultiplier));
       const rate = Math.max(0, Math.min(1, placed.cdLeft / fullCd));
       if (rate <= 0) continue;
-      for (const [dx, dy] of shape.cells) {
-        const x = this.gridLeft + (placed.x + dx) * pitch;
-        const y = this.gridTop + (placed.y + dy) * pitch;
-        const shade = new Graphics();
-        shade.roundRect(x, y, this.cellSize, this.cellSize * rate, 8).fill({ color: 0x000000, alpha: 0.42 });
-        this.combatCooldownLayer.addChild(shade);
+      const shade = this.createShapeCooldownShade(shape, rate);
+      shade.position.set(this.gridLeft + placed.x * pitch, this.gridTop + placed.y * pitch);
+      this.combatCooldownLayer.addChild(shade);
+    }
+  }
+
+  private createShapeCooldownShade(shape: ItemShapeDef, rate: number): Graphics {
+    const shade = new Graphics();
+    const pitch = this.cellSize + this.cellGap;
+    const cells = shape.cells;
+    const cellKeys = new Set(cells.map(([x, y]) => this.gridCellKey(x, y)));
+    const minY = Math.min(...cells.map(([, y]) => y));
+    const maxY = Math.max(...cells.map(([, y]) => y));
+    const totalHeight = (maxY - minY + 1) * this.cellSize + (maxY - minY) * this.cellGap;
+    const shadeHeight = totalHeight * rate;
+
+    for (const [dx, dy] of cells) {
+      const localY = (dy - minY) * pitch;
+      const visibleH = Math.max(0, Math.min(this.cellSize, shadeHeight - localY));
+      if (visibleH <= 0) continue;
+      shade.rect(dx * pitch, dy * pitch, this.cellSize, visibleH);
+
+      if (cellKeys.has(this.gridCellKey(dx + 1, dy))) {
+        shade.rect(dx * pitch + this.cellSize, dy * pitch, this.cellGap, visibleH);
+      }
+
+      if (cellKeys.has(this.gridCellKey(dx, dy + 1))) {
+        const bridgeY = localY + this.cellSize;
+        const bridgeH = Math.max(0, Math.min(this.cellGap, shadeHeight - bridgeY));
+        if (bridgeH > 0) shade.rect(dx * pitch, dy * pitch + this.cellSize, this.cellSize, bridgeH);
       }
     }
+
+    shade.fill({ color: 0x000000, alpha: 0.42 });
+    return shade;
   }
 
   private drawMushroomWorkerIdle(): void {
