@@ -1837,6 +1837,61 @@
     "frameHeight": 512
   },
   {
+    "key": "hit_cabbage_burst_00",
+    "type": "image",
+    "url": "/game-assets/effects/hit/cabbage_burst/sheet/cabbage-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "",
+    "frameX": 0,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_cabbage_burst_01",
+    "type": "image",
+    "url": "/game-assets/effects/hit/cabbage_burst/sheet/cabbage-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_cabbage_burst_00",
+    "frameX": 512,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_cabbage_burst_02",
+    "type": "image",
+    "url": "/game-assets/effects/hit/cabbage_burst/sheet/cabbage-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_cabbage_burst_01",
+    "frameX": 1024,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_cabbage_burst_03",
+    "type": "image",
+    "url": "/game-assets/effects/hit/cabbage_burst/sheet/cabbage-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_cabbage_burst_02",
+    "frameX": 1536,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
+    "key": "hit_cabbage_burst_04",
+    "type": "image",
+    "url": "/game-assets/effects/hit/cabbage_burst/sheet/cabbage-explosion.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "hit_cabbage_burst_03",
+    "frameX": 2048,
+    "frameY": 0,
+    "frameWidth": 512,
+    "frameHeight": 512
+  },
+  {
     "key": "hit_tomato_splash_small_00",
     "type": "image",
     "url": "/game-assets/effects/hit/hit_tomato_splash_small/frames/hit-tomato-splash-small-00.png",

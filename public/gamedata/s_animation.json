@@ -381,14 +381,11 @@
     "key": "hit_cabbage_burst",
     "assetKey": "loose_frames",
     "frames": [
-      "hit_tomato_burst_00",
-      "hit_tomato_burst_01",
-      "hit_tomato_burst_02",
-      "hit_tomato_burst_03",
-      "hit_tomato_burst_04",
-      "hit_tomato_burst_05",
-      "hit_tomato_burst_06",
-      "hit_tomato_burst_07"
+      "hit_cabbage_burst_00",
+      "hit_cabbage_burst_01",
+      "hit_cabbage_burst_02",
+      "hit_cabbage_burst_03",
+      "hit_cabbage_burst_04"
     ],
     "fps": 18,
     "loop": false,
