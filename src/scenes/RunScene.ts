@@ -87,6 +87,7 @@ export class RunScene extends BaseScene {
       return;
     }
     if (this.flow.phase === "fighting") {
+      this.bagScene.update(dt);
       this.battleScene?.update(dt);
       this.bagScene.syncCombatCooldowns(this.battleScene?.getCooldownMultiplier() ?? 1);
     }
@@ -128,6 +129,7 @@ export class RunScene extends BaseScene {
       onWaveClear: (message) => this.returnToBag(message),
       farmBaseMode: true,
       farmBoard: this.bagScene.getFarmBoardMetrics(finalBagY),
+      onFarmWeaponAttack: (uid) => this.bagScene.playPlantShootPunch(uid),
     });
     this.battleScene.container.eventMode = "none";
     this.battleScene.setTopHudRevealProgress(0);

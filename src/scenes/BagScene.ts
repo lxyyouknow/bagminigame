@@ -54,6 +54,20 @@ interface FarmPlot {
   cells: [number, number][];
 }
 
+interface PlacedPlantView {
+  view: Container;
+  baseX: number;
+  baseY: number;
+  centerX: number;
+  centerY: number;
+}
+
+interface PlantShootMotion {
+  uid: number;
+  elapsed: number;
+  duration: number;
+}
+
 export interface FarmBoardMetrics {
   gridLeft: number;
   gridTop: number;
@@ -90,6 +104,8 @@ export class BagScene extends BaseScene {
   private topHudExitProgress = 0;
   private combatMode = false;
   private combatCooldownLayer: Container | undefined;
+  private placedPlantViews = new Map<number, PlacedPlantView>();
+  private plantShootMotions = new Map<number, PlantShootMotion>();
 
   constructor(
     private readonly level: LevelDef,
@@ -175,8 +191,15 @@ export class BagScene extends BaseScene {
     this.redrawCombatCooldowns(cdMultiplier);
   }
 
+  playPlantShootPunch(uid: number): void {
+    if (!this.combatMode || !this.placedPlantViews.has(uid)) return;
+    this.plantShootMotions.set(uid, { uid, elapsed: 0, duration: 0.22 });
+    this.applyPlantShootMotion(uid, 0);
+  }
+
   override update(dt: number): void {
     this.updateCandidateMotions(dt);
+    this.updatePlantShootMotions(dt);
     if (this.toastTimer > 0) {
       this.toastTimer -= dt;
       if (this.toastTimer <= 0) {
@@ -199,6 +222,8 @@ export class BagScene extends BaseScene {
     this.refreshActionLayer = undefined;
     this.refreshActionExitDistance = 0;
     this.combatCooldownLayer = undefined;
+    this.placedPlantViews.clear();
+    this.plantShootMotions.clear();
     this.container.removeChildren();
     drawAssetBg(this.container, "bg_bag_prebattle");
     if (!this.combatMode) this.drawMushroomWorkerIdle();
@@ -350,6 +375,14 @@ export class BagScene extends BaseScene {
       const quality = data.getQuality(item.quality);
       const view = createItemShapeView(item, shape, quality, this.cellSize, this.cellGap, 0.9);
       view.position.set(this.gridLeft + placed.x * pitch, this.gridTop + placed.y * pitch);
+      const size = this.itemShapePixelSize(placed.itemId);
+      this.placedPlantViews.set(placed.uid, {
+        view,
+        baseX: view.x,
+        baseY: view.y,
+        centerX: size.width / 2,
+        centerY: size.height / 2,
+      });
       if (!this.combatMode) {
         view.eventMode = "static";
         view.cursor = "grab";
@@ -475,6 +508,65 @@ export class BagScene extends BaseScene {
 
     shade.fill({ color: 0x000000, alpha: 0.42 });
     return shade;
+  }
+
+  private updatePlantShootMotions(dt: number): void {
+    if (this.plantShootMotions.size === 0) return;
+    for (const motion of [...this.plantShootMotions.values()]) {
+      motion.elapsed += Math.max(0, dt);
+      if (motion.elapsed >= motion.duration) {
+        this.resetPlantShootMotion(motion.uid);
+        this.plantShootMotions.delete(motion.uid);
+        continue;
+      }
+      this.applyPlantShootMotion(motion.uid, motion.elapsed / motion.duration);
+    }
+  }
+
+  private applyPlantShootMotion(uid: number, progress: number): void {
+    const target = this.placedPlantViews.get(uid);
+    if (!target || target.view.destroyed) return;
+    const frame = this.plantShootFrame(progress);
+    target.view.scale.set(frame.scaleX, frame.scaleY);
+    target.view.position.set(
+      target.baseX + target.centerX * (1 - frame.scaleX),
+      target.baseY + target.centerY * (1 - frame.scaleY) + frame.offsetY,
+    );
+  }
+
+  private resetPlantShootMotion(uid: number): void {
+    const target = this.placedPlantViews.get(uid);
+    if (!target || target.view.destroyed) return;
+    target.view.scale.set(1, 1);
+    target.view.position.set(target.baseX, target.baseY);
+  }
+
+  private plantShootFrame(progress: number): { scaleX: number; scaleY: number; offsetY: number } {
+    const keys = [
+      { t: 0, scaleX: 1, scaleY: 1, offsetY: 0 },
+      { t: 0.18, scaleX: 1.08, scaleY: 0.88, offsetY: 4 },
+      { t: 0.42, scaleX: 0.92, scaleY: 1.16, offsetY: -8 },
+      { t: 0.73, scaleX: 1.03, scaleY: 0.97, offsetY: 1 },
+      { t: 1, scaleX: 1, scaleY: 1, offsetY: 0 },
+    ];
+    for (let i = 1; i < keys.length; i += 1) {
+      const prev = keys[i - 1];
+      const next = keys[i];
+      if (progress <= next.t) {
+        const local = (progress - prev.t) / Math.max(0.001, next.t - prev.t);
+        const eased = this.easePlantShoot(local);
+        return {
+          scaleX: prev.scaleX + (next.scaleX - prev.scaleX) * eased,
+          scaleY: prev.scaleY + (next.scaleY - prev.scaleY) * eased,
+          offsetY: prev.offsetY + (next.offsetY - prev.offsetY) * eased,
+        };
+      }
+    }
+    return keys[keys.length - 1];
+  }
+
+  private easePlantShoot(value: number): number {
+    return 1 - Math.pow(1 - Math.min(1, Math.max(0, value)), 3);
   }
 
   private drawMushroomWorkerIdle(): void {

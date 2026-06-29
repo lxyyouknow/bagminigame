@@ -40,6 +40,7 @@ export interface BattleSceneOptions {
   onWaveClear?: (message: string) => void;
   farmBaseMode?: boolean;
   farmBoard?: FarmBoardMetrics;
+  onFarmWeaponAttack?: (uid: number) => void;
 }
 
 interface HitHoldRuntime {
@@ -821,7 +822,8 @@ export class BattleScene extends BaseScene {
   }
 
   private fireSkill(placed: PlacedItem, item: ItemDef, skill: SkillDef, target?: MonsterRuntime): void {
-    if (!this.farmBaseMode) this.playHeroAttack();
+    if (this.farmBaseMode) this.options.onFarmWeaponAttack?.(placed.uid);
+    else this.playHeroAttack();
     const qMul = this.buffs.qualityAttack[item.quality] ?? 1;
     const damage = skill.attack * data.getQuality(item.quality).attackMul * this.buffs.attackMul * qMul * (skill.type === "dot" ? this.buffs.dotMul : 1);
     const start = this.farmBaseMode ? this.getFarmCastPoint(placed) : this.getHeroCastPoint(placed.uid);

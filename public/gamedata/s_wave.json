@@ -8,8 +8,8 @@
     "interval": 0.55,
     "spawn": "spread",
     "rewardGold": 24,
-    "expandCols": 1,
-    "expandRows": 1,
+    "expandCols": 0,
+    "expandRows": 0,
     "monsterHpMul": 0.75,
     "monsterSpeedMul": 1.05,
     "desc": "买量版第1波：只出有模型小僵尸，快速清怪并明显扩格"
