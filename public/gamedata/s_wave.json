@@ -23,7 +23,7 @@
     "interval": 0.48,
     "spawn": "spread",
     "rewardGold": 18,
-    "expandCols": 1,
+    "expandCols": 0,
     "expandRows": 0
   },
   {
@@ -36,7 +36,7 @@
     "spawn": "spread",
     "rewardGold": 14,
     "expandCols": 0,
-    "expandRows": 1,
+    "expandRows": 0,
     "monsterHpMul": 0.85,
     "monsterSpeedMul": 1.08,
     "desc": "买量版第2波：加入有模型毒蝠，形成第二怪种识别"
