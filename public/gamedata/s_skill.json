@@ -204,7 +204,9 @@
     "effectId": 0,
     "color": "#ffcf4a",
     "projectileAnimKey": "projectile_tomato_spin",
-    "hitAnimKey": "hit_chili_burst"
+    "hitAnimKey": "hit_chili_burst",
+    "impactDelayDuration": 0.5,
+    "impactSpinTurns": 0
   },
   {
     "id": 242,
@@ -219,7 +221,9 @@
     "effectId": 0,
     "color": "#45b7ff",
     "projectileAnimKey": "projectile_tomato_spin",
-    "hitAnimKey": "hit_chili_burst"
+    "hitAnimKey": "hit_chili_burst",
+    "impactDelayDuration": 0.5,
+    "impactSpinTurns": 0
   },
   {
     "id": 243,
@@ -234,7 +238,9 @@
     "effectId": 0,
     "color": "#a865ff",
     "projectileAnimKey": "projectile_tomato_spin",
-    "hitAnimKey": "hit_chili_burst"
+    "hitAnimKey": "hit_chili_burst",
+    "impactDelayDuration": 0.5,
+    "impactSpinTurns": 0
   },
   {
     "id": 250,

@@ -82,6 +82,7 @@ export interface SkillDef {
   projectileRotateToTarget?: boolean;
   hitUseProjectileRotation?: boolean;
   hitStopDuration?: number;
+  impactDelayDuration?: number;
   impactSpinTurns?: number;
   impactSpinDuration?: number;
 }

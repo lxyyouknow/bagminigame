@@ -1151,7 +1151,7 @@ export class BattleScene extends BaseScene {
 
   private resolveProjectileHit(projectile: ProjectileRuntime): boolean {
     if (usesAreaImpact(projectile.skill)) {
-      if ((projectile.skill.impactSpinTurns ?? 0) !== 0) {
+      if ((projectile.skill.impactSpinTurns ?? 0) !== 0 || (projectile.skill.impactDelayDuration ?? 0) > 0) {
         this.startDelayedImpact(projectile);
         return false;
       }
@@ -1183,7 +1183,7 @@ export class BattleScene extends BaseScene {
       damage: projectile.damage,
       skill: projectile.skill,
       elapsed: 0,
-      duration: Math.max(0.01, projectile.skill.impactSpinDuration ?? 0.55),
+      duration: Math.max(0.01, projectile.skill.impactDelayDuration ?? projectile.skill.impactSpinDuration ?? 0.55),
       turns: projectile.skill.impactSpinTurns ?? 2,
       startRotation: projectile.view.rotation,
     });
@@ -1198,7 +1198,7 @@ export class BattleScene extends BaseScene {
     for (const impact of [...this.delayedImpacts]) {
       impact.elapsed += dt;
       const progress = Math.min(1, impact.elapsed / impact.duration);
-      impact.view.rotation = impact.startRotation + progress * impact.turns * Math.PI * 2;
+      if (impact.turns !== 0) impact.view.rotation = impact.startRotation + progress * impact.turns * Math.PI * 2;
       if (progress >= 1) {
         this.delayedImpacts = this.delayedImpacts.filter((item) => item !== impact);
         this.releaseCombatVisual(impact.view);
