@@ -308,6 +308,7 @@ export interface UiLayoutDef {
   farmWidth?: number;
   scale?: number;
   gap?: number;
+  rowGap?: number;
   visible: boolean;
   desc: string;
 }

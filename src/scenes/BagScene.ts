@@ -1196,7 +1196,6 @@ export class BagScene extends BaseScene {
         visible: true,
         desc: "背包备战区，width/height 为单格尺寸，武器按自身占格大小显示",
       });
-    const pos = resolveUiLayoutPosition(resolvedLayout, app.screen.width, app.screen.height);
     const sizes = this.state.candidates.map((itemId) => this.itemShapePixelSize(itemId, this.cellSize));
     if (sizes.length === 0) return [];
 
@@ -1212,55 +1211,72 @@ export class BagScene extends BaseScene {
       visible: true,
       desc: "Candidate cart background for the three pre-battle item slots",
     }));
-    if (cartLayout.visible && sizes.length <= 3) {
-      const cartRect = resolveUiLayoutRect(cartLayout, app.screen.width, app.screen.height);
-      const slotCenters = [0.255, 0.5, 0.745];
-      const slotSize = Math.min(resolvedLayout.width, cartRect.width / 3 * 0.78, cartRect.height * 0.72);
-      return sizes.map((size, index) => ({
-        x: cartRect.x + cartRect.width * slotCenters[index],
-        y: cartRect.y + cartRect.height * 0.5,
-        width: Math.max(slotSize, size.width),
-        height: Math.max(slotSize, size.height),
-        labelOffsetY: size.height / 2 + 24,
-      }));
-    }
+    const areaRect = cartLayout.visible
+      ? resolveUiLayoutRect(cartLayout, app.screen.width, app.screen.height)
+      : resolveUiLayoutRect(resolvedLayout, app.screen.width, app.screen.height);
+    const gridLayout = scaleUiLayoutSize(this.layout("candidate_grid", {
+      scene: "bag",
+      key: "candidate_grid",
+      anchor: "center",
+      x: 0,
+      y: 0,
+      width: 120,
+      height: 120,
+      gap: 180,
+      rowGap: 120,
+      scale: 1,
+      visible: true,
+      desc: "Candidate item grid spacing relative to the cart center",
+    }));
+    const visualSlotCount = this.candidateVisualSlotCount();
+    const slotWidth = gridLayout.width || resolvedLayout.width;
+    const slotHeight = gridLayout.height || resolvedLayout.height;
 
-    const maxWidth = app.screen.width - 56;
-    const baseGap = resolvedLayout.gap ?? 24;
-    const oneRowNaturalWidth = sizes.reduce((sum, size) => sum + size.width, 0) + baseGap * Math.max(0, sizes.length - 1);
-    const oneRowNaturallyFits = oneRowNaturalWidth <= maxWidth;
-    const rows = this.splitCandidateRows(sizes, maxWidth, baseGap);
-    const centerLines =
-      rows.length === 1
-        ? [pos.y + this.cellSize]
-        : [pos.y + this.cellSize * 0.56, pos.y + this.cellSize * 1.64];
-    const targets: CandidateLayoutTarget[] = [];
-    const jitterX = [0, -18, 16, -9, 20, -24, 10, -14, 24, -6];
-    const jitterY = [0, 8, -6, 10, -8, 5, -10, 12, -5, 6];
-
-    rows.forEach((row, rowIndex) => {
-      const rowSizes = row.map((index) => sizes[index]);
-      const gap = this.compressedGap(rowSizes, maxWidth, baseGap);
-      const rowWidth = rowSizes.reduce((sum, size) => sum + size.width, 0) + gap * Math.max(0, rowSizes.length - 1);
-      const crowded = rows.length > 1 || !oneRowNaturallyFits;
-      const rowBottomY = centerLines[rowIndex] + Math.max(...rowSizes.map((size) => size.height)) / 2;
-      let cursorX = pos.x - rowWidth / 2 + (rowIndex === 0 && rows.length > 1 ? -18 : rows.length > 1 ? 18 : 0);
-      row.forEach((candidateIndex, localIndex) => {
-        const size = sizes[candidateIndex];
-        const x = cursorX + size.width / 2 + (crowded ? jitterX[candidateIndex % jitterX.length] : 0);
-        const y = rowBottomY - size.height / 2 + (crowded ? jitterY[candidateIndex % jitterY.length] : 0);
-        targets[candidateIndex] = {
-          x,
-          y,
-          width: size.width,
-          height: size.height,
-          labelOffsetY: size.height / 2 + 24,
-        };
-        cursorX += size.width + gap;
-      });
+    return sizes.map((size, index) => {
+      const slot = this.candidateGridSlot(this.candidateVisualSlotIndex(index), visualSlotCount, areaRect, gridLayout);
+      return {
+        x: slot.x,
+        y: slot.y,
+        width: slotWidth,
+        height: slotHeight,
+        labelOffsetY: slotHeight / 2 + 12,
+      };
     });
+  }
 
-    return targets;
+  private candidateVisualSlotCount(): number {
+    return Math.min(8, this.state.candidates.length + (this.sourceRemovedForDrag && this.dragRestoreCandidateIndex >= 0 ? 1 : 0));
+  }
+
+  private candidateVisualSlotIndex(index: number): number {
+    if (this.sourceRemovedForDrag && this.dragRestoreCandidateIndex >= 0 && index >= this.dragRestoreCandidateIndex) {
+      return Math.min(index + 1, 7);
+    }
+    return Math.min(index, 7);
+  }
+
+  private candidateGridSlot(
+    slotIndex: number,
+    visualSlotCount: number,
+    areaRect: { x: number; y: number; width: number; height: number },
+    gridLayout: ReturnType<BagScene["layout"]>,
+  ): Point {
+    const clampedIndex = Math.max(0, Math.min(7, slotIndex));
+    const row = Math.floor(clampedIndex / 4);
+    const indexInRow = clampedIndex % 4;
+    const firstRowCount = Math.min(4, visualSlotCount);
+    const secondRowCount = Math.max(0, Math.min(4, visualSlotCount - 4));
+    const rowCount = row === 0 ? firstRowCount : Math.max(1, secondRowCount);
+    const col = Math.min(indexInRow, rowCount - 1);
+    const rows = visualSlotCount > 4 ? 2 : 1;
+    const centerX = areaRect.x + areaRect.width / 2 + gridLayout.x;
+    const centerY = areaRect.y + areaRect.height / 2 + gridLayout.y;
+    const colGap = gridLayout.gap ?? 180;
+    const rowGap = gridLayout.rowGap ?? 120;
+    return {
+      x: Math.round(centerX + (col - (rowCount - 1) / 2) * colGap),
+      y: Math.round(centerY + (rows === 1 ? 0 : (row - 0.5) * rowGap)),
+    };
   }
 
   private splitCandidateRows(sizes: Array<{ width: number; height: number }>, maxWidth: number, baseGap: number): number[][] {

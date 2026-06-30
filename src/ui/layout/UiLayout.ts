@@ -58,6 +58,7 @@ export function scaleUiLayoutSize(layout: UiLayoutDef): UiLayoutDef {
     textOffsetX: layout.textOffsetX === undefined ? undefined : Math.round(layout.textOffsetX * scale),
     textOffsetY: layout.textOffsetY === undefined ? undefined : Math.round(layout.textOffsetY * scale),
     gap: layout.gap === undefined ? undefined : Math.round(layout.gap * scale),
+    rowGap: layout.rowGap === undefined ? undefined : Math.round(layout.rowGap * scale),
   };
 }
 
