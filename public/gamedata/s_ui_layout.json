@@ -266,6 +266,21 @@
   },
   {
     "scene": "bag",
+    "key": "gold_value",
+    "anchor": "topCenter",
+    "x": -54,
+    "y": 162,
+    "width": 120,
+    "height": 35,
+    "fontSize": 28,
+    "textColor": "#6b3a16",
+    "strokeColor": "#fff3bf",
+    "strokeWidth": 0,
+    "visible": true,
+    "desc": "背包左上角金币图标下方金币数量文本，会跟顶部信息栏一起收起"
+  },
+  {
+    "scene": "bag",
     "key": "wave_value",
     "anchor": "topCenter",
     "x": 135,

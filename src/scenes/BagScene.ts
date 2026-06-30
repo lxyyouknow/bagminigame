@@ -279,6 +279,29 @@ export class BagScene extends BaseScene {
     const topBar = spriteFromAsset("ui_bag_top_resource_bar", topBarRect.width, topBarRect.height);
     if (topBar) topBar.position.set(topBarRect.x, topBarRect.y);
 
+    const goldValueLayout = this.layout("gold_value", {
+      scene: "bag",
+      key: "gold_value",
+      anchor: "topLeft",
+      x: 58,
+      y: 94,
+      width: 96,
+      height: 28,
+      fontSize: 22,
+      textColor: "#fff4c2",
+      strokeColor: "#6b3a16",
+      strokeWidth: 3,
+      visible: true,
+      desc: "背包左上角金币图标下方金币数量文本",
+    });
+    const goldValuePos = resolveUiLayoutPosition(goldValueLayout, w, h);
+    const goldValueText = text(String(this.state.gold), goldValueLayout.fontSize ?? 22, goldValueLayout.textColor ?? "#fff4c2", "700", {
+      strokeColor: goldValueLayout.strokeColor,
+      strokeWidth: goldValueLayout.strokeWidth,
+    });
+    goldValueText.anchor.set(0.5);
+    goldValueText.position.set(goldValuePos.x, goldValuePos.y);
+
     const currentWave = this.runSession?.currentWave ?? this.state.currentWave ?? 1;
     const waveValueLayout = this.layout("wave_value", {
       scene: "bag",
@@ -436,6 +459,7 @@ export class BagScene extends BaseScene {
     }
     const topHud = new Container();
     if (topBarLayout.visible && topBar) topHud.addChild(topBar);
+    if (goldValueLayout.visible) topHud.addChild(goldValueText);
     if (waveValueLayout.visible) topHud.addChild(waveValueText);
     if (hpValueLayout.visible) topHud.addChild(hpValueText);
     if (bagSizeValueLayout.visible) topHud.addChild(bagSizeValueText);
