@@ -4,12 +4,14 @@ import { app, data } from "../core/runtime";
 import { glossyButton, spriteFromUi, text } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { GameWindow } from "./GameWindow";
+import { canAcceptResultConfirm } from "./resultConfirmRules";
 
 export class WndResult extends GameWindow {
   constructor(level: LevelDef, win: boolean, kills: number, rewardCoin: number, wave: number, onConfirm: () => void) {
     super();
     const w = app.screen.width;
     const h = app.screen.height;
+    const openedAtMs = performance.now();
     this.container.addChild(new Graphics().rect(0, 0, w, h).fill({ color: 0x070910, alpha: 0.82 }));
     const heroLayout = this.layout("hero", { scene: "result", key: "hero", anchor: "center", x: 0, y: Math.round(h * 0.17 - h / 2), width: 124, height: 124, visible: true, desc: "结算顶部圆形图标" });
     const heroPos = resolveUiLayoutPosition(heroLayout, w, h);
@@ -48,7 +50,10 @@ export class WndResult extends GameWindow {
     const resultPos = resolveUiLayoutPosition(resultLayout, w, h);
     resultText.position.set(resultPos.x, resultPos.y);
     const okLayout = this.layout("ok_button", { scene: "result", key: "ok_button", anchor: "bottomCenter", x: 0, y: Math.round(h * 0.82 - h), width: 176, height: 64, fontSize: 26, visible: true, desc: "结算确定按钮" });
-    const ok = glossyButton("确定", okLayout.width, okLayout.height, 0xffc23d, onConfirm, okLayout.fontSize ?? 26);
+    const ok = glossyButton("确定", okLayout.width, okLayout.height, 0xffc23d, () => {
+      if (!canAcceptResultConfirm(openedAtMs, performance.now())) return;
+      onConfirm();
+    }, okLayout.fontSize ?? 26);
     const okRect = resolveUiLayoutRect(okLayout, w, h);
     ok.position.set(okRect.x, okRect.y);
     if (heroLayout.visible) this.container.addChild(ghost);

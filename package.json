@@ -36,6 +36,7 @@
     "test:monster-view": "node scripts/run-monster-view-tests.mjs",
     "test:run-flow": "node scripts/run-run-flow-tests.mjs",
     "test:rogue-trigger": "node scripts/run-rogue-trigger-tests.mjs",
+    "test:result-confirm": "node scripts/run-result-confirm-tests.mjs",
     "test:save": "node scripts/run-save-tests.mjs",
     "test:skill-visual": "node scripts/run-skill-visual-tests.mjs",
     "test:ui-layout": "node scripts/run-ui-layout-tests.mjs",
