@@ -206,6 +206,8 @@
     "projectileAnimKey": "projectile_tomato_spin",
     "hitAnimKey": "hit_chili_burst",
     "impactDelayDuration": 0.5,
+    "impactShakeAmplitude": 8,
+    "impactShakeFrequency": 18,
     "impactSpinTurns": 0
   },
   {
@@ -223,6 +225,8 @@
     "projectileAnimKey": "projectile_tomato_spin",
     "hitAnimKey": "hit_chili_burst",
     "impactDelayDuration": 0.5,
+    "impactShakeAmplitude": 8,
+    "impactShakeFrequency": 18,
     "impactSpinTurns": 0
   },
   {
@@ -240,6 +244,8 @@
     "projectileAnimKey": "projectile_tomato_spin",
     "hitAnimKey": "hit_chili_burst",
     "impactDelayDuration": 0.5,
+    "impactShakeAmplitude": 8,
+    "impactShakeFrequency": 18,
     "impactSpinTurns": 0
   },
   {

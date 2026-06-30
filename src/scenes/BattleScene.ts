@@ -79,6 +79,8 @@ interface DelayedImpactRuntime {
   duration: number;
   turns: number;
   startRotation: number;
+  shakeAmplitude: number;
+  shakeFrequency: number;
 }
 
 export class BattleScene extends BaseScene {
@@ -1186,6 +1188,8 @@ export class BattleScene extends BaseScene {
       duration: Math.max(0.01, projectile.skill.impactDelayDuration ?? projectile.skill.impactSpinDuration ?? 0.55),
       turns: projectile.skill.impactSpinTurns ?? 2,
       startRotation: projectile.view.rotation,
+      shakeAmplitude: Math.max(0, projectile.skill.impactShakeAmplitude ?? 0),
+      shakeFrequency: Math.max(0, projectile.skill.impactShakeFrequency ?? 0),
     });
   }
 
@@ -1199,8 +1203,17 @@ export class BattleScene extends BaseScene {
       impact.elapsed += dt;
       const progress = Math.min(1, impact.elapsed / impact.duration);
       if (impact.turns !== 0) impact.view.rotation = impact.startRotation + progress * impact.turns * Math.PI * 2;
+      if (impact.shakeAmplitude > 0 && impact.shakeFrequency > 0) {
+        const wave = impact.elapsed * impact.shakeFrequency * Math.PI * 2;
+        const strength = Math.sin(progress * Math.PI);
+        impact.view.position.set(
+          impact.x + Math.sin(wave) * impact.shakeAmplitude * strength,
+          impact.y + Math.sin(wave * 1.73 + Math.PI / 3) * impact.shakeAmplitude * 0.72 * strength,
+        );
+      }
       if (progress >= 1) {
         this.delayedImpacts = this.delayedImpacts.filter((item) => item !== impact);
+        impact.view.position.set(impact.x, impact.y);
         this.releaseCombatVisual(impact.view);
         audio.playSfxEvent("battle_cast");
         this.areaDamage(impact.x, impact.y, impact.radius, impact.damage, impact.skill);
