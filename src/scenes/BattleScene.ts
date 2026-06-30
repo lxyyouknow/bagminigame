@@ -887,15 +887,16 @@ export class BattleScene extends BaseScene {
   }
 
   private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef): void {
-    let playedAnimatedEffect = false;
+    let hitAny = false;
+    let killedAny = false;
     for (const monster of this.monsters) {
       if (!monster.dead && Math.hypot(monster.x - x, monster.y - y) <= radius) {
-        const hitX = monster.x;
-        const hitY = monster.y;
         const result = this.damageMonster(monster, damage, skill);
-        playedAnimatedEffect = this.playImpactEffect(skill, result.killed, hitX, hitY) || playedAnimatedEffect;
+        hitAny = true;
+        killedAny ||= result.killed;
       }
     }
+    const playedAnimatedEffect = hitAny && this.playImpactEffect(skill, killedAny, x, y);
     if (!playedAnimatedEffect) {
       const fx = new Graphics();
       fx.circle(0, 0, radius).fill({ color: color(skill.color), alpha: 0.18 });
