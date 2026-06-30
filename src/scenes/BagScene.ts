@@ -99,8 +99,12 @@ export class BagScene extends BaseScene {
   private pendingCandidateStarts = new Map<string, Point>();
   private runSession?: RunSessionState;
   private topHudLayer: Container | undefined;
+  private candidateAreaLayer: Container | undefined;
   private refreshActionLayer: Container | undefined;
+  private startActionLayer: Container | undefined;
+  private candidateAreaExitDistance = 0;
   private refreshActionExitDistance = 0;
+  private startActionExitDistance = 0;
   private topHudExitProgress = 0;
   private combatMode = false;
   private combatCooldownLayer: Container | undefined;
@@ -166,7 +170,9 @@ export class BagScene extends BaseScene {
   setTopHudExitProgress(progress: number): void {
     this.topHudExitProgress = Math.max(0, Math.min(1, progress));
     this.applyTopHudTransition();
+    this.applyCandidateAreaTransition();
     this.applyRefreshActionTransition();
+    this.applyStartActionTransition();
   }
 
   setCombatMode(enabled: boolean): void {
@@ -219,8 +225,12 @@ export class BagScene extends BaseScene {
     this.candidateViews.clear();
     this.candidateMotions = [];
     this.topHudLayer = undefined;
+    this.candidateAreaLayer = undefined;
     this.refreshActionLayer = undefined;
+    this.startActionLayer = undefined;
+    this.candidateAreaExitDistance = 0;
     this.refreshActionExitDistance = 0;
+    this.startActionExitDistance = 0;
     this.combatCooldownLayer = undefined;
     this.placedPlantViews.clear();
     this.plantShootMotions.clear();
@@ -593,6 +603,7 @@ export class BagScene extends BaseScene {
   }
 
   private drawCandidateArea(): void {
+    const layer = new Container();
     const cartLayout = scaleUiLayoutSize(this.layout("candidate_cart", {
       scene: "bag",
       key: "candidate_cart",
@@ -610,7 +621,7 @@ export class BagScene extends BaseScene {
       const cart = spriteFromAsset("ui_bag_candidate_cart", cartRect.width, cartRect.height);
       if (cart) {
         cart.position.set(cartRect.x, cartRect.y);
-        this.container.addChild(cart);
+        layer.addChild(cart);
       }
     }
 
@@ -658,8 +669,14 @@ export class BagScene extends BaseScene {
       }
 
       this.candidateViews.set(key, { view: group });
-      this.container.addChild(group);
+      layer.addChild(group);
     });
+    if (layer.children.length > 0) {
+      this.candidateAreaLayer = layer;
+      this.candidateAreaExitDistance = Math.max(160, app.screen.width + 80);
+      this.applyCandidateAreaTransition();
+      this.container.addChild(layer);
+    }
     this.pendingCandidateStarts.clear();
   }
 
@@ -669,10 +686,22 @@ export class BagScene extends BaseScene {
     this.topHudLayer.alpha = 1 - this.topHudExitProgress;
   }
 
+  private applyCandidateAreaTransition(): void {
+    if (!this.candidateAreaLayer) return;
+    this.candidateAreaLayer.x = -Math.round(this.candidateAreaExitDistance * this.topHudExitProgress);
+    this.candidateAreaLayer.alpha = 1 - this.topHudExitProgress;
+  }
+
   private applyRefreshActionTransition(): void {
     if (!this.refreshActionLayer) return;
     this.refreshActionLayer.y = Math.round(this.refreshActionExitDistance * this.topHudExitProgress);
     this.refreshActionLayer.alpha = 1 - this.topHudExitProgress;
+  }
+
+  private applyStartActionTransition(): void {
+    if (!this.startActionLayer) return;
+    this.startActionLayer.x = Math.round(this.startActionExitDistance * this.topHudExitProgress);
+    this.startActionLayer.alpha = 1 - this.topHudExitProgress;
   }
 
   private drawActions(w: number, h: number): void {
@@ -737,7 +766,14 @@ export class BagScene extends BaseScene {
       this.applyRefreshActionTransition();
       this.container.addChild(refreshActions);
     }
-    if (startLayout.visible) this.container.addChild(start);
+    if (startLayout.visible) {
+      const startActions = new Container();
+      startActions.addChild(start);
+      this.startActionLayer = startActions;
+      this.startActionExitDistance = Math.max(120, w - startRect.x + 24);
+      this.applyStartActionTransition();
+      this.container.addChild(startActions);
+    }
   }
 
   private startDrag(itemId: number, source: DragSource, x: number, y: number): void {
