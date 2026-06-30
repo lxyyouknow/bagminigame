@@ -76,6 +76,7 @@ export interface SkillDef {
   effectId: number;
   color: string;
   projectileAnimKey?: string;
+  projectileMotion?: "target" | "roll";
   hitAnimKey?: string;
   killAnimKey?: string;
   groundFxAnimKey?: string;
@@ -87,6 +88,9 @@ export interface SkillDef {
   impactShakeFrequency?: number;
   impactSpinTurns?: number;
   impactSpinDuration?: number;
+  rollHitRadius?: number;
+  rollDamageMul?: number;
+  rollSpinSpeed?: number;
 }
 
 export interface EffectDef {
@@ -421,6 +425,12 @@ export interface ProjectileRuntime {
   radius: number;
   color: number;
   spinSpeed?: number;
+  motion?: "target" | "roll";
+  vx?: number;
+  vy?: number;
+  hitUids?: Set<number>;
+  rollHitRadius?: number;
+  rollDamage?: number;
   impactType?: "carrotSpin";
   impactAssetKey?: string;
   hitDistance: number;

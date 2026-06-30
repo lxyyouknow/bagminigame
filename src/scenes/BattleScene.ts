@@ -837,6 +837,11 @@ export class BattleScene extends BaseScene {
       const view = this.createProjectileView(color(skill.color), projectileAssetKey ? undefined : skill.projectileAnimKey, projectileAssetKey);
       view.position.set(startX, startY);
       this.projectileLayer.addChild(view);
+      const dx = target.x - startX;
+      const dy = target.y - startY;
+      const dist = Math.max(1, Math.hypot(dx, dy));
+      const motion = skill.projectileMotion === "roll" ? "roll" : "target";
+      if (motion === "roll") view.rotation = Math.atan2(dy, dx);
       this.projectiles.push({
         view,
         target,
@@ -848,7 +853,14 @@ export class BattleScene extends BaseScene {
         radius: skill.radius,
         color: color(skill.color),
         hitDistance: 24,
-        rotateToTarget: skill.projectileRotateToTarget ?? (!skill.projectileAnimKey && !projectileAssetKey),
+        rotateToTarget: motion === "roll" ? false : skill.projectileRotateToTarget ?? (!skill.projectileAnimKey && !projectileAssetKey),
+        motion,
+        vx: dx / dist,
+        vy: dy / dist,
+        hitUids: motion === "roll" ? new Set<number>() : undefined,
+        rollHitRadius: skill.rollHitRadius ?? 42,
+        rollDamage: damage * (skill.rollDamageMul ?? 1),
+        spinSpeed: motion === "roll" ? skill.rollSpinSpeed ?? Math.max(10, skill.speed / 42) : undefined,
       });
     } else if ((skill.type === "aoe" || skill.type === "dot") && target) {
       audio.playSfxEvent("battle_cast");
@@ -888,7 +900,7 @@ export class BattleScene extends BaseScene {
     };
   }
 
-  private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef): void {
+  private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef, forceImpactEffect = false): void {
     let hitAny = false;
     let killedAny = false;
     for (const monster of this.monsters) {
@@ -898,7 +910,7 @@ export class BattleScene extends BaseScene {
         killedAny ||= result.killed;
       }
     }
-    const playedAnimatedEffect = hitAny && this.playImpactEffect(skill, killedAny, x, y);
+    const playedAnimatedEffect = (hitAny || forceImpactEffect) && this.playImpactEffect(skill, killedAny, x, y);
     if (!playedAnimatedEffect) {
       const fx = new Graphics();
       fx.circle(0, 0, radius).fill({ color: color(skill.color), alpha: 0.18 });
@@ -1127,6 +1139,10 @@ export class BattleScene extends BaseScene {
 
   private updateProjectiles(dt: number): void {
     for (const projectile of [...this.projectiles]) {
+      if (projectile.motion === "roll") {
+        this.updateRollingProjectile(projectile, dt);
+        continue;
+      }
       if (projectile.target.dead) {
         this.removeProjectile(projectile);
         continue;
@@ -1149,6 +1165,37 @@ export class BattleScene extends BaseScene {
         }
       }
     }
+  }
+
+  private updateRollingProjectile(projectile: ProjectileRuntime, dt: number): void {
+    const move = projectile.speed * dt;
+    projectile.x += (projectile.vx ?? 0) * move;
+    projectile.y += (projectile.vy ?? -1) * move;
+    projectile.view.position.set(projectile.x, projectile.y);
+    if (projectile.spinSpeed) projectile.view.rotation += projectile.spinSpeed * dt;
+
+    const hitRadius = projectile.rollHitRadius ?? 42;
+    const hitUids = projectile.hitUids ?? new Set<number>();
+    projectile.hitUids = hitUids;
+    for (const monster of this.monsters) {
+      if (monster.dead || hitUids.has(monster.uid)) continue;
+      if (Math.hypot(monster.x - projectile.x, monster.y - projectile.y) > hitRadius + monster.def.radius) continue;
+      hitUids.add(monster.uid);
+      this.damageMonster(monster, projectile.rollDamage ?? projectile.damage, projectile.skill);
+    }
+
+    if (this.isProjectileAtSceneEdge(projectile)) {
+      this.areaDamage(projectile.x, projectile.y, projectile.radius, projectile.damage, projectile.skill, true);
+      this.removeProjectile(projectile);
+    }
+  }
+
+  private isProjectileAtSceneEdge(projectile: ProjectileRuntime): boolean {
+    const margin = Math.max(8, projectile.rollHitRadius ?? 42);
+    return projectile.x <= margin
+      || projectile.x >= app.screen.width - margin
+      || projectile.y <= margin
+      || projectile.y >= app.screen.height - margin;
   }
 
   private resolveProjectileHit(projectile: ProjectileRuntime): boolean {
