@@ -165,6 +165,13 @@
     "fallbackKey": ""
   },
   {
+    "key": "ui_bag_candidate_cart",
+    "type": "image",
+    "url": "/game-assets/ui/bag/bag-candidate-cart.png",
+    "preloadGroup": "bag",
+    "fallbackKey": ""
+  },
+  {
     "key": "ui_battle_info_bar",
     "type": "image",
     "url": "/game-assets/ui/battle-info-bar.png",

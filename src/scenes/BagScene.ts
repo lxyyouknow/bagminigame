@@ -593,6 +593,27 @@ export class BagScene extends BaseScene {
   }
 
   private drawCandidateArea(): void {
+    const cartLayout = scaleUiLayoutSize(this.layout("candidate_cart", {
+      scene: "bag",
+      key: "candidate_cart",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -505,
+      width: 720,
+      height: 238,
+      scale: 0.68,
+      visible: true,
+      desc: "Candidate cart background for the three pre-battle item slots",
+    }));
+    if (cartLayout.visible) {
+      const cartRect = resolveUiLayoutRect(cartLayout, app.screen.width, app.screen.height);
+      const cart = spriteFromAsset("ui_bag_candidate_cart", cartRect.width, cartRect.height);
+      if (cart) {
+        cart.position.set(cartRect.x, cartRect.y);
+        this.container.addChild(cart);
+      }
+    }
+
     const layout = this.layout("candidates", {
       scene: "bag",
       key: "candidates",
@@ -1178,6 +1199,31 @@ export class BagScene extends BaseScene {
     const pos = resolveUiLayoutPosition(resolvedLayout, app.screen.width, app.screen.height);
     const sizes = this.state.candidates.map((itemId) => this.itemShapePixelSize(itemId, this.cellSize));
     if (sizes.length === 0) return [];
+
+    const cartLayout = scaleUiLayoutSize(this.layout("candidate_cart", {
+      scene: "bag",
+      key: "candidate_cart",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -505,
+      width: 720,
+      height: 238,
+      scale: 0.68,
+      visible: true,
+      desc: "Candidate cart background for the three pre-battle item slots",
+    }));
+    if (cartLayout.visible && sizes.length <= 3) {
+      const cartRect = resolveUiLayoutRect(cartLayout, app.screen.width, app.screen.height);
+      const slotCenters = [0.255, 0.5, 0.745];
+      const slotSize = Math.min(resolvedLayout.width, cartRect.width / 3 * 0.78, cartRect.height * 0.72);
+      return sizes.map((size, index) => ({
+        x: cartRect.x + cartRect.width * slotCenters[index],
+        y: cartRect.y + cartRect.height * 0.5,
+        width: Math.max(slotSize, size.width),
+        height: Math.max(slotSize, size.height),
+        labelOffsetY: size.height / 2 + 24,
+      }));
+    }
 
     const maxWidth = app.screen.width - 56;
     const baseGap = resolvedLayout.gap ?? 24;

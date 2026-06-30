@@ -358,6 +358,18 @@
   },
   {
     "scene": "bag",
+    "key": "candidate_cart",
+    "anchor": "bottomCenter",
+    "x": -50,
+    "y": -455,
+    "width": 720,
+    "height": 238,
+    "scale": 0.95,
+    "visible": true,
+    "desc": "背包备战区三格小车，width/height 为资源原始尺寸，scale 为显示比例"
+  },
+  {
+    "scene": "bag",
     "key": "action_refresh",
     "anchor": "bottomCenter",
     "x": -280,
