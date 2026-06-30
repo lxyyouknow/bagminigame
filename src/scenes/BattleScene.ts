@@ -1111,9 +1111,6 @@ export class BattleScene extends BaseScene {
   }
 
   private baseFenceContactY(monster: MonsterRuntime): number {
-    if (this.farmBaseMode && this.options.farmBoard) {
-      return Math.max(96, this.options.farmBoard.gridTop - monster.def.radius * 0.25);
-    }
     const h = app.screen.height;
     const field = data.getBattleField(this.level.battleFieldKey);
     return resolveMonsterContactY({
