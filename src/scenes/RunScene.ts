@@ -180,6 +180,7 @@ export class RunScene extends BaseScene {
   private returnToBag(message: string): void {
     if (this.flow.phase !== "fighting" || this.battleHudExiting) return;
     this.pendingReturnMessage = message;
+    this.bagScene.playMoleWorkerVictory();
     this.battleHudEntering = false;
     this.battleHudEnterElapsed = 0;
     this.battleHudExiting = true;

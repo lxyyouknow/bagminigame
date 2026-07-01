@@ -107,6 +107,7 @@ export class BagScene extends BaseScene {
   private startActionExitDistance = 0;
   private topHudExitProgress = 0;
   private combatMode = false;
+  private moleWorkerAnimKey = "mole_worker_idle";
   private combatCooldownLayer: Container | undefined;
   private placedPlantViews = new Map<number, PlacedPlantView>();
   private plantShootMotions = new Map<number, PlantShootMotion>();
@@ -178,6 +179,12 @@ export class BagScene extends BaseScene {
   setCombatMode(enabled: boolean): void {
     if (this.combatMode === enabled) return;
     this.combatMode = enabled;
+    if (enabled) this.moleWorkerAnimKey = "mole_worker_idle";
+    this.draw();
+  }
+
+  playMoleWorkerVictory(): void {
+    this.moleWorkerAnimKey = "mole_worker_victory";
     this.draw();
   }
 
@@ -617,7 +624,7 @@ export class BagScene extends BaseScene {
       desc: "战前背包界面鼹鼠小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
     });
     if (!layout.visible) return;
-    const worker = assetManager.animation("mole_worker_idle");
+    const worker = assetManager.animation(this.moleWorkerAnimKey) ?? assetManager.animation("mole_worker_idle");
     if (!worker) return;
     const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
     worker.position.set(pos.x, pos.y);

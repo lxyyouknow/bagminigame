@@ -9,6 +9,7 @@ import { GameWindow } from "../windows/GameWindow";
 import { WndPause } from "../windows/WndPause";
 import { WndResult } from "../windows/WndResult";
 import { WndRogueOption } from "../windows/WndRogueOption";
+import { WndWaveVictory } from "../windows/WndWaveVictory";
 import { getBaseDamageFeedback, getBaseShakeFeedback } from "./baseDamageFeedbackRules";
 import { getBossArrivalWarningFrame } from "./bossArrivalWarningRules";
 import { getDamageNumberFeedback } from "./battleDamageFeedbackRules";
@@ -144,7 +145,6 @@ export class BattleScene extends BaseScene {
   private readonly tuning: BattleTuningDef;
   private readonly farmBaseMode: boolean;
 
-  private waveClearTimer: number | undefined;
 
   constructor(private readonly level: LevelDef, private readonly bag: BagState, private readonly options: BattleSceneOptions = {}) {
     super();
@@ -1727,14 +1727,17 @@ export class BattleScene extends BaseScene {
       expandedCells: result.expandedCells,
       nextWave: result.nextWave,
     });
-    const label = result.expandedCells > 0 ? `+${result.rewardGold}金币\n背包扩展 +${result.expandedCells}格` : `+${result.rewardGold}金币`;
-    this.addRewardBanner(label);
-    this.waveClearTimer = window.setTimeout(() => {
-      const expandText = result.expandedCells > 0 ? `，背包扩展 ${result.expandedCells} 格` : "";
-      const message = `第${this.currentWave}波完成：+${result.rewardGold}金币${expandText}`;
+    const expandText = result.expandedCells > 0 ? `，背包扩展 ${result.expandedCells} 格` : "";
+    const message = `第${this.currentWave}波完成：+${result.rewardGold}金币${expandText}`;
+    this.modalWindow?.destroy();
+    this.modalWindow = new WndWaveVictory(result.rewardGold, () => {
+      this.modalWindow?.destroy();
+      this.modalWindow = undefined;
       if (this.options.onWaveClear) this.options.onWaveClear(message);
       else showBag(this.level, message, this.bag);
-    }, 950);
+    });
+    this.container.addChild(this.modalWindow.container);
+    return;
   }
 
   private addRewardBanner(label: string): void {
@@ -1871,7 +1874,6 @@ export class BattleScene extends BaseScene {
   }
 
   override destroy(): void {
-    if (this.waveClearTimer !== undefined) window.clearTimeout(this.waveClearTimer);
     this.animationPlayback.clear();
     for (const projectile of [...this.projectiles]) this.releaseCombatVisual(projectile.view);
     this.projectiles = [];
