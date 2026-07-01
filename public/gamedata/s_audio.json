@@ -1,8 +1,8 @@
 [
   { "key": "bgm_main", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.wav", "preloadGroup": "main", "loop": true, "volume": 0.54, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：选关/主界面" },
   { "key": "bgm_bag", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.wav", "preloadGroup": "bag", "loop": true, "volume": 0.5, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：背包/备战界面" },
-  { "key": "bgm_battle", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.wav", "preloadGroup": "battle", "loop": true, "volume": 0.48, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：普通波次战斗" },
-  { "key": "bgm_boss", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.wav", "preloadGroup": "battle", "loop": true, "volume": 0.55, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：Boss 来临后" },
+  { "key": "bgm_battle", "type": "music", "url": "/game-assets/audio/music/farm-battle-loop.wav?v=battle-bgm-1", "preloadGroup": "battle", "loop": true, "volume": 0.5, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Battle scene loop BGM from UIres/bgm/cartoon_farm_battle_bgm_30s_loop.wav" },
+  { "key": "bgm_boss", "type": "music", "url": "/game-assets/audio/music/farm-battle-loop.wav?v=battle-bgm-1", "preloadGroup": "battle", "loop": true, "volume": 0.55, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Boss and battle scene loop BGM from UIres/bgm/cartoon_farm_battle_bgm_30s_loop.wav" },
 
   { "key": "sfx_ui_click", "type": "sfx", "url": "", "preloadGroup": "ui", "loop": false, "volume": 0.7, "maxConcurrent": 4, "generatedFreq": 880, "desc": "通用按钮点击音" },
   { "key": "sfx_bag_place", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.75, "maxConcurrent": 3, "generatedFreq": 620, "desc": "武器放入背包" },
@@ -20,5 +20,6 @@
   { "key": "sfx_boss_attack", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.78, "maxConcurrent": 2, "generatedFreq": 120, "desc": "Boss 重击基地，低频重击测试音" },
   { "key": "sfx_boss_roar", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.72, "maxConcurrent": 1, "generatedFreq": 150, "desc": "Boss 怒吼强化怪群测试音" },
   { "key": "sfx_result_win", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.9, "maxConcurrent": 1, "generatedFreq": 1320, "desc": "挑战成功结算" },
+  { "key": "sfx_wave_victory_show", "type": "sfx", "url": "/game-assets/audio/sfx/wave-victory-show.mp3?v=wave-victory-sfx-1", "preloadGroup": "battle", "loop": false, "volume": 0.9, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Wave victory popup sound effect" },
   { "key": "sfx_result_lose", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.8, "maxConcurrent": 1, "generatedFreq": 160, "desc": "挑战失败结算" }
 ]

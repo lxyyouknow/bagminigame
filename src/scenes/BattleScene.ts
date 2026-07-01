@@ -1724,7 +1724,7 @@ export class BattleScene extends BaseScene {
       this.options.session.baseHp = this.bag.baseHp;
       this.options.session.currentWave = result.nextWave;
     }
-    audio.playSfxEvent("result_win");
+    audio.playSfxEvent("wave_victory_show");
     analytics.track("battle_wave_clear", {
       levelId: this.level.id,
       wave: this.currentWave,

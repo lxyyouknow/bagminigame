@@ -20,5 +20,6 @@
   { "event": "monster_boss_attack", "audioKey": "sfx_boss_attack", "category": "sfx", "cooldownMs": 260, "desc": "Boss 攻击基地/栏杆" },
   { "event": "monster_boss_roar", "audioKey": "sfx_boss_roar", "category": "sfx", "cooldownMs": 500, "desc": "Boss 怒吼强化怪群" },
   { "event": "result_win", "audioKey": "sfx_result_win", "category": "sfx", "cooldownMs": 500, "desc": "胜利结算" },
+  { "event": "wave_victory_show", "audioKey": "sfx_wave_victory_show", "category": "sfx", "cooldownMs": 500, "desc": "Wave victory popup show sound" },
   { "event": "result_lose", "audioKey": "sfx_result_lose", "category": "sfx", "cooldownMs": 500, "desc": "失败结算" }
 ]
