@@ -236,7 +236,7 @@ export class BagScene extends BaseScene {
     this.plantShootMotions.clear();
     this.container.removeChildren();
     drawAssetBg(this.container, "bg_bag_prebattle");
-    if (!this.combatMode) this.drawMoleWorkerIdle();
+    this.drawMoleWorkerIdle();
     const w = app.screen.width;
     const h = app.screen.height;
     const boardLayout = this.layout("board", {
