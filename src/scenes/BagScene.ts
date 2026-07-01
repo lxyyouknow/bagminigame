@@ -236,7 +236,7 @@ export class BagScene extends BaseScene {
     this.plantShootMotions.clear();
     this.container.removeChildren();
     drawAssetBg(this.container, "bg_bag_prebattle");
-    if (!this.combatMode) this.drawMushroomWorkerIdle();
+    if (!this.combatMode) this.drawMoleWorkerIdle();
     const w = app.screen.width;
     const h = app.screen.height;
     const boardLayout = this.layout("board", {
@@ -603,10 +603,10 @@ export class BagScene extends BaseScene {
     return 1 - Math.pow(1 - Math.min(1, Math.max(0, value)), 3);
   }
 
-  private drawMushroomWorkerIdle(): void {
-    const layout = this.layout("mushroom_worker_idle", {
+  private drawMoleWorkerIdle(): void {
+    const layout = this.layout("mole_worker_idle", {
       scene: "bag",
-      key: "mushroom_worker_idle",
+      key: "mole_worker_idle",
       anchor: "bottomCenter",
       x: -246,
       y: -500,
@@ -614,10 +614,10 @@ export class BagScene extends BaseScene {
       height: 512,
       scale: 0.42,
       visible: true,
-      desc: "战前背包界面蘑菇小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
+      desc: "战前背包界面鼹鼠小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
     });
     if (!layout.visible) return;
-    const worker = assetManager.animation("mushroom_worker_idle");
+    const worker = assetManager.animation("mole_worker_idle");
     if (!worker) return;
     const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
     worker.position.set(pos.x, pos.y);
