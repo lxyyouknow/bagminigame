@@ -8,7 +8,7 @@ export class WndWaveVictory extends GameWindow {
   private accepted = false;
   private readonly popup = new Container();
   private popElapsed = 0;
-  private readonly popDuration = 0.42;
+  private readonly popDuration = 0.68;
 
   constructor(rewardGold: number, onContinue: () => void) {
     super();
@@ -102,16 +102,20 @@ export class WndWaveVictory extends GameWindow {
   }
 
   private popScale(t: number): number {
-    if (t < 0.62) {
-      const p = t / 0.62;
-      return 0.2 + (1.08 - 0.2) * this.easeOutBack(p);
+    if (t < 0.52) {
+      const p = t / 0.52;
+      return 0.16 + (1.16 - 0.16) * this.easeOutBack(p, 2.35);
     }
-    const p = (t - 0.62) / 0.38;
-    return 1.08 + (1 - 1.08) * this.easeOutCubic(p);
+    if (t < 0.78) {
+      const p = (t - 0.52) / 0.26;
+      return 1.16 + (0.96 - 1.16) * this.easeOutCubic(p);
+    }
+    const p = (t - 0.78) / 0.22;
+    return 0.96 + (1 - 0.96) * this.easeOutBack(p, 1.15);
   }
 
-  private easeOutBack(value: number): number {
-    const c1 = 1.70158;
+  private easeOutBack(value: number, strength = 1.70158): number {
+    const c1 = strength;
     const c3 = c1 + 1;
     return 1 + c3 * Math.pow(value - 1, 3) + c1 * Math.pow(value - 1, 2);
   }
