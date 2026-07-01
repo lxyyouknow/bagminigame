@@ -324,15 +324,15 @@
   },
   {
     "scene": "bag",
-    "key": "mushroom_worker_idle",
+    "key": "mole_worker_idle",
     "anchor": "topCenter",
-    "x": 278,
-    "y": 290,
+    "x": 265,
+    "y": 350,
     "width": 512,
     "height": 512,
     "scale": 0.45,
     "visible": true,
-    "desc": "Bag prebattle mushroom worker idle loop. x/y are center position, scale controls display size. Original atlas frames stay 512x512."
+    "desc": "战前背包界面鼹鼠小工人待机循环动画，x/y 为中心点，scale 控制显示缩放，原始图集帧保持 512x512"
   },
   {
     "scene": "bag",

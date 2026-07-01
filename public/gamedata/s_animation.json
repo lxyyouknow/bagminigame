@@ -647,6 +647,36 @@
     "scale": 1
   },
   {
+    "key": "mole_worker_idle",
+    "assetKey": "loose_frames",
+    "frames": [
+      "mole_worker_idle_00",
+      "mole_worker_idle_01",
+      "mole_worker_idle_02",
+      "mole_worker_idle_03",
+      "mole_worker_idle_04",
+      "mole_worker_idle_05",
+      "mole_worker_idle_06",
+      "mole_worker_idle_07",
+      "mole_worker_idle_08",
+      "mole_worker_idle_09",
+      "mole_worker_idle_10",
+      "mole_worker_idle_11",
+      "mole_worker_idle_12",
+      "mole_worker_idle_13",
+      "mole_worker_idle_14",
+      "mole_worker_idle_15",
+      "mole_worker_idle_16",
+      "mole_worker_idle_17",
+      "mole_worker_idle_18"
+    ],
+    "fps": 12,
+    "loop": true,
+    "anchorX": 0.5,
+    "anchorY": 0.5,
+    "scale": 1
+  },
+  {
     "key": "mushroom_worker_idle",
     "assetKey": "loose_frames",
     "frames": [

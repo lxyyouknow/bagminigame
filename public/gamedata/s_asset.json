@@ -3060,10 +3060,181 @@
     "desc": "boss_death_down_21"
   },
   {
+    "key": "mole_worker_idle_00",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_1.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "",
+    "frame": "001.png",
+    "desc": "mole_worker_idle_00"
+  },
+  {
+    "key": "mole_worker_idle_01",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_2.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_00",
+    "frame": "002.png",
+    "desc": "mole_worker_idle_01"
+  },
+  {
+    "key": "mole_worker_idle_02",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_3.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_01",
+    "frame": "003.png",
+    "desc": "mole_worker_idle_02"
+  },
+  {
+    "key": "mole_worker_idle_03",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_4.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_02",
+    "frame": "004.png",
+    "desc": "mole_worker_idle_03"
+  },
+  {
+    "key": "mole_worker_idle_04",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_5.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_03",
+    "frame": "005.png",
+    "desc": "mole_worker_idle_04"
+  },
+  {
+    "key": "mole_worker_idle_05",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_6.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_04",
+    "frame": "006.png",
+    "desc": "mole_worker_idle_05"
+  },
+  {
+    "key": "mole_worker_idle_06",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_7.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_05",
+    "frame": "007.png",
+    "desc": "mole_worker_idle_06"
+  },
+  {
+    "key": "mole_worker_idle_07",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_8.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_06",
+    "frame": "008.png",
+    "desc": "mole_worker_idle_07"
+  },
+  {
+    "key": "mole_worker_idle_08",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_9.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_07",
+    "frame": "009.png",
+    "desc": "mole_worker_idle_08"
+  },
+  {
+    "key": "mole_worker_idle_09",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_10.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_08",
+    "frame": "010.png",
+    "desc": "mole_worker_idle_09"
+  },
+  {
+    "key": "mole_worker_idle_10",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_11.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_09",
+    "frame": "011.png",
+    "desc": "mole_worker_idle_10"
+  },
+  {
+    "key": "mole_worker_idle_11",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_12.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_10",
+    "frame": "012.png",
+    "desc": "mole_worker_idle_11"
+  },
+  {
+    "key": "mole_worker_idle_12",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_13.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_11",
+    "frame": "013.png",
+    "desc": "mole_worker_idle_12"
+  },
+  {
+    "key": "mole_worker_idle_13",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_14.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_12",
+    "frame": "014.png",
+    "desc": "mole_worker_idle_13"
+  },
+  {
+    "key": "mole_worker_idle_14",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_15.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_13",
+    "frame": "015.png",
+    "desc": "mole_worker_idle_14"
+  },
+  {
+    "key": "mole_worker_idle_15",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_16.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_14",
+    "frame": "016.png",
+    "desc": "mole_worker_idle_15"
+  },
+  {
+    "key": "mole_worker_idle_16",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_17.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_15",
+    "frame": "017.png",
+    "desc": "mole_worker_idle_16"
+  },
+  {
+    "key": "mole_worker_idle_17",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_18.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_16",
+    "frame": "018.png",
+    "desc": "mole_worker_idle_17"
+  },
+  {
+    "key": "mole_worker_idle_18",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_19.json?v=mole-worker-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_17",
+    "frame": "019.png",
+    "desc": "mole_worker_idle_18"
+  },
+  {
     "key": "mushroom_worker_idle_00",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "",
     "frame": "001.png",
     "desc": "mushroom worker idle frame 1, original atlas frame 512x512"
@@ -3072,7 +3243,7 @@
     "key": "mushroom_worker_idle_01",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_00",
     "frame": "002.png",
     "desc": "mushroom worker idle frame 2, original atlas frame 512x512"
@@ -3081,7 +3252,7 @@
     "key": "mushroom_worker_idle_02",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_01",
     "frame": "003.png",
     "desc": "mushroom worker idle frame 3, original atlas frame 512x512"
@@ -3090,7 +3261,7 @@
     "key": "mushroom_worker_idle_03",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_02",
     "frame": "004.png",
     "desc": "mushroom worker idle frame 4, original atlas frame 512x512"
@@ -3099,7 +3270,7 @@
     "key": "mushroom_worker_idle_04",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_03",
     "frame": "005.png",
     "desc": "mushroom worker idle frame 5, original atlas frame 512x512"
@@ -3108,7 +3279,7 @@
     "key": "mushroom_worker_idle_05",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_04",
     "frame": "006.png",
     "desc": "mushroom worker idle frame 6, original atlas frame 512x512"
@@ -3117,7 +3288,7 @@
     "key": "mushroom_worker_idle_06",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_05",
     "frame": "007.png",
     "desc": "mushroom worker idle frame 7, original atlas frame 512x512"
@@ -3126,7 +3297,7 @@
     "key": "mushroom_worker_idle_07",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_06",
     "frame": "008.png",
     "desc": "mushroom worker idle frame 8, original atlas frame 512x512"
@@ -3135,7 +3306,7 @@
     "key": "mushroom_worker_idle_08",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_07",
     "frame": "009.png",
     "desc": "mushroom worker idle frame 9, original atlas frame 512x512"
@@ -3144,7 +3315,7 @@
     "key": "mushroom_worker_idle_09",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_08",
     "frame": "010.png",
     "desc": "mushroom worker idle frame 10, original atlas frame 512x512"
@@ -3153,7 +3324,7 @@
     "key": "mushroom_worker_idle_10",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_09",
     "frame": "011.png",
     "desc": "mushroom worker idle frame 11, original atlas frame 512x512"
@@ -3162,7 +3333,7 @@
     "key": "mushroom_worker_idle_11",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_10",
     "frame": "012.png",
     "desc": "mushroom worker idle frame 12, original atlas frame 512x512"
@@ -3171,7 +3342,7 @@
     "key": "mushroom_worker_idle_12",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_11",
     "frame": "013.png",
     "desc": "mushroom worker idle frame 13, original atlas frame 512x512"
@@ -3180,7 +3351,7 @@
     "key": "mushroom_worker_idle_13",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_12",
     "frame": "014.png",
     "desc": "mushroom worker idle frame 14, original atlas frame 512x512"
@@ -3189,7 +3360,7 @@
     "key": "mushroom_worker_idle_14",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_13",
     "frame": "015.png",
     "desc": "mushroom worker idle frame 15, original atlas frame 512x512"
@@ -3198,7 +3369,7 @@
     "key": "mushroom_worker_idle_15",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_14",
     "frame": "016.png",
     "desc": "mushroom worker idle frame 16, original atlas frame 512x512"
@@ -3207,7 +3378,7 @@
     "key": "mushroom_worker_idle_16",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_15",
     "frame": "017.png",
     "desc": "mushroom worker idle frame 17, original atlas frame 512x512"
@@ -3216,7 +3387,7 @@
     "key": "mushroom_worker_idle_17",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_2.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_16",
     "frame": "018.png",
     "desc": "mushroom worker idle frame 18, original atlas frame 512x512"
@@ -3225,7 +3396,7 @@
     "key": "mushroom_worker_idle_18",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_3.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_17",
     "frame": "019.png",
     "desc": "mushroom worker idle frame 19, original atlas frame 512x512"
@@ -3234,7 +3405,7 @@
     "key": "mushroom_worker_idle_19",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_3.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_18",
     "frame": "020.png",
     "desc": "mushroom worker idle frame 20, original atlas frame 512x512"
@@ -3243,7 +3414,7 @@
     "key": "mushroom_worker_idle_20",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_3.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_19",
     "frame": "021.png",
     "desc": "mushroom worker idle frame 21, original atlas frame 512x512"
@@ -3252,7 +3423,7 @@
     "key": "mushroom_worker_idle_21",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_3.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_20",
     "frame": "022.png",
     "desc": "mushroom worker idle frame 22, original atlas frame 512x512"
@@ -3261,7 +3432,7 @@
     "key": "mushroom_worker_idle_22",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_3.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_21",
     "frame": "023.png",
     "desc": "mushroom worker idle frame 23, original atlas frame 512x512"
@@ -3270,7 +3441,7 @@
     "key": "mushroom_worker_idle_23",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_3.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_idle_22",
     "frame": "024.png",
     "desc": "mushroom worker idle frame 24, original atlas frame 512x512"
@@ -3279,7 +3450,7 @@
     "key": "mushroom_worker_work_00",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "",
     "frame": "001.png",
     "desc": "mushroom worker work frame 1, original atlas frame 512x512"
@@ -3288,7 +3459,7 @@
     "key": "mushroom_worker_work_01",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_work_00",
     "frame": "002.png",
     "desc": "mushroom worker work frame 2, original atlas frame 512x512"
@@ -3297,7 +3468,7 @@
     "key": "mushroom_worker_work_02",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_work_01",
     "frame": "003.png",
     "desc": "mushroom worker work frame 3, original atlas frame 512x512"
@@ -3306,7 +3477,7 @@
     "key": "mushroom_worker_work_03",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_work_02",
     "frame": "004.png",
     "desc": "mushroom worker work frame 4, original atlas frame 512x512"
@@ -3315,7 +3486,7 @@
     "key": "mushroom_worker_work_04",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_work_03",
     "frame": "005.png",
     "desc": "mushroom worker work frame 5, original atlas frame 512x512"
@@ -3324,7 +3495,7 @@
     "key": "mushroom_worker_work_05",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_work_04",
     "frame": "006.png",
     "desc": "mushroom worker work frame 6, original atlas frame 512x512"
@@ -3333,7 +3504,7 @@
     "key": "mushroom_worker_work_06",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_work_05",
     "frame": "007.png",
     "desc": "mushroom worker work frame 7, original atlas frame 512x512"
@@ -3342,7 +3513,7 @@
     "key": "mushroom_worker_work_07",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_work/sheet/spritesheet_1.json?v=mushroom-worker-1",
-    "preloadGroup": "bag",
+    "preloadGroup": "legacy",
     "fallbackKey": "mushroom_worker_work_06",
     "frame": "008.png",
     "desc": "mushroom worker work frame 8, original atlas frame 512x512"
