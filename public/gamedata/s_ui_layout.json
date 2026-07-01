@@ -953,5 +953,45 @@
     "fontSize": 26,
     "visible": true,
     "desc": "结算确定按钮"
+  },
+  {
+    "scene": "wave_victory",
+    "key": "panel",
+    "anchor": "center",
+    "x": 0,
+    "y": -200,
+    "width": 700,
+    "height": 649,
+    "scale": 1,
+    "visible": true,
+    "desc": "???????????x/y ??????scale ??????"
+  },
+  {
+    "scene": "wave_victory",
+    "key": "coin_value",
+    "anchor": "center",
+    "x": 10,
+    "y": -90,
+    "width": 220,
+    "height": 66,
+    "fontSize": 66,
+    "textColor": "#7a3511",
+    "strokeColor": "#7a3511",
+    "strokeWidth": 0,
+    "scale": 1,
+    "visible": true,
+    "desc": "?????????????????x/y ??????scale ??????"
+  },
+  {
+    "scene": "wave_victory",
+    "key": "continue_button",
+    "anchor": "center",
+    "x": 0,
+    "y": 110,
+    "width": 400,
+    "height": 118,
+    "scale": 1,
+    "visible": true,
+    "desc": "?????????????x/y ??????scale ???????????? s_ui pressScale ??"
   }
 ]

@@ -3231,6 +3231,214 @@
     "desc": "mole_worker_idle_18"
   },
   {
+    "key": "mole_worker_victory_00",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_1.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_00",
+    "desc": "mole_worker_victory_00"
+  },
+  {
+    "key": "mole_worker_victory_01",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_2.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_00",
+    "desc": "mole_worker_victory_01"
+  },
+  {
+    "key": "mole_worker_victory_02",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_3.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_01",
+    "desc": "mole_worker_victory_02"
+  },
+  {
+    "key": "mole_worker_victory_03",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_4.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_02",
+    "desc": "mole_worker_victory_03"
+  },
+  {
+    "key": "mole_worker_victory_04",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_5.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_03",
+    "desc": "mole_worker_victory_04"
+  },
+  {
+    "key": "mole_worker_victory_05",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_6.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_04",
+    "desc": "mole_worker_victory_05"
+  },
+  {
+    "key": "mole_worker_victory_06",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_7.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_05",
+    "desc": "mole_worker_victory_06"
+  },
+  {
+    "key": "mole_worker_victory_07",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_8.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_06",
+    "desc": "mole_worker_victory_07"
+  },
+  {
+    "key": "mole_worker_victory_08",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_9.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_07",
+    "desc": "mole_worker_victory_08"
+  },
+  {
+    "key": "mole_worker_victory_09",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_10.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_08",
+    "desc": "mole_worker_victory_09"
+  },
+  {
+    "key": "mole_worker_victory_10",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_11.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_09",
+    "desc": "mole_worker_victory_10"
+  },
+  {
+    "key": "mole_worker_victory_11",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_12.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_10",
+    "desc": "mole_worker_victory_11"
+  },
+  {
+    "key": "mole_worker_victory_12",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_13.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_11",
+    "desc": "mole_worker_victory_12"
+  },
+  {
+    "key": "mole_worker_victory_13",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_14.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_12",
+    "desc": "mole_worker_victory_13"
+  },
+  {
+    "key": "mole_worker_victory_14",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_15.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_13",
+    "desc": "mole_worker_victory_14"
+  },
+  {
+    "key": "mole_worker_victory_15",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_16.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_14",
+    "desc": "mole_worker_victory_15"
+  },
+  {
+    "key": "mole_worker_victory_16",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_17.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_15",
+    "desc": "mole_worker_victory_16"
+  },
+  {
+    "key": "mole_worker_victory_17",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_18.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_16",
+    "desc": "mole_worker_victory_17"
+  },
+  {
+    "key": "mole_worker_victory_18",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_19.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_17",
+    "desc": "mole_worker_victory_18"
+  },
+  {
+    "key": "mole_worker_victory_19",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_20.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_18",
+    "desc": "mole_worker_victory_19"
+  },
+  {
+    "key": "mole_worker_victory_20",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_21.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_19",
+    "desc": "mole_worker_victory_20"
+  },
+  {
+    "key": "mole_worker_victory_21",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_22.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_20",
+    "desc": "mole_worker_victory_21"
+  },
+  {
+    "key": "mole_worker_victory_22",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_23.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_21",
+    "desc": "mole_worker_victory_22"
+  },
+  {
+    "key": "mole_worker_victory_23",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_24.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_22",
+    "desc": "mole_worker_victory_23"
+  },
+  {
+    "key": "mole_worker_victory_24",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_25.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_23",
+    "desc": "mole_worker_victory_24"
+  },
+  {
+    "key": "mole_worker_victory_25",
+    "type": "image",
+    "url": "/game-assets/characters/mole_worker_victory/sheet/spritesheet_26.png?v=mole-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_victory_24",
+    "desc": "mole_worker_victory_25"
+  },
+  {
     "key": "mushroom_worker_idle_00",
     "type": "spritesheet",
     "url": "/game-assets/characters/mushroom_worker_idle/sheet/spritesheet_1.json?v=mushroom-worker-1",
@@ -3517,5 +3725,19 @@
     "fallbackKey": "mushroom_worker_work_06",
     "frame": "008.png",
     "desc": "mushroom worker work frame 8, original atlas frame 512x512"
+  },
+  {
+    "key": "ui_wave_victory_panel",
+    "type": "image",
+    "url": "/game-assets/ui/wave-victory/wave-victory-panel.png?v=wave-victory-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "ui_button_yellow"
+  },
+  {
+    "key": "ui_wave_victory_continue_button",
+    "type": "image",
+    "url": "/game-assets/ui/wave-victory/wave-victory-continue.png?v=wave-victory-1",
+    "preloadGroup": "battle",
+    "fallbackKey": "ui_button_yellow"
   }
 ]

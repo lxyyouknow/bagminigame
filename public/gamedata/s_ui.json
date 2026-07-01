@@ -129,5 +129,20 @@
     "desc": "结算金币奖励图标",
     "defaultWidth": 54,
     "defaultHeight": 54
+  },
+  {
+    "key": "wave_victory_panel",
+    "assetKey": "ui_wave_victory_panel",
+    "desc": "????????????? UIres/ui/????.png ??",
+    "defaultWidth": 700,
+    "defaultHeight": 649
+  },
+  {
+    "key": "wave_victory_continue_button",
+    "assetKey": "ui_wave_victory_continue_button",
+    "desc": "??????????????? UIres/ui/??.png ??",
+    "defaultWidth": 300,
+    "defaultHeight": 89,
+    "pressScale": 0.95
   }
 ]

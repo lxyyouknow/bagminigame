@@ -677,6 +677,43 @@
     "scale": 1
   },
   {
+    "key": "mole_worker_victory",
+    "assetKey": "loose_frames",
+    "frames": [
+      "mole_worker_victory_00",
+      "mole_worker_victory_01",
+      "mole_worker_victory_02",
+      "mole_worker_victory_03",
+      "mole_worker_victory_04",
+      "mole_worker_victory_05",
+      "mole_worker_victory_06",
+      "mole_worker_victory_07",
+      "mole_worker_victory_08",
+      "mole_worker_victory_09",
+      "mole_worker_victory_10",
+      "mole_worker_victory_11",
+      "mole_worker_victory_12",
+      "mole_worker_victory_13",
+      "mole_worker_victory_14",
+      "mole_worker_victory_15",
+      "mole_worker_victory_16",
+      "mole_worker_victory_17",
+      "mole_worker_victory_18",
+      "mole_worker_victory_19",
+      "mole_worker_victory_20",
+      "mole_worker_victory_21",
+      "mole_worker_victory_22",
+      "mole_worker_victory_23",
+      "mole_worker_victory_24",
+      "mole_worker_victory_25"
+    ],
+    "fps": 18,
+    "loop": false,
+    "anchorX": 0.5,
+    "anchorY": 0.5,
+    "scale": 1
+  },
+  {
     "key": "mushroom_worker_idle",
     "assetKey": "loose_frames",
     "frames": [
