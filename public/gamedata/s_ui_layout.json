@@ -986,7 +986,7 @@
     "scene": "wave_victory",
     "key": "continue_button",
     "anchor": "center",
-    "x": 0,
+    "x": 10,
     "y": 110,
     "width": 400,
     "height": 118,

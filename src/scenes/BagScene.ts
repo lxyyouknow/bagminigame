@@ -188,6 +188,11 @@ export class BagScene extends BaseScene {
     this.draw();
   }
 
+  playMoleWorkerIdle(): void {
+    this.moleWorkerAnimKey = "mole_worker_idle";
+    this.draw();
+  }
+
   getFarmBoardMetrics(cameraOffsetY = this.container.y): FarmBoardMetrics {
     return {
       gridLeft: this.gridLeft,

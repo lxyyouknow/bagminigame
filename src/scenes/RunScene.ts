@@ -165,6 +165,7 @@ export class RunScene extends BaseScene {
     this.battleScene = new BattleScene(this.level, this.session.bag, {
       session: this.session,
       onWaveClear: (message) => this.returnToBag(message),
+      onWaveVictoryStart: () => this.bagScene.playMoleWorkerVictory(),
       farmBaseMode: true,
       farmBoard: this.bagScene.getFarmBoardMetrics(finalBagY),
       onFarmWeaponAttack: (uid) => this.bagScene.playPlantShootPunch(uid),
@@ -180,7 +181,6 @@ export class RunScene extends BaseScene {
   private returnToBag(message: string): void {
     if (this.flow.phase !== "fighting" || this.battleHudExiting) return;
     this.pendingReturnMessage = message;
-    this.bagScene.playMoleWorkerVictory();
     this.battleHudEntering = false;
     this.battleHudEnterElapsed = 0;
     this.battleHudExiting = true;
@@ -195,6 +195,7 @@ export class RunScene extends BaseScene {
     this.battleHudEntering = false;
     this.battleHudEnterElapsed = 0;
     this.bagScene.setCombatMode(false);
+    this.bagScene.playMoleWorkerIdle();
     this.bagScene.refreshAfterWave(message);
     this.bagScene.container.eventMode = "none";
     if (this.battleScene) this.battleScene.container.eventMode = "none";

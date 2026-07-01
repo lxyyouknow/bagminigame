@@ -39,6 +39,7 @@ import type { FarmBoardMetrics } from "./BagScene";
 export interface BattleSceneOptions {
   session?: RunSessionState;
   onWaveClear?: (message: string) => void;
+  onWaveVictoryStart?: () => void;
   farmBaseMode?: boolean;
   farmBoard?: FarmBoardMetrics;
   onFarmWeaponAttack?: (uid: number) => void;
@@ -174,7 +175,11 @@ export class BattleScene extends BaseScene {
   }
 
   override update(dt: number): void {
-    if (this.paused) return;
+    if (this.paused) {
+      this.modalWindow?.update(dt);
+      return;
+    }
+    this.modalWindow?.update(dt);
     this.time += dt;
     if (this.options.session) this.options.session.playSeconds += dt;
     this.spawnDue();
@@ -1727,6 +1732,7 @@ export class BattleScene extends BaseScene {
       expandedCells: result.expandedCells,
       nextWave: result.nextWave,
     });
+    this.options.onWaveVictoryStart?.();
     const expandText = result.expandedCells > 0 ? `，背包扩展 ${result.expandedCells} 格` : "";
     const message = `第${this.currentWave}波完成：+${result.rewardGold}金币${expandText}`;
     this.modalWindow?.destroy();

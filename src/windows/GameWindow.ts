@@ -7,6 +7,9 @@ export abstract class GameWindow {
     this.container.eventMode = "static";
   }
 
+  update(_dt: number): void {
+  }
+
   destroy(): void {
     this.container.destroy({ children: true } as DestroyOptions);
   }
