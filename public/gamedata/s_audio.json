@@ -5,7 +5,7 @@
   { "key": "bgm_boss", "type": "music", "url": "/game-assets/audio/music/farm-battle-loop.wav?v=battle-bgm-1", "preloadGroup": "battle", "loop": true, "volume": 0.55, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Boss and battle scene loop BGM from UIres/bgm/cartoon_farm_battle_bgm_30s_loop.wav" },
 
   { "key": "sfx_ui_click", "type": "sfx", "url": "", "preloadGroup": "ui", "loop": false, "volume": 0.7, "maxConcurrent": 4, "generatedFreq": 880, "desc": "通用按钮点击音" },
-  { "key": "sfx_bag_place", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.75, "maxConcurrent": 3, "generatedFreq": 620, "desc": "武器放入背包" },
+  { "key": "sfx_bag_place", "type": "sfx", "url": "/game-assets/audio/sfx/plant-place.mp3?v=plant-place-sfx-1", "preloadGroup": "bag", "loop": false, "volume": 0.2, "maxConcurrent": 3, "generatedFreq": 0, "desc": "植物种到田块里" },
   { "key": "sfx_bag_invalid", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.6, "maxConcurrent": 2, "generatedFreq": 180, "desc": "非法放置提示" },
   { "key": "sfx_bag_merge", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.9, "maxConcurrent": 2, "generatedFreq": 1040, "desc": "武器合成成功" },
   { "key": "sfx_bag_refresh", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.7, "maxConcurrent": 2, "generatedFreq": 760, "desc": "候选武器刷新" },

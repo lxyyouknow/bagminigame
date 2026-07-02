@@ -5,7 +5,7 @@
     "time": 0.2,
     "monsterId": 1,
     "count": 6,
-    "interval": 0.55,
+    "interval": 3,
     "spawn": "spread",
     "rewardGold": 24,
     "expandCols": 0,
