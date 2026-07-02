@@ -76,6 +76,7 @@ export interface SkillDef {
   effectId: number;
   color: string;
   projectileAnimKey?: string;
+  soundKey?: string;
   projectileMotion?: "target" | "roll";
   hitAnimKey?: string;
   killAnimKey?: string;

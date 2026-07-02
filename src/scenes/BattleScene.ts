@@ -838,7 +838,7 @@ export class BattleScene extends BaseScene {
     const startY = start.y;
     const projectileAssetKey = this.visualProjectileAssetKey(item);
     if ((skill.type === "projectile" || shouldUseVisualProjectile(skill) || projectileAssetKey) && target) {
-      audio.playSfxEvent("battle_shoot");
+      audio.playSfxEvent(skill.soundKey ?? "battle_shoot");
       const view = this.createProjectileView(color(skill.color), projectileAssetKey ? undefined : skill.projectileAnimKey, projectileAssetKey);
       view.position.set(startX, startY);
       this.projectileLayer.addChild(view);

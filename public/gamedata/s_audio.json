@@ -7,11 +7,12 @@
   { "key": "sfx_ui_click", "type": "sfx", "url": "/game-assets/audio/sfx/button-click.mp3?v=button-click-sfx-1", "preloadGroup": "ui", "loop": false, "volume": 0.5, "maxConcurrent": 4, "generatedFreq": 0, "desc": "通用按钮点击音" },
   { "key": "sfx_bag_place", "type": "sfx", "url": "/game-assets/audio/sfx/plant-place.mp3?v=plant-place-sfx-1", "preloadGroup": "bag", "loop": false, "volume": 0.2, "maxConcurrent": 3, "generatedFreq": 0, "desc": "植物种到田块里" },
   { "key": "sfx_bag_invalid", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.6, "maxConcurrent": 2, "generatedFreq": 180, "desc": "非法放置提示" },
-  { "key": "sfx_bag_merge", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.9, "maxConcurrent": 2, "generatedFreq": 1040, "desc": "武器合成成功" },
+  { "key": "sfx_bag_merge", "type": "sfx", "url": "/game-assets/audio/sfx/plant-merge.mp3?v=plant-merge-sfx-1", "preloadGroup": "bag", "loop": false, "volume": 0.7, "maxConcurrent": 2, "generatedFreq": 0, "desc": "植物合成升级" },
   { "key": "sfx_bag_refresh", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.7, "maxConcurrent": 2, "generatedFreq": 760, "desc": "候选武器刷新" },
   { "key": "sfx_bag_expand", "type": "sfx", "url": "", "preloadGroup": "bag", "loop": false, "volume": 0.8, "maxConcurrent": 2, "generatedFreq": 960, "desc": "背包扩格成功" },
 
   { "key": "sfx_battle_shoot", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.45, "maxConcurrent": 5, "generatedFreq": 520, "desc": "投射物发射" },
+  { "key": "sfx_wheat_attack", "type": "sfx", "url": "/game-assets/audio/sfx/wheat-attack.mp3?v=wheat-attack-sfx-1", "preloadGroup": "battle", "loop": false, "volume": 0.45, "maxConcurrent": 5, "generatedFreq": 0, "desc": "小麦 1-3 级攻击" },
   { "key": "sfx_battle_hit", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.38, "maxConcurrent": 6, "generatedFreq": 260, "desc": "命中怪物" },
   { "key": "sfx_battle_cast", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.5, "maxConcurrent": 3, "generatedFreq": 420, "desc": "范围技能释放" },
   { "key": "sfx_battle_level_up", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.9, "maxConcurrent": 1, "generatedFreq": 1180, "desc": "升级三选一出现" },
