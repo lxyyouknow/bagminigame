@@ -12,6 +12,7 @@
     "effectId": 0,
     "color": "#ff8c45",
     "projectileAnimKey": "projectile_tomato_spin",
+    "hitSoundKey": "tomato_hit",
     "hitAnimKey": "hit_tomato_splash_small",
     "killAnimKey": "hit_tomato_burst"
   },
@@ -28,6 +29,7 @@
     "effectId": 0,
     "color": "#45b7ff",
     "projectileAnimKey": "projectile_tomato_spin",
+    "hitSoundKey": "tomato_hit",
     "hitAnimKey": "hit_tomato_splash_small",
     "killAnimKey": "hit_tomato_burst"
   },
@@ -44,6 +46,7 @@
     "effectId": 0,
     "color": "#a865ff",
     "projectileAnimKey": "projectile_tomato_spin",
+    "hitSoundKey": "tomato_hit",
     "hitAnimKey": "hit_tomato_splash_small",
     "killAnimKey": "hit_tomato_burst"
   },
