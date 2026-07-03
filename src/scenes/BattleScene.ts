@@ -1314,7 +1314,7 @@ export class BattleScene extends BaseScene {
   }
 
   private damageMonster(monster: MonsterRuntime, amount: number, skill?: SkillDef): DamageResult {
-    audio.playSfxEvent("battle_hit");
+    audio.playSfxEvent(skill?.hitSoundKey ?? "battle_hit");
     const damage = Math.max(1, amount - monster.def.armor);
     monster.hp -= damage;
     this.redrawMonsterHpBar(monster);

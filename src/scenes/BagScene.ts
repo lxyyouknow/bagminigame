@@ -1,4 +1,4 @@
-import { Container, Graphics, Rectangle, type DestroyOptions } from "pixi.js";
+import { Container, Graphics, Rectangle, type AnimatedSprite, type DestroyOptions } from "pixi.js";
 import type { BagState, DragSource, DropResult, ItemShapeDef, LevelDef, PlacedItem } from "../types";
 import { ads, app, assetManager, audio, data, nextUid } from "../core/runtime";
 import { showBattle } from "../core/navigation";
@@ -108,6 +108,10 @@ export class BagScene extends BaseScene {
   private topHudExitProgress = 0;
   private combatMode = false;
   private moleWorkerAnimKey = "mole_worker_idle";
+  private moleWorker?: AnimatedSprite;
+  private moleWorkerKey = "";
+  private rabbitWorker?: AnimatedSprite;
+  private rabbitWorkerKey = "";
   private combatCooldownLayer: Container | undefined;
   private placedPlantViews = new Map<number, PlacedPlantView>();
   private plantShootMotions = new Map<number, PlantShootMotion>();
@@ -630,7 +634,7 @@ export class BagScene extends BaseScene {
       desc: "战前背包界面鼹鼠小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
     });
     if (!layout.visible) return;
-    const worker = assetManager.animation(this.moleWorkerAnimKey) ?? assetManager.animation("mole_worker_idle");
+    const worker = this.getCachedWorkerAnimation("mole", this.moleWorkerAnimKey, "mole_worker_idle");
     if (!worker) return;
     const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
     worker.position.set(pos.x, pos.y);
@@ -653,13 +657,41 @@ export class BagScene extends BaseScene {
       desc: "战前背包界面兔子小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
     });
     if (!layout.visible) return;
-    const worker = assetManager.animation("rabbit_worker_idle");
+    const worker = this.getCachedWorkerAnimation("rabbit", "rabbit_worker_idle");
     if (!worker) return;
     const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
     worker.position.set(pos.x, pos.y);
     worker.scale.set(layout.scale ?? 1);
     worker.play();
     this.container.addChild(worker);
+  }
+
+  private getCachedWorkerAnimation(kind: "mole" | "rabbit", animKey: string, fallbackKey = animKey): AnimatedSprite | undefined {
+    const cached = kind === "mole" ? this.moleWorker : this.rabbitWorker;
+    const cachedKey = kind === "mole" ? this.moleWorkerKey : this.rabbitWorkerKey;
+    if (cached && cachedKey === animKey) return cached;
+
+    cached?.destroy({ children: true } as DestroyOptions);
+    const worker = assetManager.animation(animKey) ?? (fallbackKey !== animKey ? assetManager.animation(fallbackKey) : undefined);
+    if (!worker) {
+      if (kind === "mole") {
+        this.moleWorker = undefined;
+        this.moleWorkerKey = "";
+      } else {
+        this.rabbitWorker = undefined;
+        this.rabbitWorkerKey = "";
+      }
+      return undefined;
+    }
+
+    if (kind === "mole") {
+      this.moleWorker = worker;
+      this.moleWorkerKey = animKey;
+    } else {
+      this.rabbitWorker = worker;
+      this.rabbitWorkerKey = animKey;
+    }
+    return worker;
   }
 
   private drawCandidateArea(): void {
