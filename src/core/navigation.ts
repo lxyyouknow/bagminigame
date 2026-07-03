@@ -1,6 +1,7 @@
 import type { BagState, LevelDef } from "../types";
 
 type NavigationHandlers = {
+  showLogin: () => void;
   showMain: () => void;
   showLevelLoading: (level: LevelDef, entryToast?: string) => void;
   showRun: (level: LevelDef, entryToast?: string, initialState?: BagState) => void;
@@ -9,6 +10,7 @@ type NavigationHandlers = {
 };
 
 const handlers: NavigationHandlers = {
+  showLogin: () => { throw new Error("导航未初始化：showLogin"); },
   showMain: () => { throw new Error("导航未初始化：showMain"); },
   showLevelLoading: () => { throw new Error("导航未初始化：showLevelLoading"); },
   showRun: () => { throw new Error("导航未初始化：showRun"); },
@@ -18,6 +20,10 @@ const handlers: NavigationHandlers = {
 
 export function registerNavigation(nextHandlers: NavigationHandlers): void {
   Object.assign(handlers, nextHandlers);
+}
+
+export function showLogin(): void {
+  handlers.showLogin();
 }
 
 export function showMain(): void {

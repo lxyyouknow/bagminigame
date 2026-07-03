@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 import { analytics, app, assetManager, audio, data, lifecycle, save } from "../core/runtime";
-import { showMain } from "../core/navigation";
+import { showLogin } from "../core/navigation";
 import { drawGrassBg, text } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
 import { BaseScene } from "./BaseScene";
@@ -32,14 +32,14 @@ export class LoadingScene extends BaseScene {
       lifecycle.init();
       audio.init();
       audio.preloadGroups(["boot", "main", "ui"]);
-      await assetManager.preloadGroups(["boot", "main", "bag", "battle", "ui"]);
+      await assetManager.preloadGroups(["boot", "main", "login", "bag", "battle", "ui"]);
       if (this.disposed) return;
       analytics.track("loading_complete", { levelCount: data.levels.length });
       this.progress = 1;
       this.redraw();
       window.setTimeout(() => {
         try {
-          showMain();
+          showLogin();
         } catch (error) {
           this.showError(error);
         }
