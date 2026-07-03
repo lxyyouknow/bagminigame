@@ -13,6 +13,7 @@
 
   { "key": "sfx_battle_shoot", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.45, "maxConcurrent": 5, "generatedFreq": 520, "desc": "投射物发射" },
   { "key": "sfx_wheat_attack", "type": "sfx", "url": "/game-assets/audio/sfx/wheat-attack.mp3?v=wheat-attack-sfx-1", "preloadGroup": "battle", "loop": false, "volume": 0.45, "maxConcurrent": 5, "generatedFreq": 0, "desc": "小麦 1-3 级攻击" },
+  { "key": "sfx_tomato_throw", "type": "sfx", "url": "/game-assets/audio/sfx/tomato-throw.mp3?v=tomato-throw-sfx-1", "preloadGroup": "battle", "loop": false, "volume": 0.52, "maxConcurrent": 6, "generatedFreq": 0, "desc": "番茄丢出" },
   { "key": "sfx_tomato_hit", "type": "sfx", "url": "/game-assets/audio/sfx/tomato-hit.mp3?v=tomato-hit-sfx-1", "preloadGroup": "battle", "loop": false, "volume": 0.55, "maxConcurrent": 6, "generatedFreq": 0, "desc": "番茄击中怪物" },
   { "key": "sfx_battle_hit", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.38, "maxConcurrent": 6, "generatedFreq": 260, "desc": "命中怪物" },
   { "key": "sfx_battle_cast", "type": "sfx", "url": "", "preloadGroup": "battle", "loop": false, "volume": 0.5, "maxConcurrent": 3, "generatedFreq": 420, "desc": "范围技能释放" },
