@@ -1,8 +1,8 @@
-import { Graphics } from "pixi.js";
+import { Container, Graphics, type Sprite } from "pixi.js";
 import { analytics, app, assetManager, audio, data, lifecycle, save } from "../core/runtime";
 import { showLogin } from "../core/navigation";
-import { drawGrassBg, text } from "../utils/display";
-import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect } from "../ui/layout/UiLayout";
+import { drawAssetBg, spriteFromAsset, text } from "../utils/display";
+import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
 import { BaseScene } from "./BaseScene";
 
 export class LoadingScene extends BaseScene {
@@ -32,6 +32,9 @@ export class LoadingScene extends BaseScene {
       lifecycle.init();
       audio.init();
       audio.preloadGroups(["boot", "main", "ui"]);
+      await assetManager.preloadGroups(["boot"]);
+      if (this.disposed) return;
+      this.redraw();
       await assetManager.preloadGroups(["boot", "main", "login", "bag", "battle", "ui"]);
       if (this.disposed) return;
       analytics.track("loading_complete", { levelCount: data.levels.length });
@@ -57,7 +60,7 @@ export class LoadingScene extends BaseScene {
 
   private redraw(): void {
     this.container.removeChildren();
-    drawGrassBg(this.container);
+    drawAssetBg(this.container, "loading_background");
     const w = app.screen.width;
     const h = app.screen.height;
     const heroLayout = getUiLayout(data, "loading", "hero", {
@@ -77,9 +80,9 @@ export class LoadingScene extends BaseScene {
     hero.circle(heroPos.x, heroPos.y, (heroLayout.iconSize ?? 68) / 2).fill({ color: 0xff5b5b }).stroke({ color: 0xffffff, width: 4, alpha: 0.55 });
     hero.roundRect(heroPos.x - heroLayout.width / 2, heroPos.y + (heroLayout.iconSize ?? 68) / 2, heroLayout.width, 24, 12).fill({ color: 0x1f2b39 });
 
-    const barLayout = getUiLayout(data, "loading", "progress_bar", {
+    const barLayout = getUiLayout(data, "loading", "progress_fill", {
       scene: "loading",
-      key: "progress_bar",
+      key: "progress_fill",
       anchor: "center",
       x: 0,
       y: Math.round(h * 0.56 - h / 2 + 12),
@@ -88,11 +91,9 @@ export class LoadingScene extends BaseScene {
       visible: true,
       desc: "Loading 进度条区域",
     });
-    const barRect = resolveUiLayoutRect(barLayout, w, h);
     this.bar.clear();
-    this.bar.roundRect(barRect.x, barRect.y, barRect.width, barRect.height, 12).fill({ color: 0x111822 });
-    this.bar.roundRect(barRect.x, barRect.y, barRect.width * this.progress, barRect.height, 12).fill({ color: 0x45f0c2 });
-    this.bar.stroke({ color: 0xffffff, width: 2, alpha: 0.35 });
+    this.bar.removeChildren();
+    this.drawProgressBar();
 
     const labelLayout = getUiLayout(data, "loading", "label", {
       scene: "loading",
@@ -134,5 +135,93 @@ export class LoadingScene extends BaseScene {
       errorText.position.set(errorPos.x, errorPos.y);
       this.container.addChild(errorText);
     }
+  }
+
+  private drawProgressBar(): void {
+    const w = app.screen.width;
+    const h = app.screen.height;
+    const layer = new Container();
+    const groupLayout = getUiLayout(data, "loading", "progress_group", {
+      scene: "loading",
+      key: "progress_group",
+      anchor: "bottomCenter",
+      x: 0,
+      y: 0,
+      width: 600,
+      height: 87,
+      scale: 1,
+      visible: true,
+      desc: "Loading 进度条整体模块，x/y 是整体偏移，scale 是整体缩放",
+    });
+    if (!groupLayout.visible) return;
+
+    const trackLayout = scaleUiLayoutSize(getUiLayout(data, "loading", "progress_track", {
+      scene: "loading",
+      key: "progress_track",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -380,
+      width: 700,
+      height: 258,
+      scale: 1,
+      visible: true,
+      desc: "Loading 进度条底图",
+    }));
+    const fillLayout = scaleUiLayoutSize(getUiLayout(data, "loading", "progress_fill", {
+      scene: "loading",
+      key: "progress_fill",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -345,
+      width: 600,
+      height: 87,
+      scale: 1,
+      visible: true,
+      desc: "Loading 进度条填充图",
+    }));
+    const thumbLayout = scaleUiLayoutSize(getUiLayout(data, "loading", "progress_thumb", {
+      scene: "loading",
+      key: "progress_thumb",
+      anchor: "bottomCenter",
+      x: 0,
+      y: -379,
+      width: 120,
+      height: 146,
+      scale: 1,
+      visible: true,
+      desc: "Loading 进度条滑块，x 是相对进度末端的横向微调",
+    }));
+
+    const trackRect = resolveUiLayoutRect(trackLayout, w, h);
+    const track = spriteFromAsset("loading_progress_track", trackRect.width, trackRect.height);
+    if (track && trackLayout.visible) {
+      track.position.set(trackRect.x, trackRect.y);
+      layer.addChild(track);
+    }
+
+    const fillRect = resolveUiLayoutRect(fillLayout, w, h);
+    const fill = spriteFromAsset("loading_progress_fill", fillRect.width, fillRect.height) as Sprite | undefined;
+    if (fill && fillLayout.visible) {
+      fill.position.set(fillRect.x, fillRect.y);
+      const fillMask = new Graphics();
+      fillMask.rect(fillRect.x, fillRect.y, Math.max(1, fillRect.width * this.progress), fillRect.height).fill({ color: 0xffffff });
+      fill.mask = fillMask;
+      layer.addChild(fill, fillMask);
+    }
+
+    const thumbRect = resolveUiLayoutRect(thumbLayout, w, h);
+    const thumb = spriteFromAsset("loading_progress_thumb", thumbRect.width, thumbRect.height);
+    if (thumb && thumbLayout.visible) {
+      const thumbCenterX = fillRect.x + fillRect.width * this.progress + thumbLayout.x;
+      thumb.position.set(thumbCenterX - thumbRect.width / 2, thumbRect.y);
+      layer.addChild(thumb);
+    }
+
+    const groupPivotX = fillRect.x + fillRect.width / 2;
+    const groupPivotY = fillRect.y + fillRect.height / 2;
+    layer.pivot.set(groupPivotX, groupPivotY);
+    layer.position.set(groupPivotX + groupLayout.x, groupPivotY + groupLayout.y);
+    layer.scale.set(groupLayout.scale ?? 1);
+    this.bar.addChild(layer);
   }
 }
