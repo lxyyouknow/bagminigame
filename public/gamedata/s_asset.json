@@ -3877,6 +3877,159 @@
     "fallbackKey": "ui_button_yellow"
   },
   {
+    "key": "rabbit_worker_victory_00",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_1.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_00",
+    "frame": "001.png",
+    "desc": "rabbit_worker_victory_00"
+  },
+  {
+    "key": "rabbit_worker_victory_01",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_2.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_00",
+    "frame": "002.png",
+    "desc": "rabbit_worker_victory_01"
+  },
+  {
+    "key": "rabbit_worker_victory_02",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_3.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_01",
+    "frame": "003.png",
+    "desc": "rabbit_worker_victory_02"
+  },
+  {
+    "key": "rabbit_worker_victory_03",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_4.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_02",
+    "frame": "004.png",
+    "desc": "rabbit_worker_victory_03"
+  },
+  {
+    "key": "rabbit_worker_victory_04",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_5.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_03",
+    "frame": "005.png",
+    "desc": "rabbit_worker_victory_04"
+  },
+  {
+    "key": "rabbit_worker_victory_05",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_6.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_04",
+    "frame": "006.png",
+    "desc": "rabbit_worker_victory_05"
+  },
+  {
+    "key": "rabbit_worker_victory_06",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_7.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_05",
+    "frame": "007.png",
+    "desc": "rabbit_worker_victory_06"
+  },
+  {
+    "key": "rabbit_worker_victory_07",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_8.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_06",
+    "frame": "008.png",
+    "desc": "rabbit_worker_victory_07"
+  },
+  {
+    "key": "rabbit_worker_victory_08",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_9.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_07",
+    "frame": "009.png",
+    "desc": "rabbit_worker_victory_08"
+  },
+  {
+    "key": "rabbit_worker_victory_09",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_10.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_08",
+    "frame": "010.png",
+    "desc": "rabbit_worker_victory_09"
+  },
+  {
+    "key": "rabbit_worker_victory_10",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_11.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_09",
+    "frame": "011.png",
+    "desc": "rabbit_worker_victory_10"
+  },
+  {
+    "key": "rabbit_worker_victory_11",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_12.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_10",
+    "frame": "012.png",
+    "desc": "rabbit_worker_victory_11"
+  },
+  {
+    "key": "rabbit_worker_victory_12",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_13.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_11",
+    "frame": "013.png",
+    "desc": "rabbit_worker_victory_12"
+  },
+  {
+    "key": "rabbit_worker_victory_13",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_14.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_12",
+    "frame": "014.png",
+    "desc": "rabbit_worker_victory_13"
+  },
+  {
+    "key": "rabbit_worker_victory_14",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_15.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_13",
+    "frame": "015.png",
+    "desc": "rabbit_worker_victory_14"
+  },
+  {
+    "key": "rabbit_worker_victory_15",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_16.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_14",
+    "frame": "016.png",
+    "desc": "rabbit_worker_victory_15"
+  },
+  {
+    "key": "rabbit_worker_victory_16",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/rabbit_worker_victory/sheet/spritesheet_17.json?v=rabbit-worker-victory-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_victory_15",
+    "frame": "017.png",
+    "desc": "rabbit_worker_victory_16"
+  },
+  {
     "key": "rabbit_worker_idle_00",
     "type": "image",
     "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_1.png?v=rabbit-worker-idle-1",

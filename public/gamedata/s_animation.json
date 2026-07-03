@@ -776,6 +776,34 @@
     "scale": 1
   },
   {
+    "key": "rabbit_worker_victory",
+    "assetKey": "loose_frames",
+    "frames": [
+      "rabbit_worker_victory_00",
+      "rabbit_worker_victory_01",
+      "rabbit_worker_victory_02",
+      "rabbit_worker_victory_03",
+      "rabbit_worker_victory_04",
+      "rabbit_worker_victory_05",
+      "rabbit_worker_victory_06",
+      "rabbit_worker_victory_07",
+      "rabbit_worker_victory_08",
+      "rabbit_worker_victory_09",
+      "rabbit_worker_victory_10",
+      "rabbit_worker_victory_11",
+      "rabbit_worker_victory_12",
+      "rabbit_worker_victory_13",
+      "rabbit_worker_victory_14",
+      "rabbit_worker_victory_15",
+      "rabbit_worker_victory_16"
+    ],
+    "fps": 18,
+    "loop": true,
+    "anchorX": 0.5,
+    "anchorY": 0.5,
+    "scale": 1
+  },
+  {
     "key": "rabbit_worker_idle",
     "assetKey": "loose_frames",
     "frames": [
