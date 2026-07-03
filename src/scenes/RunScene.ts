@@ -165,7 +165,10 @@ export class RunScene extends BaseScene {
     this.battleScene = new BattleScene(this.level, this.session.bag, {
       session: this.session,
       onWaveClear: (message) => this.returnToBag(message),
-      onWaveVictoryStart: () => this.bagScene.playMoleWorkerVictory(),
+      onWaveVictoryStart: () => {
+        this.bagScene.playMoleWorkerVictory();
+        this.bagScene.playRabbitWorkerVictory();
+      },
       farmBaseMode: true,
       farmBoard: this.bagScene.getFarmBoardMetrics(finalBagY),
       onFarmWeaponAttack: (uid) => this.bagScene.playPlantShootPunch(uid),
@@ -196,6 +199,7 @@ export class RunScene extends BaseScene {
     this.battleHudEnterElapsed = 0;
     this.bagScene.setCombatMode(false);
     this.bagScene.playMoleWorkerIdle();
+    this.bagScene.playRabbitWorkerIdle();
     this.bagScene.refreshAfterWave(message);
     this.bagScene.container.eventMode = "none";
     if (this.battleScene) this.battleScene.container.eventMode = "none";

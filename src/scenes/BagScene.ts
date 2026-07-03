@@ -110,6 +110,7 @@ export class BagScene extends BaseScene {
   private moleWorkerAnimKey = "mole_worker_idle";
   private moleWorker?: AnimatedSprite;
   private moleWorkerKey = "";
+  private rabbitWorkerAnimKey = "rabbit_worker_idle";
   private rabbitWorker?: AnimatedSprite;
   private rabbitWorkerKey = "";
   private combatCooldownLayer: Container | undefined;
@@ -184,6 +185,7 @@ export class BagScene extends BaseScene {
     if (this.combatMode === enabled) return;
     this.combatMode = enabled;
     if (enabled) this.moleWorkerAnimKey = "mole_worker_idle";
+    if (enabled) this.rabbitWorkerAnimKey = "rabbit_worker_idle";
     this.draw();
   }
 
@@ -194,6 +196,16 @@ export class BagScene extends BaseScene {
 
   playMoleWorkerIdle(): void {
     this.moleWorkerAnimKey = "mole_worker_idle";
+    this.draw();
+  }
+
+  playRabbitWorkerVictory(): void {
+    this.rabbitWorkerAnimKey = "rabbit_worker_victory";
+    this.draw();
+  }
+
+  playRabbitWorkerIdle(): void {
+    this.rabbitWorkerAnimKey = "rabbit_worker_idle";
     this.draw();
   }
 
@@ -657,7 +669,7 @@ export class BagScene extends BaseScene {
       desc: "战前背包界面兔子小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
     });
     if (!layout.visible) return;
-    const worker = this.getCachedWorkerAnimation("rabbit", "rabbit_worker_idle");
+    const worker = this.getCachedWorkerAnimation("rabbit", this.rabbitWorkerAnimKey, "rabbit_worker_idle");
     if (!worker) return;
     const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
     worker.position.set(pos.x, pos.y);
