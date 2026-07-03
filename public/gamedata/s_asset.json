@@ -7,6 +7,38 @@
     "fallbackKey": ""
   },
   {
+    "key": "loading_background",
+    "type": "image",
+    "url": "/game-assets/ui/login/login-background.png",
+    "preloadGroup": "boot",
+    "fallbackKey": "bg_grass_cartoon",
+    "bgAlignX": "center",
+    "bgAlignY": "center",
+    "bgOffsetX": 0,
+    "bgOffsetY": 0
+  },
+  {
+    "key": "loading_progress_track",
+    "type": "image",
+    "url": "/game-assets/ui/loading/loading-progress-track.png",
+    "preloadGroup": "boot",
+    "fallbackKey": ""
+  },
+  {
+    "key": "loading_progress_fill",
+    "type": "image",
+    "url": "/game-assets/ui/loading/loading-progress-fill.png",
+    "preloadGroup": "boot",
+    "fallbackKey": ""
+  },
+  {
+    "key": "loading_progress_thumb",
+    "type": "image",
+    "url": "/game-assets/ui/loading/loading-progress-thumb.png",
+    "preloadGroup": "boot",
+    "fallbackKey": ""
+  },
+  {
     "key": "bg_grass_cartoon",
     "type": "image",
     "url": "/game-assets/backgrounds/grass-cartoon-base.png",

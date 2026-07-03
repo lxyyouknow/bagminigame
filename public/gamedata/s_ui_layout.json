@@ -142,19 +142,67 @@
     "width": 124,
     "height": 92,
     "iconSize": 68,
-    "visible": true,
+    "visible": false,
     "desc": "Loading 中央角色占位图中心点"
   },
   {
     "scene": "loading",
     "key": "progress_bar",
-    "anchor": "center",
+    "anchor": "bottomCenter",
     "x": 0,
-    "y": 56,
-    "width": 282,
-    "height": 24,
+    "y": -335,
+    "width": 600,
+    "height": 87,
     "visible": true,
-    "desc": "Loading 进度条区域"
+    "desc": "Loading 进度条填充区域，底图和滑块按原图比例围绕此区域摆放"
+  },
+  {
+    "scene": "loading",
+    "key": "progress_group",
+    "anchor": "bottomCenter",
+    "x": 0,
+    "y": 16,
+    "width": 600,
+    "height": 87,
+    "scale": 0.9,
+    "visible": true,
+    "desc": "Loading 进度条整体模块，x/y 控制整体偏移，scale 控制整体缩放"
+  },
+  {
+    "scene": "loading",
+    "key": "progress_track",
+    "anchor": "bottomCenter",
+    "x": 0,
+    "y": -380,
+    "width": 700,
+    "height": 258,
+    "scale": 1,
+    "visible": true,
+    "desc": "Loading 进度条底图，可单独调整坐标和缩放"
+  },
+  {
+    "scene": "loading",
+    "key": "progress_fill",
+    "anchor": "bottomCenter",
+    "x": -3,
+    "y": -248,
+    "width": 600,
+    "height": 87,
+    "scale": 1,
+    "visible": true,
+    "desc": "Loading 进度条填充图，可单独调整坐标和缩放"
+  },
+  {
+    "scene": "loading",
+    "key": "progress_thumb",
+    "anchor": "bottomCenter",
+    "x": 0,
+    "y": -304,
+    "width": 120,
+    "height": 146,
+    "scale": 1,
+    "visible": true,
+    "desc": "Loading 进度条滑块，可单独调整缩放；x 是相对进度条末端的横向微调"
   },
   {
     "scene": "loading",
@@ -165,7 +213,7 @@
     "width": 320,
     "height": 36,
     "fontSize": 24,
-    "visible": true,
+    "visible": false,
     "desc": "Loading 文本中心点"
   },
   {
