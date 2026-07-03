@@ -3739,5 +3739,485 @@
     "url": "/game-assets/ui/wave-victory/wave-victory-continue.png?v=wave-victory-1",
     "preloadGroup": "battle",
     "fallbackKey": "ui_button_yellow"
+  },
+  {
+    "key": "rabbit_worker_idle_00",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_1.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_00",
+    "desc": "rabbit_worker_idle_00"
+  },
+  {
+    "key": "rabbit_worker_idle_01",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_2.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_00",
+    "desc": "rabbit_worker_idle_01"
+  },
+  {
+    "key": "rabbit_worker_idle_02",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_3.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_01",
+    "desc": "rabbit_worker_idle_02"
+  },
+  {
+    "key": "rabbit_worker_idle_03",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_4.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_02",
+    "desc": "rabbit_worker_idle_03"
+  },
+  {
+    "key": "rabbit_worker_idle_04",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_5.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_03",
+    "desc": "rabbit_worker_idle_04"
+  },
+  {
+    "key": "rabbit_worker_idle_05",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_6.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_04",
+    "desc": "rabbit_worker_idle_05"
+  },
+  {
+    "key": "rabbit_worker_idle_06",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_7.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_05",
+    "desc": "rabbit_worker_idle_06"
+  },
+  {
+    "key": "rabbit_worker_idle_07",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_8.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_06",
+    "desc": "rabbit_worker_idle_07"
+  },
+  {
+    "key": "rabbit_worker_idle_08",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_9.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_07",
+    "desc": "rabbit_worker_idle_08"
+  },
+  {
+    "key": "rabbit_worker_idle_09",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_10.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_08",
+    "desc": "rabbit_worker_idle_09"
+  },
+  {
+    "key": "rabbit_worker_idle_10",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_11.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_09",
+    "desc": "rabbit_worker_idle_10"
+  },
+  {
+    "key": "rabbit_worker_idle_11",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_12.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_10",
+    "desc": "rabbit_worker_idle_11"
+  },
+  {
+    "key": "rabbit_worker_idle_12",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_13.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_11",
+    "desc": "rabbit_worker_idle_12"
+  },
+  {
+    "key": "rabbit_worker_idle_13",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_14.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_12",
+    "desc": "rabbit_worker_idle_13"
+  },
+  {
+    "key": "rabbit_worker_idle_14",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_15.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_13",
+    "desc": "rabbit_worker_idle_14"
+  },
+  {
+    "key": "rabbit_worker_idle_15",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_16.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_14",
+    "desc": "rabbit_worker_idle_15"
+  },
+  {
+    "key": "rabbit_worker_idle_16",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_17.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_15",
+    "desc": "rabbit_worker_idle_16"
+  },
+  {
+    "key": "rabbit_worker_idle_17",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_18.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_16",
+    "desc": "rabbit_worker_idle_17"
+  },
+  {
+    "key": "rabbit_worker_idle_18",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_19.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_17",
+    "desc": "rabbit_worker_idle_18"
+  },
+  {
+    "key": "rabbit_worker_idle_19",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_20.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_18",
+    "desc": "rabbit_worker_idle_19"
+  },
+  {
+    "key": "rabbit_worker_idle_20",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_21.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_19",
+    "desc": "rabbit_worker_idle_20"
+  },
+  {
+    "key": "rabbit_worker_idle_21",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_22.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_20",
+    "desc": "rabbit_worker_idle_21"
+  },
+  {
+    "key": "rabbit_worker_idle_22",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_23.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_21",
+    "desc": "rabbit_worker_idle_22"
+  },
+  {
+    "key": "rabbit_worker_idle_23",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_24.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_22",
+    "desc": "rabbit_worker_idle_23"
+  },
+  {
+    "key": "rabbit_worker_idle_24",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_25.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_23",
+    "desc": "rabbit_worker_idle_24"
+  },
+  {
+    "key": "rabbit_worker_idle_25",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_26.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_24",
+    "desc": "rabbit_worker_idle_25"
+  },
+  {
+    "key": "rabbit_worker_idle_26",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_27.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_25",
+    "desc": "rabbit_worker_idle_26"
+  },
+  {
+    "key": "rabbit_worker_idle_27",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_28.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_26",
+    "desc": "rabbit_worker_idle_27"
+  },
+  {
+    "key": "rabbit_worker_idle_28",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_29.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_27",
+    "desc": "rabbit_worker_idle_28"
+  },
+  {
+    "key": "rabbit_worker_idle_29",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_30.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_28",
+    "desc": "rabbit_worker_idle_29"
+  },
+  {
+    "key": "rabbit_worker_idle_30",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_31.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_29",
+    "desc": "rabbit_worker_idle_30"
+  },
+  {
+    "key": "rabbit_worker_idle_31",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_32.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_30",
+    "desc": "rabbit_worker_idle_31"
+  },
+  {
+    "key": "rabbit_worker_idle_32",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_33.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_31",
+    "desc": "rabbit_worker_idle_32"
+  },
+  {
+    "key": "rabbit_worker_idle_33",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_34.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_32",
+    "desc": "rabbit_worker_idle_33"
+  },
+  {
+    "key": "rabbit_worker_idle_34",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_35.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_33",
+    "desc": "rabbit_worker_idle_34"
+  },
+  {
+    "key": "rabbit_worker_idle_35",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_36.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_34",
+    "desc": "rabbit_worker_idle_35"
+  },
+  {
+    "key": "rabbit_worker_idle_36",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_37.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_35",
+    "desc": "rabbit_worker_idle_36"
+  },
+  {
+    "key": "rabbit_worker_idle_37",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_38.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_36",
+    "desc": "rabbit_worker_idle_37"
+  },
+  {
+    "key": "rabbit_worker_idle_38",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_39.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_37",
+    "desc": "rabbit_worker_idle_38"
+  },
+  {
+    "key": "rabbit_worker_idle_39",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_40.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_38",
+    "desc": "rabbit_worker_idle_39"
+  },
+  {
+    "key": "rabbit_worker_idle_40",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_41.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_39",
+    "desc": "rabbit_worker_idle_40"
+  },
+  {
+    "key": "rabbit_worker_idle_41",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_42.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_40",
+    "desc": "rabbit_worker_idle_41"
+  },
+  {
+    "key": "rabbit_worker_idle_42",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_43.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_41",
+    "desc": "rabbit_worker_idle_42"
+  },
+  {
+    "key": "rabbit_worker_idle_43",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_44.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_42",
+    "desc": "rabbit_worker_idle_43"
+  },
+  {
+    "key": "rabbit_worker_idle_44",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_45.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_43",
+    "desc": "rabbit_worker_idle_44"
+  },
+  {
+    "key": "rabbit_worker_idle_45",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_46.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_44",
+    "desc": "rabbit_worker_idle_45"
+  },
+  {
+    "key": "rabbit_worker_idle_46",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_47.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_45",
+    "desc": "rabbit_worker_idle_46"
+  },
+  {
+    "key": "rabbit_worker_idle_47",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_48.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_46",
+    "desc": "rabbit_worker_idle_47"
+  },
+  {
+    "key": "rabbit_worker_idle_48",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_49.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_47",
+    "desc": "rabbit_worker_idle_48"
+  },
+  {
+    "key": "rabbit_worker_idle_49",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_50.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_48",
+    "desc": "rabbit_worker_idle_49"
+  },
+  {
+    "key": "rabbit_worker_idle_50",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_51.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_49",
+    "desc": "rabbit_worker_idle_50"
+  },
+  {
+    "key": "rabbit_worker_idle_51",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_52.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_50",
+    "desc": "rabbit_worker_idle_51"
+  },
+  {
+    "key": "rabbit_worker_idle_52",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_53.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_51",
+    "desc": "rabbit_worker_idle_52"
+  },
+  {
+    "key": "rabbit_worker_idle_53",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_54.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_52",
+    "desc": "rabbit_worker_idle_53"
+  },
+  {
+    "key": "rabbit_worker_idle_54",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_55.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_53",
+    "desc": "rabbit_worker_idle_54"
+  },
+  {
+    "key": "rabbit_worker_idle_55",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_56.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_54",
+    "desc": "rabbit_worker_idle_55"
+  },
+  {
+    "key": "rabbit_worker_idle_56",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_57.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_55",
+    "desc": "rabbit_worker_idle_56"
+  },
+  {
+    "key": "rabbit_worker_idle_57",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_58.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_56",
+    "desc": "rabbit_worker_idle_57"
+  },
+  {
+    "key": "rabbit_worker_idle_58",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_59.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_57",
+    "desc": "rabbit_worker_idle_58"
+  },
+  {
+    "key": "rabbit_worker_idle_59",
+    "type": "image",
+    "url": "/game-assets/characters/rabbit_worker_idle/sheet/spritesheet_60.png?v=rabbit-worker-idle-1",
+    "preloadGroup": "bag",
+    "fallbackKey": "rabbit_worker_idle_58",
+    "desc": "rabbit_worker_idle_59"
   }
 ]

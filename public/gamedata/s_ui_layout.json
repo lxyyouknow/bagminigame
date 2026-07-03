@@ -336,6 +336,18 @@
   },
   {
     "scene": "bag",
+    "key": "rabbit_worker_idle",
+    "anchor": "topCenter",
+    "x": -285,
+    "y": 500,
+    "width": 512,
+    "height": 512,
+    "scale": 0.45,
+    "visible": true,
+    "desc": "战前背包界面兔子小工人待机循环动画，x/y 为中心点，scale 控制显示缩放，原始图集帧保持 512x512"
+  },
+  {
+    "scene": "bag",
     "key": "board",
     "anchor": "topCenter",
     "x": 0,
