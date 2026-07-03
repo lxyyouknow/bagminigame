@@ -1,8 +1,8 @@
 [
-  { "key": "bgm_main", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.wav", "preloadGroup": "main", "loop": true, "volume": 0.54, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：选关/主界面" },
-  { "key": "bgm_bag", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.wav", "preloadGroup": "bag", "loop": true, "volume": 0.5, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：背包/备战界面" },
-  { "key": "bgm_battle", "type": "music", "url": "/game-assets/audio/music/farm-battle-loop.wav?v=battle-bgm-1", "preloadGroup": "battle", "loop": true, "volume": 0.5, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Battle scene loop BGM from UIres/bgm/cartoon_farm_battle_bgm_30s_loop.wav" },
-  { "key": "bgm_boss", "type": "music", "url": "/game-assets/audio/music/farm-battle-loop.wav?v=battle-bgm-1", "preloadGroup": "battle", "loop": true, "volume": 0.55, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Boss and battle scene loop BGM from UIres/bgm/cartoon_farm_battle_bgm_30s_loop.wav" },
+  { "key": "bgm_main", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.mp3", "preloadGroup": "main", "loop": true, "volume": 0.54, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：选关/主界面" },
+  { "key": "bgm_bag", "type": "music", "url": "/game-assets/audio/music/farm-sunshine-loop.mp3", "preloadGroup": "bag", "loop": true, "volume": 0.5, "maxConcurrent": 1, "generatedFreq": 0, "desc": "农场阳光主题循环 BGM：背包/备战界面" },
+  { "key": "bgm_battle", "type": "music", "url": "/game-assets/audio/music/farm-battle-loop.mp3?v=battle-bgm-1", "preloadGroup": "battle", "loop": true, "volume": 0.5, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Battle scene loop BGM from UIres/bgm/cartoon_farm_battle_bgm_30s_loop.wav" },
+  { "key": "bgm_boss", "type": "music", "url": "/game-assets/audio/music/farm-battle-loop.mp3?v=battle-bgm-1", "preloadGroup": "battle", "loop": true, "volume": 0.55, "maxConcurrent": 1, "generatedFreq": 0, "desc": "Boss and battle scene loop BGM from UIres/bgm/cartoon_farm_battle_bgm_30s_loop.wav" },
 
   { "key": "sfx_ui_click", "type": "sfx", "url": "/game-assets/audio/sfx/button-click.mp3?v=button-click-sfx-1", "preloadGroup": "ui", "loop": false, "volume": 0.5, "maxConcurrent": 4, "generatedFreq": 0, "desc": "通用按钮点击音" },
   { "key": "sfx_bag_place", "type": "sfx", "url": "/game-assets/audio/sfx/plant-place.mp3?v=plant-place-sfx-1", "preloadGroup": "bag", "loop": false, "volume": 0.2, "maxConcurrent": 3, "generatedFreq": 0, "desc": "植物种到田块里" },
