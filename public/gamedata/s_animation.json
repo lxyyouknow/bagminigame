@@ -832,7 +832,7 @@
       "rabbit_worker_idle_58",
       "rabbit_worker_idle_59"
     ],
-    "fps": 18,
+    "fps": 16,
     "loop": true,
     "anchorX": 0.5,
     "anchorY": 0.5,

@@ -25,6 +25,38 @@
     "bgOffsetY": 0
   },
   {
+    "key": "login_background",
+    "type": "image",
+    "url": "/game-assets/ui/login/login-background.png",
+    "preloadGroup": "login",
+    "fallbackKey": "bg_grass_cartoon",
+    "bgAlignX": "center",
+    "bgAlignY": "center",
+    "bgOffsetX": 0,
+    "bgOffsetY": 0
+  },
+  {
+    "key": "login_start_game_button",
+    "type": "image",
+    "url": "/game-assets/ui/login/login-start-game.png",
+    "preloadGroup": "login",
+    "fallbackKey": "ui_button_yellow"
+  },
+  {
+    "key": "login_guest_button",
+    "type": "image",
+    "url": "/game-assets/ui/login/login-guest.png",
+    "preloadGroup": "login",
+    "fallbackKey": "ui_button_blue"
+  },
+  {
+    "key": "login_settings_button",
+    "type": "image",
+    "url": "/game-assets/ui/login/login-settings.png",
+    "preloadGroup": "login",
+    "fallbackKey": "ui_button_basic"
+  },
+  {
     "key": "bg_battle_field",
     "type": "image",
     "url": "/game-assets/backgrounds/battle-background.png",
