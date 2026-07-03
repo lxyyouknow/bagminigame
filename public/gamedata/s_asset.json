@@ -3126,7 +3126,7 @@
   {
     "key": "mole_worker_idle_00",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_1.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_1.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "",
     "frame": "001.png",
@@ -3135,7 +3135,7 @@
   {
     "key": "mole_worker_idle_01",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_2.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_2.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_00",
     "frame": "002.png",
@@ -3144,7 +3144,7 @@
   {
     "key": "mole_worker_idle_02",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_3.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_3.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_01",
     "frame": "003.png",
@@ -3153,7 +3153,7 @@
   {
     "key": "mole_worker_idle_03",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_4.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_4.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_02",
     "frame": "004.png",
@@ -3162,7 +3162,7 @@
   {
     "key": "mole_worker_idle_04",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_5.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_5.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_03",
     "frame": "005.png",
@@ -3171,7 +3171,7 @@
   {
     "key": "mole_worker_idle_05",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_6.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_6.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_04",
     "frame": "006.png",
@@ -3180,7 +3180,7 @@
   {
     "key": "mole_worker_idle_06",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_7.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_7.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_05",
     "frame": "007.png",
@@ -3189,7 +3189,7 @@
   {
     "key": "mole_worker_idle_07",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_8.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_8.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_06",
     "frame": "008.png",
@@ -3198,7 +3198,7 @@
   {
     "key": "mole_worker_idle_08",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_9.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_9.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_07",
     "frame": "009.png",
@@ -3207,7 +3207,7 @@
   {
     "key": "mole_worker_idle_09",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_10.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_10.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_08",
     "frame": "010.png",
@@ -3216,7 +3216,7 @@
   {
     "key": "mole_worker_idle_10",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_11.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_11.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_09",
     "frame": "011.png",
@@ -3225,7 +3225,7 @@
   {
     "key": "mole_worker_idle_11",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_12.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_12.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_10",
     "frame": "012.png",
@@ -3234,7 +3234,7 @@
   {
     "key": "mole_worker_idle_12",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_13.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_13.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_11",
     "frame": "013.png",
@@ -3243,7 +3243,7 @@
   {
     "key": "mole_worker_idle_13",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_14.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_14.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_12",
     "frame": "014.png",
@@ -3252,7 +3252,7 @@
   {
     "key": "mole_worker_idle_14",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_15.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_15.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_13",
     "frame": "015.png",
@@ -3261,7 +3261,7 @@
   {
     "key": "mole_worker_idle_15",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_16.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_16.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_14",
     "frame": "016.png",
@@ -3270,7 +3270,7 @@
   {
     "key": "mole_worker_idle_16",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_17.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_17.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_15",
     "frame": "017.png",
@@ -3279,7 +3279,7 @@
   {
     "key": "mole_worker_idle_17",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_18.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_18.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_16",
     "frame": "018.png",
@@ -3288,11 +3288,83 @@
   {
     "key": "mole_worker_idle_18",
     "type": "spritesheet",
-    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_19.json?v=mole-worker-1",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_19.json?v=mole-worker-idle-2",
     "preloadGroup": "bag",
     "fallbackKey": "mole_worker_idle_17",
     "frame": "019.png",
     "desc": "mole_worker_idle_18"
+  },
+  {
+    "key": "mole_worker_idle_19",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_20.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_18",
+    "frame": "020.png",
+    "desc": "mole_worker_idle_19"
+  },
+  {
+    "key": "mole_worker_idle_20",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_21.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_19",
+    "frame": "021.png",
+    "desc": "mole_worker_idle_20"
+  },
+  {
+    "key": "mole_worker_idle_21",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_22.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_20",
+    "frame": "022.png",
+    "desc": "mole_worker_idle_21"
+  },
+  {
+    "key": "mole_worker_idle_22",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_23.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_21",
+    "frame": "023.png",
+    "desc": "mole_worker_idle_22"
+  },
+  {
+    "key": "mole_worker_idle_23",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_24.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_22",
+    "frame": "024.png",
+    "desc": "mole_worker_idle_23"
+  },
+  {
+    "key": "mole_worker_idle_24",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_25.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_23",
+    "frame": "025.png",
+    "desc": "mole_worker_idle_24"
+  },
+  {
+    "key": "mole_worker_idle_25",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_26.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_24",
+    "frame": "026.png",
+    "desc": "mole_worker_idle_25"
+  },
+  {
+    "key": "mole_worker_idle_26",
+    "type": "spritesheet",
+    "url": "/game-assets/characters/mole_worker_idle/sheet/spritesheet_27.json?v=mole-worker-idle-2",
+    "preloadGroup": "bag",
+    "fallbackKey": "mole_worker_idle_25",
+    "frame": "027.png",
+    "desc": "mole_worker_idle_26"
   },
   {
     "key": "mole_worker_victory_00",

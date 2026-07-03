@@ -668,7 +668,15 @@
       "mole_worker_idle_15",
       "mole_worker_idle_16",
       "mole_worker_idle_17",
-      "mole_worker_idle_18"
+      "mole_worker_idle_18",
+      "mole_worker_idle_19",
+      "mole_worker_idle_20",
+      "mole_worker_idle_21",
+      "mole_worker_idle_22",
+      "mole_worker_idle_23",
+      "mole_worker_idle_24",
+      "mole_worker_idle_25",
+      "mole_worker_idle_26"
     ],
     "fps": 12,
     "loop": true,
