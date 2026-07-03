@@ -249,6 +249,7 @@ export class BagScene extends BaseScene {
     this.container.removeChildren();
     drawAssetBg(this.container, "bg_bag_prebattle");
     this.drawMoleWorkerIdle();
+    this.drawRabbitWorkerIdle();
     const w = app.screen.width;
     const h = app.screen.height;
     const boardLayout = this.layout("board", {
@@ -619,17 +620,40 @@ export class BagScene extends BaseScene {
     const layout = this.layout("mole_worker_idle", {
       scene: "bag",
       key: "mole_worker_idle",
-      anchor: "bottomCenter",
-      x: -246,
-      y: -500,
+      anchor: "topCenter",
+      x: 285,
+      y: 500,
       width: 512,
       height: 512,
-      scale: 0.42,
+      scale: 0.45,
       visible: true,
       desc: "战前背包界面鼹鼠小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
     });
     if (!layout.visible) return;
     const worker = assetManager.animation(this.moleWorkerAnimKey) ?? assetManager.animation("mole_worker_idle");
+    if (!worker) return;
+    const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
+    worker.position.set(pos.x, pos.y);
+    worker.scale.set(layout.scale ?? 1);
+    worker.play();
+    this.container.addChild(worker);
+  }
+
+  private drawRabbitWorkerIdle(): void {
+    const layout = this.layout("rabbit_worker_idle", {
+      scene: "bag",
+      key: "rabbit_worker_idle",
+      anchor: "topCenter",
+      x: -285,
+      y: 500,
+      width: 512,
+      height: 512,
+      scale: 0.45,
+      visible: true,
+      desc: "战前背包界面兔子小工人待机循环动画，x/y 控制中心点，scale 控制显示缩放",
+    });
+    if (!layout.visible) return;
+    const worker = assetManager.animation("rabbit_worker_idle");
     if (!worker) return;
     const pos = resolveUiLayoutPosition(layout, app.screen.width, app.screen.height);
     worker.position.set(pos.x, pos.y);
