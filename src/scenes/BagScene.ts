@@ -848,8 +848,10 @@ export class BagScene extends BaseScene {
     const scaledRefreshLayout = scaleUiLayoutSize(refreshLayout);
     const scaledExpandLayout = scaleUiLayoutSize(expandLayout);
     const scaledStartLayout = scaleUiLayoutSize(startLayout);
-    const refresh = uiButton("bag_ad_refresh_button", "", scaledRefreshLayout.width, scaledRefreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2(), scaledRefreshLayout.fontSize ?? 16);
-    const expand = uiButton("bag_gold_refresh_button", "", scaledExpandLayout.width, scaledExpandLayout.height, 0x33bfff, () => this.refreshCandidatesByGold(), scaledExpandLayout.fontSize ?? 16, 0.95);
+    const refreshReleasePadding = Math.max(18, Math.round(scaledRefreshLayout.height * 0.65));
+    const expandReleasePadding = Math.max(18, Math.round(scaledExpandLayout.height * 0.65));
+    const refresh = uiButton("bag_ad_refresh_button", "", scaledRefreshLayout.width, scaledRefreshLayout.height, 0x28c9b0, () => void this.refreshCandidatesByAdQuality2(), scaledRefreshLayout.fontSize ?? 16, undefined, false, refreshReleasePadding);
+    const expand = uiButton("bag_gold_refresh_button", "", scaledExpandLayout.width, scaledExpandLayout.height, 0x33bfff, () => this.refreshCandidatesByGold(), scaledExpandLayout.fontSize ?? 16, 0.95, false, expandReleasePadding);
     const start = uiButton("bag_start_wave_button", "", scaledStartLayout.width, scaledStartLayout.height, 0xffb33d, () => this.tryStartBattle(), scaledStartLayout.fontSize ?? 16, 0.95);
     const refreshPos = resolveUiLayoutPosition(scaledRefreshLayout, w, h);
     const expandRect = resolveUiLayoutRect(scaledExpandLayout, w, h);

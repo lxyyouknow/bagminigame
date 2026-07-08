@@ -1,9 +1,11 @@
 import { Container, Graphics, type Sprite } from "pixi.js";
 import { analytics, app, assetManager, audio, data, lifecycle, save } from "../core/runtime";
-import { showLogin } from "../core/navigation";
+import { showLogin, showRun } from "../core/navigation";
+import { debugTrace } from "../core/debugTrace";
 import { drawAssetBg, spriteFromAsset, text } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
 import { BaseScene } from "./BaseScene";
+import { inspectRunRecoverySnapshot } from "./runRecoveryState";
 
 export class LoadingScene extends BaseScene {
   private progress = 0;
@@ -13,6 +15,7 @@ export class LoadingScene extends BaseScene {
 
   constructor() {
     super();
+    document.querySelector("#boot-loading")?.remove();
     this.redraw();
     void this.load();
   }
@@ -31,10 +34,12 @@ export class LoadingScene extends BaseScene {
       analytics.setUserId(save.getAccountId());
       lifecycle.init();
       audio.init();
-      audio.preloadGroups(["boot", "main", "ui"]);
+      audio.preloadGroupsInBackground(["main"]);
       await assetManager.preloadGroups(["boot"]);
       if (this.disposed) return;
       this.redraw();
+      await audio.preloadGroups(["boot", "main", "login", "bag", "battle", "ui"]);
+      audio.preloadGroupsInBackground(["main", "bag", "battle"]);
       await assetManager.preloadGroups(["boot", "main", "login", "bag", "battle", "ui"]);
       if (this.disposed) return;
       analytics.track("loading_complete", { levelCount: data.levels.length });
@@ -42,6 +47,24 @@ export class LoadingScene extends BaseScene {
       this.redraw();
       window.setTimeout(() => {
         try {
+          const recoveryResult = inspectRunRecoverySnapshot(save.getAccountId());
+          const recovery = recoveryResult.snapshot;
+          if (recovery) {
+            debugTrace("run_recovery_restore", {
+              levelId: recovery.levelId,
+              phase: recovery.phase,
+              wave: recovery.session.currentWave,
+              baseHp: Math.round(recovery.session.baseHp),
+              source: recoveryResult.source ?? "",
+            });
+            const level = data.levels.find((row) => row.id === recovery.levelId);
+            if (level) {
+              showRun(level, "检测到页面刷新，已恢复上一局", recovery.bag, recovery.session);
+              return;
+            }
+            debugTrace("run_recovery_missing_level", { levelId: recovery.levelId });
+          }
+          debugTrace("run_recovery_skip", { reason: recoveryResult.reason, account: save.getAccountId() });
           showLogin();
         } catch (error) {
           this.showError(error);

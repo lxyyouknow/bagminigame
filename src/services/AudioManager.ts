@@ -1,15 +1,20 @@
 import { GameDataManager } from "../data/GameDataManager";
 import type { AudioDef, AudioSettings } from "../types";
 import { clamp01 } from "../utils/math";
+import { debugTrace } from "../core/debugTrace";
 
 export class AudioManager {
   private readonly storageKey = "backpack-mini-game-audio";
   private clips = new Map<string, HTMLAudioElement>();
+  private sfxBuffers = new Map<string, AudioBuffer>();
+  private sfxBufferLoading = new Map<string, Promise<void>>();
   private activeCount = new Map<string, number>();
   private lastPlayAt = new Map<string, number>();
   private currentMusic: HTMLAudioElement | undefined;
   private currentMusicKey = "";
   private context: AudioContext | undefined;
+  private htmlAudioUnlocked = false;
+  private musicUnlockPromise: Promise<void> | undefined;
   private generatedMusic:
     | {
         key: string;
@@ -31,14 +36,25 @@ export class AudioManager {
   init(): void {
     this.loadSettings();
     window.addEventListener("pointerdown", () => void this.unlock(), { once: true });
+    window.addEventListener("touchend", () => void this.unlock(), { once: true });
+    document.addEventListener("WeixinJSBridgeReady", () => void this.unlock(), { once: true });
   }
 
-  preloadGroups(groups: string[]): void {
+  async preloadGroups(groups: string[]): Promise<void> {
     const targetGroups = new Set(groups);
+    const rows: AudioDef[] = [];
+    const musicRows: AudioDef[] = [];
     for (const row of this.data.audio) {
       if (!row.url || !targetGroups.has(row.preloadGroup)) continue;
-      this.ensureClip(row);
+      if (row.type === "music") musicRows.push(row);
+      else rows.push(row);
     }
+    for (const row of musicRows) this.ensureClip(row);
+    await Promise.all(rows.map((row) => this.loadSfxBuffer(row)));
+  }
+
+  preloadGroupsInBackground(groups: string[]): void {
+    void this.preloadGroups(groups);
   }
 
   playMusicEvent(eventKey: string): void {
@@ -75,16 +91,8 @@ export class AudioManager {
       return;
     }
 
-    const active = this.activeCount.get(def.key) ?? 0;
-    if (def.maxConcurrent > 0 && active >= def.maxConcurrent) return;
-    const base = this.ensureClip(def);
-    if (!base) return;
-    const clip = base.cloneNode(true) as HTMLAudioElement;
-    clip.volume = this.calcVolume(def, "sfx");
-    clip.loop = false;
-    this.activeCount.set(def.key, active + 1);
-    clip.addEventListener("ended", () => this.activeCount.set(def.key, Math.max(0, (this.activeCount.get(def.key) ?? 1) - 1)), { once: true });
-    void clip.play().catch(() => {});
+    if (this.playBufferedSfx(def)) return;
+    void this.loadSfxBuffer(def);
   }
 
   setMasterVolume(value: number): void {
@@ -147,7 +155,14 @@ export class AudioManager {
     clip.volume = this.calcVolume(def, "music");
     clip.currentTime = 0;
     this.currentMusic = clip;
-    if (!this.settings.mutedMusic) void clip.play().catch(() => {});
+    if (!this.settings.mutedMusic) {
+      void clip.play().catch((error) => {
+        debugTrace("audio_music_play_failed", {
+          key: def.key,
+          message: error instanceof Error ? error.message : String(error),
+        });
+      });
+    }
   }
 
   private applyMusicVolume(): void {
@@ -157,7 +172,12 @@ export class AudioManager {
     if (this.settings.mutedMusic || this.musicPausedByGame || this.currentMusic.volume <= 0) {
       this.currentMusic.pause();
     } else {
-      void this.currentMusic.play().catch(() => {});
+      void this.currentMusic.play().catch((error) => {
+        debugTrace("audio_music_resume_failed", {
+          key: this.currentMusicKey,
+          message: error instanceof Error ? error.message : String(error),
+        });
+      });
     }
   }
 
@@ -169,16 +189,87 @@ export class AudioManager {
     clip.preload = "auto";
     clip.loop = def.loop;
     clip.volume = this.calcVolume(def, def.type);
+    clip.load();
     this.clips.set(def.key, clip);
     return clip;
   }
 
+  private async loadSfxBuffer(def: AudioDef): Promise<void> {
+    if (!def.url || this.sfxBuffers.has(def.key)) return;
+    const existing = this.sfxBufferLoading.get(def.key);
+    if (existing) return existing;
+    const task = this.fetchAndDecodeSfx(def).finally(() => {
+      this.sfxBufferLoading.delete(def.key);
+    });
+    this.sfxBufferLoading.set(def.key, task);
+    return task;
+  }
+
+  private async fetchAndDecodeSfx(def: AudioDef): Promise<void> {
+    const ctx = this.ensureAudioContext();
+    if (!ctx || !def.url) return;
+    try {
+      const response = await fetch(def.url, { cache: "force-cache" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const bytes = await response.arrayBuffer();
+      const buffer = await ctx.decodeAudioData(bytes.slice(0));
+      this.sfxBuffers.set(def.key, buffer);
+      debugTrace("audio_sfx_decoded", { key: def.key, seconds: Math.round(buffer.duration * 100) / 100 });
+    } catch (error) {
+      debugTrace("audio_sfx_decode_failed", {
+        key: def.key,
+        message: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  private playBufferedSfx(def: AudioDef): boolean {
+    const buffer = this.sfxBuffers.get(def.key);
+    if (!buffer) return false;
+    const ctx = this.ensureAudioContext();
+    if (!ctx) return false;
+    if (ctx.state === "suspended") void ctx.resume().catch(() => {});
+    const active = this.activeCount.get(def.key) ?? 0;
+    if (def.maxConcurrent > 0 && active >= def.maxConcurrent) return true;
+    const gain = ctx.createGain();
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    gain.gain.value = this.calcVolume(def, "sfx");
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    this.activeCount.set(def.key, active + 1);
+    source.onended = () => {
+      source.disconnect();
+      gain.disconnect();
+      this.activeCount.set(def.key, Math.max(0, (this.activeCount.get(def.key) ?? 1) - 1));
+    };
+    try {
+      source.start();
+      return true;
+    } catch (error) {
+      debugTrace("audio_sfx_start_failed", {
+        key: def.key,
+        message: error instanceof Error ? error.message : String(error),
+      });
+      source.onended = null;
+      source.disconnect();
+      gain.disconnect();
+      this.activeCount.set(def.key, Math.max(0, active));
+      return false;
+    }
+  }
+
+  private ensureAudioContext(): AudioContext | undefined {
+    const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Ctor) return undefined;
+    this.context ??= new Ctor();
+    return this.context;
+  }
+
   private playGenerated(def: AudioDef): void {
     if (!def.generatedFreq || this.settings.sfxVolume <= 0 || this.settings.masterVolume <= 0) return;
-    const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Ctor) return;
-    this.context ??= new Ctor();
-    const ctx = this.context;
+    const ctx = this.ensureAudioContext();
+    if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = "triangle";
@@ -193,10 +284,8 @@ export class AudioManager {
 
   private playGeneratedMusic(def: AudioDef): void {
     if (!def.generatedFreq) return;
-    const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Ctor) return;
-    this.context ??= new Ctor();
-    const ctx = this.context;
+    const ctx = this.ensureAudioContext();
+    if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = "sine";
@@ -240,8 +329,38 @@ export class AudioManager {
   }
 
   private async unlock(): Promise<void> {
+    this.htmlAudioUnlocked = true;
     if (this.context?.state === "suspended") await this.context.resume();
+    this.musicUnlockPromise ??= this.unlockMusicClips();
+    await this.musicUnlockPromise;
     if (this.currentMusic && !this.settings.mutedMusic && !this.musicPausedByGame) void this.currentMusic.play().catch(() => {});
+  }
+
+  private async unlockMusicClips(): Promise<void> {
+    const musicRows = this.data.audio.filter((row) => row.type === "music" && row.url);
+    for (const row of musicRows) {
+      const clip = this.ensureClip(row);
+      if (!clip) continue;
+      const previousMuted = clip.muted;
+      const previousVolume = clip.volume;
+      const previousTime = clip.currentTime;
+      try {
+        clip.muted = true;
+        clip.volume = 0;
+        await clip.play();
+        clip.pause();
+        clip.currentTime = Number.isFinite(previousTime) ? previousTime : 0;
+        debugTrace("audio_music_unlocked", { key: row.key });
+      } catch (error) {
+        debugTrace("audio_music_unlock_failed", {
+          key: row.key,
+          message: error instanceof Error ? error.message : String(error),
+        });
+      } finally {
+        clip.muted = previousMuted;
+        clip.volume = previousVolume;
+      }
+    }
   }
 
   private loadSettings(): void {

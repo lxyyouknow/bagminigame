@@ -1,9 +1,11 @@
 import type { LifecycleReason } from "../services/LifecycleService";
 import type { BagState, LevelDef } from "../types";
-import { app, audio, data } from "../core/runtime";
+import { app, audio, data, save } from "../core/runtime";
+import { debugTrace } from "../core/debugTrace";
 import { BaseScene } from "./BaseScene";
 import { BagScene } from "./BagScene";
 import { BattleScene } from "./BattleScene";
+import { clearRunRecoverySnapshot, saveRunRecoverySnapshot, type RunRecoveryPhase } from "./runRecoveryState";
 import {
   beginBagTransition,
   beginBattleTransition,
@@ -34,8 +36,10 @@ export class RunScene extends BaseScene {
   private readonly battleHudExitDuration: number;
   private pendingReturnMessage = "";
   private readonly farmBattleCameraShift: number;
+  private recoverySaveElapsed = 0;
+  private recoveryEnabled = true;
 
-  constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string) {
+  constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string, restoredSession?: RunSessionState) {
     super();
     this.flow = createRunFlow(
       data.getEconomy("run_transition_seconds") ?? 0.42,
@@ -48,17 +52,23 @@ export class RunScene extends BaseScene {
     this.battleHudExitDuration = data.getEconomy("run_battle_top_hud_exit_seconds") ?? this.battleHudEnterDuration;
     this.farmBattleCameraShift = data.economy.find((row) => row.key === "run_farm_battle_camera_shift")?.value ?? 0.5;
     this.bagScene = new BagScene(level, initialState, entryToast, () => this.startBattle());
-    this.session = createRunSessionState(level, this.bagScene.getState());
+    this.session = restoredSession ? { ...restoredSession, bag: this.bagScene.getState() } : createRunSessionState(level, this.bagScene.getState());
     this.bagScene.attachRunSession(this.session);
     this.bagScene.refresh();
     this.container.addChild(this.bagScene.container);
     this.applyViewOffsets();
     this.applyUiTransition();
+    this.persistRecoverySnapshot("preparing");
     audio.playMusicEvent("music_bag");
   }
 
   override update(dt: number): void {
     if (this.lifecycleFrozen) return;
+    this.recoverySaveElapsed += Math.max(0, dt);
+    if (this.recoverySaveElapsed >= 0.7) {
+      this.persistRecoverySnapshot(this.getRecoveryPhase());
+      this.recoverySaveElapsed = 0;
+    }
     if (this.startingBattleUi) {
       this.startingBattleUiElapsed = Math.min(this.startingBattleUiDuration, this.startingBattleUiElapsed + Math.max(0, dt));
       const progress = this.easeOutCubic(this.startingBattleUiElapsed / Math.max(0.01, this.startingBattleUiDuration));
@@ -169,6 +179,7 @@ export class RunScene extends BaseScene {
         this.bagScene.playMoleWorkerVictory();
         this.bagScene.playRabbitWorkerVictory();
       },
+      onExitToMain: () => this.stopRecoverySnapshot(),
       farmBaseMode: true,
       farmBoard: this.bagScene.getFarmBoardMetrics(finalBagY),
       onFarmWeaponAttack: (uid) => this.bagScene.playPlantShootPunch(uid),
@@ -229,6 +240,7 @@ export class RunScene extends BaseScene {
     }
     audio.playMusicEvent("music_bag");
     this.applyViewOffsets();
+    this.persistRecoverySnapshot("preparing");
   }
 
   private applyViewOffsets(): void {
@@ -263,6 +275,37 @@ export class RunScene extends BaseScene {
 
   private easeOutCubic(value: number): number {
     return 1 - Math.pow(1 - Math.min(1, Math.max(0, value)), 3);
+  }
+
+  private getRecoveryPhase(): RunRecoveryPhase {
+    if (this.flow.phase === "preparing") return "preparing";
+    if (this.flow.phase === "fighting") return "fighting";
+    return "transition";
+  }
+
+  private persistRecoverySnapshot(phase: RunRecoveryPhase): void {
+    if (!this.recoveryEnabled) return;
+    this.session.bag = this.bagScene.getState();
+    saveRunRecoverySnapshot({
+      version: 1,
+      accountId: save.getAccountId(),
+      levelId: this.level.id,
+      phase,
+      savedAt: Date.now(),
+      bag: this.bagScene.getState(),
+      session: this.session,
+    });
+    debugTrace("run_recovery_save", {
+      levelId: this.level.id,
+      phase,
+      wave: this.session.currentWave,
+      baseHp: Math.round(this.session.baseHp),
+    });
+  }
+
+  private stopRecoverySnapshot(): void {
+    this.recoveryEnabled = false;
+    clearRunRecoverySnapshot();
   }
 
   override destroy(): void {

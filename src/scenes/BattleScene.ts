@@ -2,6 +2,7 @@ import { AnimatedSprite, Container, Graphics, Sprite, type DestroyOptions } from
 import type { AnimationDef, BagState, BattleTuningDef, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
+import { debugTrace } from "../core/debugTrace";
 import { showBag, showMain } from "../core/navigation";
 import { color, text, uiButton, weightedPick, spriteFromAsset, spriteFromUi } from "../utils/display";
 import { getUiLayout, resolveUiLayoutPosition, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
@@ -12,6 +13,7 @@ import { WndRogueOption } from "../windows/WndRogueOption";
 import { WndWaveVictory } from "../windows/WndWaveVictory";
 import { getBaseDamageFeedback, getBaseShakeFeedback } from "./baseDamageFeedbackRules";
 import { getBossArrivalWarningFrame } from "./bossArrivalWarningRules";
+import { shouldOpenPauseWindowForLifecycle } from "./battleLifecycleRules";
 import { getDamageNumberFeedback } from "./battleDamageFeedbackRules";
 import { resolveMonsterContactY } from "./battleContactLineRules";
 import { computeBattleEquipListLayout, computeBattleHudLayout } from "./battleEquipLayout";
@@ -40,6 +42,8 @@ export interface BattleSceneOptions {
   session?: RunSessionState;
   onWaveClear?: (message: string) => void;
   onWaveVictoryStart?: () => void;
+  onResult?: (win: boolean) => void;
+  onExitToMain?: () => void;
   farmBaseMode?: boolean;
   farmBoard?: FarmBoardMetrics;
   onFarmWeaponAttack?: (uid: number) => void;
@@ -141,6 +145,7 @@ export class BattleScene extends BaseScene {
   private baseShakeDuration = 0;
   private baseShakeAmplitude = 0;
   private bossArrivalWarning?: BossArrivalWarningRuntime;
+  private lifecycleSoftPaused = false;
   private readonly heroAnimKey = "hero_pumpkin_slingshot_attack_up";
   private readonly animationPlayback = new AnimationPlaybackController();
   private readonly tuning: BattleTuningDef;
@@ -150,7 +155,7 @@ export class BattleScene extends BaseScene {
   constructor(private readonly level: LevelDef, private readonly bag: BagState, private readonly options: BattleSceneOptions = {}) {
     super();
     this.farmBaseMode = Boolean(options.farmBaseMode);
-    audio.preloadGroups(["battle"]);
+    void audio.preloadGroups(["battle"]);
     audio.playMusicEvent("music_battle");
     this.monsterLayer.sortableChildren = true;
     this.tuning = data.getBattleTuning(level.battleTuningId);
@@ -197,6 +202,7 @@ export class BattleScene extends BaseScene {
     this.updateBossArrivalWarning(dt);
     if (this.ending) return;
     if (this.baseHp <= 0) {
+      debugTrace("battle_base_hp_zero", { levelId: this.level.id, wave: this.currentWave, kills: this.options.session?.kills ?? this.kills });
       this.showResult(false);
     } else if (isWaveCombatSettled(this.spawnQueue.length, this.monsters)) {
       if (this.currentWave >= this.level.winWave) this.showResult(true);
@@ -209,11 +215,15 @@ export class BattleScene extends BaseScene {
       this.setBattlePaused(true);
       return;
     }
-    this.openPause();
+    this.setBattlePaused(true);
+    this.lifecycleSoftPaused = !shouldOpenPauseWindowForLifecycle(_reason);
+    if (!this.lifecycleSoftPaused) this.openPause();
   }
 
   override onAppResume(_reason: LifecycleReason): void {
-    // 市面小游戏常见处理：回到前台只恢复音频，不自动继续战斗，等待玩家点“继续挑战”。
+    if (!this.lifecycleSoftPaused || this.modalWindow) return;
+    this.lifecycleSoftPaused = false;
+    this.setBattlePaused(false);
   }
 
   setTopHudRevealProgress(progress: number): void {
@@ -1789,6 +1799,14 @@ export class BattleScene extends BaseScene {
     this.setBattlePaused(true);
     if (this.modalWindow) return;
     this.bag.baseHp = Math.max(0, this.baseHp);
+    debugTrace("battle_show_result", {
+      levelId: this.level.id,
+      win,
+      wave: this.currentWave,
+      baseHp: Math.round(this.baseHp),
+      kills: this.options.session?.kills ?? this.kills,
+    });
+    this.options.onResult?.(win);
     audio.playSfxEvent(win ? "result_win" : "result_lose");
     const reward = save.applyBattleResult(this.level.id, {
       win,
@@ -1806,7 +1824,11 @@ export class BattleScene extends BaseScene {
       rewardCoin: reward.coin,
       playSeconds: Math.round(this.options.session?.playSeconds ?? this.time),
     });
-    this.modalWindow = new WndResult(this.level, win, this.options.session?.kills ?? this.kills, reward.coin, this.currentWave, () => showMain());
+    this.modalWindow = new WndResult(this.level, win, this.options.session?.kills ?? this.kills, reward.coin, this.currentWave, () => {
+      debugTrace("battle_result_confirm_to_main", { levelId: this.level.id, win, wave: this.currentWave }, true);
+      this.options.onExitToMain?.();
+      showMain();
+    });
     this.container.addChild(this.modalWindow.container);
   }
 
@@ -1822,7 +1844,11 @@ export class BattleScene extends BaseScene {
         this.modalWindow = undefined;
         this.setBattlePaused(false);
       },
-      () => showMain(),
+      () => {
+        debugTrace("battle_pause_confirm_to_main", { levelId: this.level.id, wave: this.currentWave }, true);
+        this.options.onExitToMain?.();
+        showMain();
+      },
     );
     this.container.addChild(this.modalWindow.container);
   }

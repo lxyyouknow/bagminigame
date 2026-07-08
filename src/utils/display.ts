@@ -72,7 +72,22 @@ export function button(label: string, width: number, height: number, bg: number,
   return c;
 }
 
-export function uiButton(uiKey: string, label: string, width: number, height: number, bg: number, onTap: () => void, fontSize = 20, pressScale?: number, triggerOnDown = false): Container {
+export function isInsidePaddedRect(x: number, y: number, width: number, height: number, padding: number): boolean {
+  return x >= -padding && x <= width + padding && y >= -padding && y <= height + padding;
+}
+
+export function uiButton(
+  uiKey: string,
+  label: string,
+  width: number,
+  height: number,
+  bg: number,
+  onTap: () => void,
+  fontSize = 20,
+  pressScale?: number,
+  triggerOnDown = false,
+  releasePadding = 0,
+): Container {
   const c = new Container();
   c.eventMode = "static";
   c.cursor = "pointer";
@@ -117,7 +132,17 @@ export function uiButton(uiKey: string, label: string, width: number, height: nu
     content.scale.set(1);
     onTap();
   });
-  c.on("pointerupoutside", () => {
+  c.on("pointerupoutside", (event) => {
+    event.stopPropagation();
+    if (pressed && !triggerOnDown && releasePadding > 0) {
+      const local = c.toLocal(event.global);
+      if (isInsidePaddedRect(local.x, local.y, width, height, releasePadding)) {
+        pressed = false;
+        content.scale.set(1);
+        onTap();
+        return;
+      }
+    }
     pressed = false;
     content.scale.set(1);
   });

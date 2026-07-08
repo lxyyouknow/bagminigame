@@ -7,6 +7,7 @@ import { AudioManager } from "../services/AudioManager";
 import { LifecycleService, type LifecycleReason } from "../services/LifecycleService";
 import { SaveService } from "../services/SaveService";
 import { createDefaultStorageAdapter } from "../services/StorageAdapter";
+import { debugTrace } from "./debugTrace";
 
 export const DESIGN_WIDTH = 720;
 export const DESIGN_HEIGHT = 1440;
@@ -59,6 +60,7 @@ export interface Scene {
 }
 
 export function setScene(scene: Scene): void {
+  debugTrace("set_scene", { scene: scene.constructor.name });
   if (activeScene) {
     app.stage.removeChild(activeScene.container);
     activeScene.destroy();
@@ -72,11 +74,13 @@ app.ticker.add((ticker) => {
 });
 
 function handleAppPause(reason: LifecycleReason): void {
+  debugTrace("lifecycle_pause", { reason, scene: activeScene?.constructor.name });
   audio.pauseForLifecycle();
   activeScene?.onAppPause?.(reason);
 }
 
 function handleAppResume(reason: LifecycleReason): void {
+  debugTrace("lifecycle_resume", { reason, scene: activeScene?.constructor.name });
   audio.resumeFromLifecycle();
   activeScene?.onAppResume?.(reason);
 }

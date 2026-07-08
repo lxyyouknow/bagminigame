@@ -1,5 +1,6 @@
 export type AnalyticsEventName =
   | "loading_complete"
+  | "login_start_game"
   | "main_show"
   | "level_start_click"
   | "level_start_success"

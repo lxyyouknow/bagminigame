@@ -34,7 +34,7 @@ export class LevelLoadingScene extends BaseScene {
 
   private async load(): Promise<void> {
     try {
-      audio.preloadGroups(["bag", "battle", "ui"]);
+      await audio.preloadGroups(["bag", "battle", "ui"]);
       await assetManager.preloadGroups(["bag", "battle", "ui"]);
       if (!this.disposed) {
         this.ready = true;

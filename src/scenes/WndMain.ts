@@ -6,6 +6,7 @@ import { formatConsumeToast } from "../ui/resourceMeta";
 import type { UiLayoutDef } from "../types";
 import { resolveUiLayoutPosition, withLayoutDefaults } from "../ui/layout/UiLayout";
 import { BaseScene } from "./BaseScene";
+import { clearRunRecoverySnapshot } from "./runRecoveryState";
 
 export class WndMain extends BaseScene {
   private selectedIndex = 0;
@@ -222,6 +223,7 @@ export class WndMain extends BaseScene {
     analytics.track("level_start_click", { levelId: level.id, costResource: cost.resource, costAmount: cost.amount });
     const result = save.tryConsumeLevelEntry(level.id);
     if (result.ok) {
+      clearRunRecoverySnapshot();
       analytics.track("level_start_success", { levelId: level.id, costResource: cost.resource, costAmount: cost.amount });
       const remaining = save.getResources()[cost.resource];
       showLevelLoading(level, formatConsumeToast(cost.resource, cost.amount, remaining));
