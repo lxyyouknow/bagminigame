@@ -516,6 +516,27 @@
     "fallbackKey": "weapon_cabbage_projectile_lv2_icon"
   },
   {
+    "key": "weapon_blueberry_projectile_lv1_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/blueberry-projectile-lv1.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_blueberry_lv1_icon"
+  },
+  {
+    "key": "weapon_blueberry_projectile_lv2_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/blueberry-projectile-lv2.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_blueberry_projectile_lv1_icon"
+  },
+  {
+    "key": "weapon_blueberry_projectile_lv3_icon",
+    "type": "image",
+    "url": "/game-assets/weapons/fruits/blueberry-projectile-lv3.png",
+    "preloadGroup": "battle",
+    "fallbackKey": "weapon_blueberry_projectile_lv2_icon"
+  },
+  {
     "key": "weapon_blueberry_lv1_icon",
     "type": "image",
     "url": "/game-assets/weapons/plants/weapon-plant-blueberry-lv1-icon.png",
