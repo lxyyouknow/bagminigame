@@ -2,9 +2,9 @@
   {
     "id": 1,
     "name": "小僵尸",
-    "hp": 20,
+    "hp": 100,
     "armor": 0,
-    "speed": 50,
+    "speed": 15,
     "attack": 18,
     "attackInterval": 1.35,
     "gold": 2,
@@ -21,9 +21,9 @@
   {
     "id": 2,
     "name": "毒蝠",
-    "hp": 70,
+    "hp": 100,
     "armor": 0,
-    "speed": 92,
+    "speed": 30,
     "attack": 14,
     "attackInterval": 1.1,
     "gold": 2,
