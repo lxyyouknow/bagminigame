@@ -8,7 +8,7 @@ const tomatoSkillIds = new Set([201, 202, 203]);
 const carrotSkillIds = new Set([211, 212, 213]);
 const wheatSkillIds = new Set([221, 222, 223]);
 const chiliSkillIds = new Set([241, 242, 243]);
-const cabbageSkillIds = new Set([251, 252]);
+const cabbageSkillIds = new Set([250, 251, 252]);
 
 for (const skill of skills) {
   if (offensiveTypes.has(skill.type)) {
@@ -56,8 +56,8 @@ const expectedAnimations = [
   { key: "projectile_wheat_arrow", loop: true, frames: 8, scale: 0.78, fps: 18 },
   { key: "hit_tomato_burst", loop: false, frames: 8, scale: 0.7 },
   { key: "hit_tomato_splash_small", loop: false, frames: 8, scale: 0.7, fps: 18 },
-  { key: "hit_chili_burst", loop: false, frames: 8, scale: 0.4 },
-  { key: "hit_cabbage_burst", loop: false, frames: 8, scale: 0.4 },
+  { key: "hit_chili_burst", loop: false, frames: 5, scale: 0.4 },
+  { key: "hit_cabbage_burst", loop: false, frames: 5, scale: 0.4 },
   { key: "hit_carrot_split", loop: false, frames: 8, scale: 0.4 },
   { key: "hit_wheat_stuck", loop: false, frames: 8, scale: 0.4 },
 ];

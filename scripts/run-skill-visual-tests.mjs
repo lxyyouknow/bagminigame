@@ -18,4 +18,4 @@ await run("npx", [
 ]);
 await run("node", [`${outDir}/tests/skill-visual-rules.test.js`]);
 await run("node", ["tests/skill-visual-config.test.mjs"]);
-await run("python3", ["tests/check_tomato_hit_frames.py"]);
+await run(process.platform === "win32" ? "python" : "python3", ["tests/check_tomato_hit_frames.py"]);

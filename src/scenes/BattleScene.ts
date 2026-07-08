@@ -901,7 +901,7 @@ export class BattleScene extends BaseScene {
   }
 
   private visualProjectileAssetKey(item: ItemDef): string | undefined {
-    if (item.baseId !== "bomb" && item.baseId !== "staff") return undefined;
+    if (item.baseId !== "bomb" && item.baseId !== "staff" && item.baseId !== "shield") return undefined;
     return item.projectileAssetKey;
   }
 
