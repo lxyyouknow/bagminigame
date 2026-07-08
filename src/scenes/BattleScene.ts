@@ -87,6 +87,7 @@ interface DelayedImpactRuntime {
   startRotation: number;
   shakeAmplitude: number;
   shakeFrequency: number;
+  suppressHitSound: boolean;
 }
 
 export class BattleScene extends BaseScene {
@@ -919,12 +920,12 @@ export class BattleScene extends BaseScene {
     };
   }
 
-  private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef, forceImpactEffect = false): void {
+  private areaDamage(x: number, y: number, radius: number, damage: number, skill: SkillDef, forceImpactEffect = false, suppressHitSound = false): void {
     let hitAny = false;
     let killedAny = false;
     for (const monster of this.monsters) {
       if (!monster.dead && Math.hypot(monster.x - x, monster.y - y) <= radius) {
-        const result = this.damageMonster(monster, damage, skill);
+        const result = this.damageMonster(monster, damage, skill, suppressHitSound);
         hitAny = true;
         killedAny ||= result.killed;
       }
@@ -1253,6 +1254,10 @@ export class BattleScene extends BaseScene {
     const x = projectile.target.x;
     const y = projectile.target.y;
     projectile.view.position.set(x, y);
+    const suppressHitSound = (projectile.skill.impactSpinTurns ?? 0) !== 0 && Boolean(projectile.skill.hitSoundKey);
+    if (suppressHitSound && projectile.skill.hitSoundKey) {
+      audio.playSfxEvent(projectile.skill.hitSoundKey);
+    }
     this.delayedImpacts.push({
       view: projectile.view,
       x,
@@ -1266,6 +1271,7 @@ export class BattleScene extends BaseScene {
       startRotation: projectile.view.rotation,
       shakeAmplitude: Math.max(0, projectile.skill.impactShakeAmplitude ?? 0),
       shakeFrequency: Math.max(0, projectile.skill.impactShakeFrequency ?? 0),
+      suppressHitSound,
     });
   }
 
@@ -1292,7 +1298,7 @@ export class BattleScene extends BaseScene {
         impact.view.position.set(impact.x, impact.y);
         this.releaseCombatVisual(impact.view);
         audio.playSfxEvent("battle_cast");
-        this.areaDamage(impact.x, impact.y, impact.radius, impact.damage, impact.skill);
+        this.areaDamage(impact.x, impact.y, impact.radius, impact.damage, impact.skill, false, impact.suppressHitSound);
       }
     }
   }
@@ -1337,8 +1343,8 @@ export class BattleScene extends BaseScene {
     }
   }
 
-  private damageMonster(monster: MonsterRuntime, amount: number, skill?: SkillDef): DamageResult {
-    audio.playSfxEvent(skill?.hitSoundKey ?? "battle_hit");
+  private damageMonster(monster: MonsterRuntime, amount: number, skill?: SkillDef, suppressSound = false): DamageResult {
+    if (!suppressSound) audio.playSfxEvent(skill?.hitSoundKey ?? "battle_hit");
     const damage = Math.max(1, amount - monster.def.armor);
     monster.hp -= damage;
     this.redrawMonsterHpBar(monster);

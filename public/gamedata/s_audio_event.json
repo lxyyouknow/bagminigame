@@ -14,6 +14,7 @@
   { "event": "battle_shoot", "audioKey": "sfx_battle_shoot", "category": "sfx", "cooldownMs": 80, "desc": "普通投射物发射" },
   { "event": "wheat_attack", "audioKey": "sfx_wheat_attack", "category": "sfx", "cooldownMs": 80, "desc": "小麦 1-3 级攻击" },
   { "event": "carrot_attack", "audioKey": "sfx_carrot_attack", "category": "sfx", "cooldownMs": 80, "desc": "胡萝卜 1-3 级发射子弹" },
+  { "event": "carrot_hit", "audioKey": "sfx_carrot_hit", "category": "sfx", "cooldownMs": 55, "desc": "胡萝卜 1-3 级击中怪物" },
   { "event": "tomato_throw", "audioKey": "sfx_tomato_throw", "category": "sfx", "cooldownMs": 45, "desc": "番茄丢出" },
   { "event": "tomato_hit", "audioKey": "sfx_tomato_hit", "category": "sfx", "cooldownMs": 45, "desc": "番茄击中怪物" },
   { "event": "battle_hit", "audioKey": "sfx_battle_hit", "category": "sfx", "cooldownMs": 70, "desc": "命中怪物" },

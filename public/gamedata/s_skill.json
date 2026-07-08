@@ -67,6 +67,7 @@
     "color": "#a96b45",
     "projectileAnimKey": "projectile_carrot_spin",
     "soundKey": "carrot_attack",
+    "hitSoundKey": "carrot_hit",
     "hitAnimKey": "hit_carrot_split",
     "impactSpinTurns": -2,
     "impactSpinDuration": 0.39
@@ -85,6 +86,7 @@
     "color": "#45b7ff",
     "projectileAnimKey": "projectile_carrot_spin",
     "soundKey": "carrot_attack",
+    "hitSoundKey": "carrot_hit",
     "hitAnimKey": "hit_carrot_split",
     "impactSpinTurns": -2,
     "impactSpinDuration": 0.39
@@ -103,6 +105,7 @@
     "color": "#a865ff",
     "projectileAnimKey": "projectile_carrot_spin",
     "soundKey": "carrot_attack",
+    "hitSoundKey": "carrot_hit",
     "hitAnimKey": "hit_carrot_split",
     "impactSpinTurns": -2,
     "impactSpinDuration": 0.39
