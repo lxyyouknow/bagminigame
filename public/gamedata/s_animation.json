@@ -397,6 +397,25 @@
     "hitFadeDuration": 0.35
   },
   {
+    "key": "hit_blueberry_burst",
+    "assetKey": "loose_frames",
+    "frames": [
+      "hit_blueberry_burst_00",
+      "hit_blueberry_burst_01",
+      "hit_blueberry_burst_02",
+      "hit_blueberry_burst_03",
+      "hit_blueberry_burst_04"
+    ],
+    "fps": 18,
+    "loop": false,
+    "anchorX": 0.5,
+    "anchorY": 0.5,
+    "scale": 0.4,
+    "hitHoldFrame": 3,
+    "hitHoldDuration": 0.35,
+    "hitFadeDuration": 0.2
+  },
+  {
     "key": "hit_carrot_split",
     "assetKey": "loose_frames",
     "frames": [

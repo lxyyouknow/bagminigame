@@ -174,7 +174,7 @@
     "effectId": 311,
     "color": "#6d8cff",
     "projectileAnimKey": "projectile_tomato_spin",
-    "hitAnimKey": "hit_tomato_splash_small"
+    "hitAnimKey": "hit_blueberry_burst"
   },
   {
     "id": 232,
@@ -189,7 +189,7 @@
     "effectId": 311,
     "color": "#45b7ff",
     "projectileAnimKey": "projectile_tomato_spin",
-    "hitAnimKey": "hit_tomato_splash_small"
+    "hitAnimKey": "hit_blueberry_burst"
   },
   {
     "id": 233,
@@ -204,7 +204,7 @@
     "effectId": 311,
     "color": "#a865ff",
     "projectileAnimKey": "projectile_tomato_spin",
-    "hitAnimKey": "hit_tomato_splash_small"
+    "hitAnimKey": "hit_blueberry_burst"
   },
   {
     "id": 241,
