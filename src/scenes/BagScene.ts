@@ -60,6 +60,8 @@ interface PlacedPlantView {
   baseY: number;
   centerX: number;
   centerY: number;
+  height: number;
+  phase: number;
 }
 
 interface PlantShootMotion {
@@ -116,6 +118,7 @@ export class BagScene extends BaseScene {
   private combatCooldownLayer: Container | undefined;
   private placedPlantViews = new Map<number, PlacedPlantView>();
   private plantShootMotions = new Map<number, PlantShootMotion>();
+  private plantIdleTime = 0;
 
   constructor(
     private readonly level: LevelDef,
@@ -234,6 +237,7 @@ export class BagScene extends BaseScene {
   override update(dt: number): void {
     this.updateCandidateMotions(dt);
     this.updatePlantShootMotions(dt);
+    this.updatePlantIdleMotions(dt);
     if (this.toastTimer > 0) {
       this.toastTimer -= dt;
       if (this.toastTimer <= 0) {
@@ -444,6 +448,8 @@ export class BagScene extends BaseScene {
         baseY: view.y,
         centerX: size.width / 2,
         centerY: size.height / 2,
+        height: size.height,
+        phase: (placed.uid % 7) * 0.47,
       });
       if (!this.combatMode) {
         view.eventMode = "static";
@@ -578,7 +584,6 @@ export class BagScene extends BaseScene {
     for (const motion of [...this.plantShootMotions.values()]) {
       motion.elapsed += Math.max(0, dt);
       if (motion.elapsed >= motion.duration) {
-        this.resetPlantShootMotion(motion.uid);
         this.plantShootMotions.delete(motion.uid);
         continue;
       }
@@ -586,22 +591,46 @@ export class BagScene extends BaseScene {
     }
   }
 
+  private updatePlantIdleMotions(dt: number): void {
+    if (this.placedPlantViews.size === 0) return;
+    this.plantIdleTime += Math.max(0, dt);
+    for (const [uid, target] of this.placedPlantViews) {
+      if (this.plantShootMotions.has(uid)) continue;
+      if (target.view.destroyed) continue;
+      const frame = this.plantIdleFrame(this.plantIdleTime + target.phase);
+      this.applyPlantIdleTransform(target, frame.scaleX, frame.scaleY);
+    }
+  }
+
   private applyPlantShootMotion(uid: number, progress: number): void {
     const target = this.placedPlantViews.get(uid);
     if (!target || target.view.destroyed) return;
     const frame = this.plantShootFrame(progress);
-    target.view.scale.set(frame.scaleX, frame.scaleY);
+    this.applyPlantTransform(target, frame.scaleX, frame.scaleY, frame.offsetY);
+  }
+
+  private applyPlantTransform(target: PlacedPlantView, scaleX: number, scaleY: number, offsetY: number): void {
+    target.view.scale.set(scaleX, scaleY);
     target.view.position.set(
-      target.baseX + target.centerX * (1 - frame.scaleX),
-      target.baseY + target.centerY * (1 - frame.scaleY) + frame.offsetY,
+      target.baseX + target.centerX * (1 - scaleX),
+      target.baseY + target.centerY * (1 - scaleY) + offsetY,
     );
   }
 
-  private resetPlantShootMotion(uid: number): void {
-    const target = this.placedPlantViews.get(uid);
-    if (!target || target.view.destroyed) return;
-    target.view.scale.set(1, 1);
-    target.view.position.set(target.baseX, target.baseY);
+  private applyPlantIdleTransform(target: PlacedPlantView, scaleX: number, scaleY: number): void {
+    target.view.scale.set(scaleX, scaleY);
+    target.view.position.set(
+      target.baseX + target.centerX * (1 - scaleX),
+      target.baseY + target.height * (1 - scaleY),
+    );
+  }
+
+  private plantIdleFrame(time: number): { scaleX: number; scaleY: number } {
+    const wave = Math.sin(time * Math.PI * 2 * 0.72);
+    return {
+      scaleX: 1 + wave * 0.014,
+      scaleY: 1 - wave * 0.02,
+    };
   }
 
   private plantShootFrame(progress: number): { scaleX: number; scaleY: number; offsetY: number } {
