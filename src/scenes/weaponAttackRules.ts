@@ -3,6 +3,32 @@ export interface AttackTargetCandidate {
   y: number;
 }
 
+export function isMonsterTargetable(y: number, targetableY = 0): boolean {
+  return y >= Math.max(0, targetableY);
+}
+
+export interface ProjectileAimTarget {
+  dead: boolean;
+  x: number;
+  y: number;
+}
+
+export interface ProjectileAimState {
+  targetX: number;
+  targetY: number;
+}
+
+export interface ProjectileAimPoint extends ProjectileAimState {
+  targetAlive: boolean;
+}
+
+export function resolveProjectileAimPoint(target: ProjectileAimTarget, state: ProjectileAimState): ProjectileAimPoint {
+  if (target.dead) {
+    return { targetX: state.targetX, targetY: state.targetY, targetAlive: false };
+  }
+  return { targetX: target.x, targetY: target.y, targetAlive: true };
+}
+
 export function chooseBalancedTarget<T extends AttackTargetCandidate>(
   targets: readonly T[],
   targetRule: string,

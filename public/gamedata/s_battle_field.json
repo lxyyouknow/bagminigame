@@ -11,11 +11,12 @@
     "monsterContactMode": "fenceForeground",
     "monsterContactY": 0,
     "monsterContactOffsetY": 56,
+    "monsterTargetableY": 230,
     "baseHitFxY": 392,
     "heroY": 640,
     "hpBarY": 792,
     "monsterAttackHitFrame": 0,
     "monsterAttackHitTime": 0,
-    "desc": "怪物停在木栏杆前开始攻击。默认攻击线跟随栏杆前景图位置，再用 monsterContactOffsetY 微调，不使用固定屏幕 Y。栏杆作为前景遮挡层盖在怪物上方，避免怪物踩到栏杆上。下方基地、栏杆或地面美术换皮时，优先调整本表，不要改 UI 布局表。attackHit 字段预留给后续攻击动作命中帧。"
+    "desc": "怪物停在木栏杆前开始攻击。默认攻击线跟随栏杆前景图位置，再用 monsterContactOffsetY 微调，不使用固定屏幕 Y。monsterTargetableY 控制怪物走出顶部 UI 遮挡区后才允许被武器锁定。栏杆作为前景遮挡层盖在怪物上方，避免怪物踩到栏杆上。下方基地、栏杆或地面美术换皮时，优先调整本表，不要改 UI 布局表。attackHit 字段预留给后续攻击动作命中帧。"
   }
 ]

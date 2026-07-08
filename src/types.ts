@@ -167,6 +167,7 @@ export interface BattleFieldDef {
   monsterContactMode: "line" | "fenceForeground";
   monsterContactY: number;
   monsterContactOffsetY?: number;
+  monsterTargetableY?: number;
   baseHitFxY: number;
   heroY: number;
   hpBarY: number;
@@ -422,6 +423,8 @@ export interface ProjectileRuntime {
   skill: SkillDef;
   x: number;
   y: number;
+  targetX: number;
+  targetY: number;
   speed: number;
   damage: number;
   radius: number;

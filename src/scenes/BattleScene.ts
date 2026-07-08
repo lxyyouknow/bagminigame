@@ -28,7 +28,7 @@ import { shouldPreserveMonsterOverlayChild } from "./monsterViewRules";
 import { chooseMonsterSpawnPosition } from "./monsterSpawnRules";
 import { AnimationPlaybackController } from "./animationPlaybackController";
 import { getImpactAnimationKey, shouldUseVisualProjectile, usesAreaImpact } from "./skillVisualRules";
-import { chooseBalancedTarget, getInitialWeaponCooldown } from "./weaponAttackRules";
+import { chooseBalancedTarget, getInitialWeaponCooldown, isMonsterTargetable, resolveProjectileAimPoint } from "./weaponAttackRules";
 import { shouldOpenRogueOptionsOnLevelUp } from "./rogueTriggerRules";
 import { getMonsterHpFillWidth } from "./monsterHpBarRules";
 import { getMonsterDepthZIndex, separateMonsterCrowd } from "./monsterDepthRules";
@@ -815,7 +815,9 @@ export class BattleScene extends BaseScene {
   }
 
   private pickTarget(skill: SkillDef): MonsterRuntime | undefined {
-    const alive = this.monsters.filter((monster) => !monster.dead && monster.hp > 0);
+    const field = data.getBattleField(this.level.battleFieldKey);
+    const targetableY = field.monsterTargetableY ?? 0;
+    const alive = this.monsters.filter((monster) => !monster.dead && monster.hp > 0 && isMonsterTargetable(monster.y, targetableY));
     const incomingByUid = new Map<number, number>();
     for (const projectile of this.projectiles) {
       if (projectile.target.dead) continue;
@@ -853,6 +855,8 @@ export class BattleScene extends BaseScene {
         skill,
         x: startX,
         y: startY,
+        targetX: target.x,
+        targetY: target.y,
         speed: Math.max(1, skill.speed),
         damage,
         radius: skill.radius,
@@ -1148,12 +1152,11 @@ export class BattleScene extends BaseScene {
         this.updateRollingProjectile(projectile, dt);
         continue;
       }
-      if (projectile.target.dead) {
-        this.removeProjectile(projectile);
-        continue;
-      }
-      const dx = projectile.target.x - projectile.x;
-      const dy = projectile.target.y - projectile.y;
+      const aim = resolveProjectileAimPoint(projectile.target, { targetX: projectile.targetX, targetY: projectile.targetY });
+      projectile.targetX = aim.targetX;
+      projectile.targetY = aim.targetY;
+      const dx = aim.targetX - projectile.x;
+      const dy = aim.targetY - projectile.y;
       const dist = Math.max(1, Math.hypot(dx, dy));
       const move = projectile.speed * dt;
       projectile.x += (dx / dist) * move;
@@ -1162,7 +1165,7 @@ export class BattleScene extends BaseScene {
       if (projectile.rotateToTarget) projectile.view.rotation = Math.atan2(dy, dx);
       if (projectile.spinSpeed) projectile.view.rotation += this.time * projectile.spinSpeed;
       if (dist <= projectile.hitDistance || move >= dist) {
-        const shouldReleaseView = this.resolveProjectileHit(projectile);
+        const shouldReleaseView = aim.targetAlive ? this.resolveProjectileHit(projectile) : this.resolveProjectileDeadTargetImpact(projectile);
         if (shouldReleaseView) {
           this.removeProjectile(projectile);
         } else {
@@ -1220,6 +1223,17 @@ export class BattleScene extends BaseScene {
       result.killed,
       hitX,
       hitY,
+      projectile.skill.hitUseProjectileRotation ? projectile.view.rotation : 0,
+    );
+    return true;
+  }
+
+  private resolveProjectileDeadTargetImpact(projectile: ProjectileRuntime): boolean {
+    this.playImpactEffect(
+      projectile.skill,
+      false,
+      projectile.targetX,
+      projectile.targetY,
       projectile.skill.hitUseProjectileRotation ? projectile.view.rotation : 0,
     );
     return true;
