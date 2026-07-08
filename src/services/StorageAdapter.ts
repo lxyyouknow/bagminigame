@@ -35,14 +35,5 @@ export class LocalStorageAdapter implements StorageAdapter {
 }
 
 export function createDefaultStorageAdapter(): StorageAdapter {
-  try {
-    const adapter = new LocalStorageAdapter();
-    const testKey = "__backpack_storage_test__";
-    adapter.setItem(testKey, "1");
-    adapter.removeItem(testKey);
-    return adapter;
-  } catch (error) {
-    console.warn("本地存储不可用，本次会话改用内存存档。刷新页面后进度可能丢失。", error);
-    return new MemoryStorageAdapter();
-  }
+  return new MemoryStorageAdapter();
 }

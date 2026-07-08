@@ -35,11 +35,11 @@ function run(): void {
   assertEqual(save.getResources().dynamite, 24, "开始关卡后应扣除 6 个钥匙");
 
   const sharedStorage = new MemoryStorageAdapter();
-  const persistentSave = createService("persist_user", sharedStorage);
-  const persistentStart = persistentSave.tryConsumeLevelEntry(1);
-  assert(persistentStart.ok, "共享存储下也应允许开始第 1 关");
-  const reloadedSave = createService("persist_user", sharedStorage);
-  assertEqual(reloadedSave.getResources().dynamite, 24, "重新初始化后钥匙扣减结果应保留");
+  const sessionSave = createService("session_user", sharedStorage);
+  const sessionStart = sessionSave.tryConsumeLevelEntry(1);
+  assert(sessionStart.ok, "共享存储下也应允许开始第 1 关");
+  const reloadedSave = createService("session_user");
+  assertEqual(reloadedSave.getResources().dynamite, 30, "重新初始化后不应保留上次钥匙扣减结果");
 
   const win: BattleResult = { win: true, wave: 3, kills: 18, runGold: 42, playSeconds: 31 };
   const firstReward = save.applyBattleResult(1, win);

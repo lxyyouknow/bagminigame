@@ -70,20 +70,18 @@ saveRunRecoverySnapshot({
   session,
 });
 
-const restored = loadRunRecoverySnapshot("test_lxy", 12_000);
-if (!restored) throw new Error("同账号未过期快照应该可以恢复");
-assertEqual(restored.levelId, 1, "恢复关卡 id 应正确");
-assertEqual(restored.session.currentWave, 2, "恢复波次应正确");
-assertEqual(restored.session.baseHp, 720, "恢复基地血量应正确");
-assertEqual(restored.session.bag, restored.bag, "恢复后 session.bag 应指向恢复背包对象");
-assertEqual(sessionStorage.getItem("backpack_run_recovery_v1") !== null, true, "快照应同时写入 sessionStorage，提升 WebView 刷新恢复率");
+assertEqual(storage.getItem("backpack_run_recovery_v1"), null, "禁用恢复后不应写入 localStorage 快照");
+assertEqual(sessionStorage.getItem("backpack_run_recovery_v1"), null, "禁用恢复后不应写入 sessionStorage 快照");
 
-assertEqual(loadRunRecoverySnapshot("other_account", 12_000), undefined, "不同账号不应恢复快照");
-assertEqual(loadRunRecoverySnapshot("test_lxy", 10_000 + 1000 * 60 * 41), undefined, "过期快照不应恢复");
-
-clearRunRecoverySnapshot();
-assertEqual(loadRunRecoverySnapshot("test_lxy", 12_000), undefined, "清理后不应恢复快照");
-
+storage.setItem("backpack_run_recovery_v1", JSON.stringify({
+  version: 1,
+  accountId: "test_lxy",
+  levelId: 1,
+  phase: "preparing",
+  savedAt: 20_000,
+  bag,
+  session,
+}));
 sessionStorage.setItem("backpack_run_recovery_v1", JSON.stringify({
   version: 1,
   accountId: "test_lxy",
@@ -93,8 +91,12 @@ sessionStorage.setItem("backpack_run_recovery_v1", JSON.stringify({
   bag,
   session,
 }));
-const restoredFromSession = loadRunRecoverySnapshot("test_lxy", 21_000);
-if (!restoredFromSession) throw new Error("localStorage 为空但 sessionStorage 有快照时应该可以恢复");
-assertEqual(restoredFromSession.phase, "preparing", "sessionStorage 快照恢复应正确");
+
+assertEqual(loadRunRecoverySnapshot("test_lxy", 21_000), undefined, "禁用恢复后不应恢复旧快照");
+assertEqual(storage.getItem("backpack_run_recovery_v1"), null, "读取恢复时应清理旧 localStorage 快照");
+assertEqual(sessionStorage.getItem("backpack_run_recovery_v1"), null, "读取恢复时应清理旧 sessionStorage 快照");
+
+clearRunRecoverySnapshot();
+assertEqual(loadRunRecoverySnapshot("test_lxy", 21_000), undefined, "清理后仍不应恢复快照");
 
 console.log("run-recovery-state tests ok");

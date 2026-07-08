@@ -21,8 +21,10 @@ export interface RunRecoveryLoadResult {
 
 const storageKey = "backpack_run_recovery_v1";
 const maxRecoveryAgeMs = 1000 * 60 * 40;
+const runRecoveryEnabled = false;
 
 export function saveRunRecoverySnapshot(snapshot: RunRecoverySnapshot): void {
+  if (!runRecoveryEnabled) return;
   const storages = getStorages();
   if (storages.length <= 0) return;
   const payload = JSON.stringify(snapshot);
@@ -40,6 +42,10 @@ export function loadRunRecoverySnapshot(accountId: string, now = Date.now()): Ru
 }
 
 export function inspectRunRecoverySnapshot(accountId: string, now = Date.now()): RunRecoveryLoadResult {
+  if (!runRecoveryEnabled) {
+    clearRunRecoverySnapshot();
+    return { reason: "empty" };
+  }
   const storages = getStorages();
   if (storages.length <= 0) return { reason: "no_storage" };
   let lastReason: RunRecoveryLoadResult["reason"] = "empty";
