@@ -308,9 +308,9 @@
   {
     "key": "ui_result_coin",
     "type": "image",
-    "url": "/game-assets/ui/icon-coin.png",
+    "url": "",
     "preloadGroup": "battle",
-    "fallbackKey": "placeholder_icon"
+    "fallbackKey": "ui_res_coin"
   },
   {
     "key": "level_map_1",
@@ -623,37 +623,37 @@
   {
     "key": "weapon_ball_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-tomato-icon.png",
+    "url": "",
     "preloadGroup": "bag",
-    "fallbackKey": "placeholder_icon"
+    "fallbackKey": "weapon_tomato_lv1_icon"
   },
   {
     "key": "weapon_bat_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-carrot-icon.png",
+    "url": "",
     "preloadGroup": "bag",
-    "fallbackKey": "placeholder_icon"
+    "fallbackKey": "weapon_carrot_lv1_icon"
   },
   {
     "key": "weapon_spear_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-wheat-icon.png",
+    "url": "",
     "preloadGroup": "bag",
-    "fallbackKey": "placeholder_icon"
+    "fallbackKey": "weapon_wheat_lv1_icon"
   },
   {
     "key": "weapon_shield_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-blueberry-icon.png",
+    "url": "",
     "preloadGroup": "bag",
-    "fallbackKey": "placeholder_icon"
+    "fallbackKey": "weapon_blueberry_lv1_icon"
   },
   {
     "key": "weapon_bomb_icon",
     "type": "image",
-    "url": "/game-assets/weapons/plants/weapon-plant-pepper-icon.png",
+    "url": "",
     "preloadGroup": "bag",
-    "fallbackKey": "placeholder_icon"
+    "fallbackKey": "weapon_chili_lv1_icon"
   },
   {
     "key": "weapon_chili_lv1_icon",

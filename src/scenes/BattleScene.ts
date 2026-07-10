@@ -1,4 +1,4 @@
-import { AnimatedSprite, Container, Graphics, Sprite, type DestroyOptions } from "pixi.js";
+import { AnimatedSprite, Container, Graphics, Sprite, Text, type DestroyOptions } from "pixi.js";
 import type { AnimationDef, BagState, BattleTuningDef, CombatBuffs, FloatingRuntime, ItemDef, LevelDef, MonsterDef, MonsterRuntime, PlacedItem, ProjectileRuntime, RogueOptionDef, SkillDef, SpinDamageRuntime } from "../types";
 import type { LifecycleReason } from "../services/LifecycleService";
 import { analytics, app, assetManager, audio, data, nextUid, save } from "../core/runtime";
@@ -90,6 +90,38 @@ interface DelayedImpactRuntime {
   suppressHitSound: boolean;
 }
 
+interface BattleHudRuntime {
+  waveBar: Graphics;
+  waveBarX: number;
+  waveBarY: number;
+  waveBarWidth: number;
+  waveBarHeight: number;
+  levelText: Text;
+  goldText: Text;
+  killText: Text;
+  topHp: Text;
+  lastProgress: number;
+}
+
+interface BaseHpBarRuntime {
+  container: Container;
+  mask?: Graphics;
+  fallbackFill?: Graphics;
+  hpValue: Text;
+  barX: number;
+  barY: number;
+  barWidth: number;
+  barHeight: number;
+  lastRate: number;
+}
+
+interface EquipCooldownRuntime {
+  placed: PlacedItem;
+  mask: Graphics;
+  slotSize: number;
+  lastHeight: number;
+}
+
 export class BattleScene extends BaseScene {
   private monsters: MonsterRuntime[] = [];
   private projectiles: ProjectileRuntime[] = [];
@@ -130,6 +162,9 @@ export class BattleScene extends BaseScene {
   private uiLayer = new Container();
   private bossWarningLayer = new Container();
   private topHudLayer: Container | undefined;
+  private hudRuntime?: BattleHudRuntime;
+  private baseHpRuntime?: BaseHpBarRuntime;
+  private equipCooldowns: EquipCooldownRuntime[] = [];
   private topHudRevealProgress = 1;
   private fenceLeft?: Sprite;
   private fenceRight?: Sprite;
@@ -178,6 +213,7 @@ export class BattleScene extends BaseScene {
     analytics.track("battle_start", { levelId: level.id, wave: this.currentWave, weaponCount: bag.placed.length, startGold: bag.gold });
     this.container.addChild(this.battleLayer, this.groundFxLayer, this.monsterLayer, this.fieldForegroundLayer, this.projectileLayer, this.hitFxLayer, this.deathFxLayer, this.damageTextLayer, this.uiLayer, this.bossWarningLayer);
     this.drawStatic();
+    this.updateDynamicUi(true);
   }
 
   override update(dt: number): void {
@@ -198,7 +234,7 @@ export class BattleScene extends BaseScene {
     this.updateFloating(dt);
     this.updateFadeReleases(dt);
     this.updateHero(dt);
-    this.drawStatic();
+    this.updateDynamicUi();
     this.updateBaseShake(dt);
     this.updateBossArrivalWarning(dt);
     if (this.ending) return;
@@ -348,11 +384,6 @@ export class BattleScene extends BaseScene {
     });
     const waveRect = resolveUiLayoutRect(waveLayout, w, h);
     const waveBar = new Graphics();
-    const expNeed = getExpNeed(this.levelNo, this.tuning);
-    const progress = Math.max(0, Math.min(1, this.exp / Math.max(1, expNeed)));
-    waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width, waveRect.height, 8).fill({ color: 0x10151c, alpha: 0.9 });
-    waveBar.roundRect(waveRect.x, waveRect.y, waveRect.width * progress, waveRect.height, 8).fill({ color: 0x4ed5ff });
-    waveBar.stroke({ color: 0xffffff, width: 1, alpha: 0.35 });
     const levelBadge = new Graphics();
     levelBadge.circle(waveRect.x + waveRect.width + 18, waveRect.y + waveRect.height / 2, 18).fill({ color: 0x7c4f27 }).stroke({ color: 0xffd36a, width: 3 });
     const levelText = text(String(this.levelNo), 14, "#ffffff", "700");
@@ -390,6 +421,18 @@ export class BattleScene extends BaseScene {
     const topHp = text(`♥ ${Math.max(0, Math.round(this.baseHp))}`, statLayout.fontSize ?? 17, "#ff6b78", "700");
     topHp.anchor.set(1, 0.5);
     topHp.position.set(w - 18, statPos.y + 1);
+    this.hudRuntime = {
+      waveBar,
+      waveBarX: waveRect.x,
+      waveBarY: waveRect.y,
+      waveBarWidth: waveRect.width,
+      waveBarHeight: waveRect.height,
+      levelText,
+      goldText,
+      killText,
+      topHp,
+      lastProgress: -1,
+    };
 
     const equipLayout = this.layout("equip_bar", {
       scene: "battle",
@@ -468,8 +511,9 @@ export class BattleScene extends BaseScene {
         }
       : resolveUiLayoutPosition(hpLayout, w, h);
     const baseHpUi = this.createBaseHpBar(hpPos.x, hpPos.y, hpLayout.width, hpLayout);
-    this.baseHpLayer = baseHpUi;
-    this.baseHpLayerHomeX = baseHpUi.x;
+    this.baseHpRuntime = baseHpUi;
+    this.baseHpLayer = baseHpUi.container;
+    this.baseHpLayerHomeX = baseHpUi.container.x;
     this.applyFenceTransition();
 
     const topHud = new Container();
@@ -485,7 +529,7 @@ export class BattleScene extends BaseScene {
       this.uiLayer.addChild(topHud);
     }
     if (!this.farmBaseMode && baseLayout.visible) this.uiLayer.addChild(this.heroLayer);
-    if (hpLayout.visible) this.uiLayer.addChild(baseHpUi);
+    if (hpLayout.visible) this.uiLayer.addChild(baseHpUi.container);
 
     if (this.farmBaseMode) return;
 
@@ -497,13 +541,9 @@ export class BattleScene extends BaseScene {
       const slotSize = Math.min(slot.width, slot.height);
       const icon = this.createBattleWeaponSlot(item, iconSize, slotSize);
       icon.position.set(equipRect.x + 12 + slot.x + slot.width / 2, equipRect.y + 9 + slot.y + slot.height / 2);
-      const skill = data.getSkill(item.skillId);
-      const cdRate = Math.max(0, Math.min(1, placed.cdLeft / Math.max(0.1, skill.cd * this.buffs.cdMul)));
-      if (cdRate > 0) {
-        const mask = new Graphics();
-        mask.roundRect(-slotSize / 2, -slotSize / 2, slotSize, slotSize * cdRate, 8).fill({ color: 0x000000, alpha: 0.46 });
-        icon.addChild(mask);
-      }
+      const mask = new Graphics();
+      icon.addChild(mask);
+      this.equipCooldowns.push({ placed, mask, slotSize, lastHeight: -1 });
       if (equipLayout.visible) this.uiLayer.addChild(icon);
     });
   }
@@ -514,7 +554,7 @@ export class BattleScene extends BaseScene {
     this.topHudLayer.alpha = this.topHudRevealProgress;
   }
 
-  private createBaseHpBar(centerX: number, centerY: number, width: number, layout?: { fontSize?: number; textColor?: string; strokeColor?: string; strokeWidth?: number; barOffsetX?: number; barOffsetY?: number; barWidth?: number; barHeight?: number; textOffsetX?: number; textOffsetY?: number }): Container {
+  private createBaseHpBar(centerX: number, centerY: number, width: number, layout?: { fontSize?: number; textColor?: string; strokeColor?: string; strokeWidth?: number; barOffsetX?: number; barOffsetY?: number; barWidth?: number; barHeight?: number; textOffsetX?: number; textOffsetY?: number }): BaseHpBarRuntime {
     const c = new Container();
     const frameTexture = assetManager.texture("battle_base_hp_frame");
     const barTexture = assetManager.texture("battle_base_hp_bar");
@@ -529,20 +569,22 @@ export class BattleScene extends BaseScene {
       c.addChild(new Graphics().roundRect(0, 0, frameW, frameH, 18).fill({ color: 0x5c2f08 }).stroke({ color: 0xffd36a, width: 3 }));
     }
 
-    const hpRate = Math.max(0, Math.min(1, this.baseHp / Math.max(1, this.baseMaxHp)));
     const scale = frameW / 360;
     const barX = layout?.barOffsetX ?? 88 * scale;
     const barY = layout?.barOffsetY ?? 20 * scale;
     const barW = layout?.barWidth ?? 230 * scale;
     const barH = layout?.barHeight ?? 41 * scale;
     const bar = spriteFromAsset("battle_base_hp_bar", barW, barH);
+    let mask: Graphics | undefined;
+    let fallbackFill: Graphics | undefined;
     if (bar && barTexture) {
       bar.position.set(barX, barY);
-      const mask = new Graphics().rect(barX, barY, barW * hpRate, barH).fill({ color: 0xffffff });
+      mask = new Graphics();
       bar.mask = mask;
       c.addChild(bar, mask);
     } else {
-      c.addChild(new Graphics().roundRect(barX, barY, barW * hpRate, barH, 8 * scale).fill({ color: 0x6cc83a }));
+      fallbackFill = new Graphics();
+      c.addChild(fallbackFill);
     }
 
     const hpValue = text(String(Math.max(0, Math.round(this.baseHp))), layout?.fontSize ?? Math.max(16, Math.round(22 * scale)), layout?.textColor ?? "#ffffff", "700", {
@@ -552,7 +594,67 @@ export class BattleScene extends BaseScene {
     hpValue.anchor.set(0.5);
     hpValue.position.set(barX + barW / 2 + (layout?.textOffsetX ?? 0), barY + barH / 2 + (layout?.textOffsetY ?? 0));
     c.addChild(hpValue);
-    return c;
+    return {
+      container: c,
+      mask,
+      fallbackFill,
+      hpValue,
+      barX,
+      barY,
+      barWidth: barW,
+      barHeight: barH,
+      lastRate: -1,
+    };
+  }
+
+  private updateDynamicUi(force = false): void {
+    const hud = this.hudRuntime;
+    if (hud) {
+      const expNeed = getExpNeed(this.levelNo, this.tuning);
+      const progress = Math.max(0, Math.min(1, this.exp / Math.max(1, expNeed)));
+      if (force || Math.abs(progress - hud.lastProgress) >= 0.001) {
+        hud.lastProgress = progress;
+        hud.waveBar.clear();
+        hud.waveBar.roundRect(hud.waveBarX, hud.waveBarY, hud.waveBarWidth, hud.waveBarHeight, 8).fill({ color: 0x10151c, alpha: 0.9 });
+        if (progress > 0) hud.waveBar.roundRect(hud.waveBarX, hud.waveBarY, hud.waveBarWidth * progress, hud.waveBarHeight, 8).fill({ color: 0x4ed5ff });
+        hud.waveBar.stroke({ color: 0xffffff, width: 1, alpha: 0.35 });
+      }
+      const levelLabel = String(this.levelNo);
+      const goldLabel = String(this.bag.gold);
+      const killLabel = `杀敌数:${this.kills}`;
+      const hpLabel = `♥ ${Math.max(0, Math.round(this.baseHp))}`;
+      if (hud.levelText.text !== levelLabel) hud.levelText.text = levelLabel;
+      if (hud.goldText.text !== goldLabel) hud.goldText.text = goldLabel;
+      if (hud.killText.text !== killLabel) hud.killText.text = killLabel;
+      if (hud.topHp.text !== hpLabel) hud.topHp.text = hpLabel;
+    }
+
+    const base = this.baseHpRuntime;
+    if (base) {
+      const rate = Math.max(0, Math.min(1, this.baseHp / Math.max(1, this.baseMaxHp)));
+      if (force || Math.abs(rate - base.lastRate) >= 0.001) {
+        base.lastRate = rate;
+        base.mask?.clear();
+        base.fallbackFill?.clear();
+        if (rate > 0) {
+          base.mask?.rect(base.barX, base.barY, base.barWidth * rate, base.barHeight).fill({ color: 0xffffff });
+          base.fallbackFill?.roundRect(base.barX, base.barY, base.barWidth * rate, base.barHeight, 8).fill({ color: 0x6cc83a });
+        }
+      }
+      const hpValue = String(Math.max(0, Math.round(this.baseHp)));
+      if (base.hpValue.text !== hpValue) base.hpValue.text = hpValue;
+    }
+
+    for (const runtime of this.equipCooldowns) {
+      const item = data.getItem(runtime.placed.itemId);
+      const skill = data.getSkill(item.skillId);
+      const rate = Math.max(0, Math.min(1, runtime.placed.cdLeft / Math.max(0.1, skill.cd * this.buffs.cdMul)));
+      const height = Math.round(runtime.slotSize * rate);
+      if (!force && height === runtime.lastHeight) continue;
+      runtime.lastHeight = height;
+      runtime.mask.clear();
+      if (height > 0) runtime.mask.roundRect(-runtime.slotSize / 2, -runtime.slotSize / 2, runtime.slotSize, height, 8).fill({ color: 0x000000, alpha: 0.46 });
+    }
   }
 
   private drawSplitBattleBackground(battleBgAssetKey: string): void {

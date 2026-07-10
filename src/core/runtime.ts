@@ -19,17 +19,26 @@ if (!root) {
 }
 
 export const app = new Application();
+const mobileRuntime = /Android|iPhone|iPad|iPod|Mobile|MicroMessenger/i.test(navigator.userAgent)
+  || (navigator.maxTouchPoints ?? 0) > 1;
 
 await app.init({
   background: "#172433",
   width: DESIGN_WIDTH,
   height: DESIGN_HEIGHT,
   antialias: true,
-  resolution: Math.min(window.devicePixelRatio || 1, 2),
+  resolution: Math.min(window.devicePixelRatio || 1, mobileRuntime ? 1.5 : 2),
   autoDensity: true,
 });
 
 root.appendChild(app.canvas);
+app.canvas.addEventListener("webglcontextlost", (event) => {
+  event.preventDefault();
+  debugTrace("webgl_context_lost");
+});
+app.canvas.addEventListener("webglcontextrestored", () => {
+  debugTrace("webgl_context_restored");
+});
 app.stage.eventMode = "static";
 app.stage.hitArea = app.screen;
 

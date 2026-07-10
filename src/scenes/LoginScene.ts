@@ -1,6 +1,6 @@
 import { Container, Graphics, Rectangle } from "pixi.js";
 import type { UiLayoutDef } from "../types";
-import { analytics, app, audio, data } from "../core/runtime";
+import { analytics, app, assetManager, audio, data } from "../core/runtime";
 import { showRun } from "../core/navigation";
 import { drawAssetBg, spriteFromAsset } from "../utils/display";
 import { getUiLayout, resolveUiLayoutRect, scaleUiLayoutSize } from "../ui/layout/UiLayout";
@@ -9,6 +9,7 @@ import { BaseScene } from "./BaseScene";
 
 export class LoginScene extends BaseScene {
   private settingWindow?: WndSetting;
+  private enteringBag = false;
 
   constructor() {
     super();
@@ -100,10 +101,17 @@ export class LoginScene extends BaseScene {
     this.container.addChild(button);
   }
 
-  private enterBag(): void {
+  private async enterBag(): Promise<void> {
+    if (this.enteringBag) return;
     const level = data.levels[0];
     if (!level) return;
+    this.enteringBag = true;
     analytics.track("login_start_game", { levelId: level.id });
+    await Promise.all([
+      assetManager.preloadBagCore(),
+      audio.preloadGroups(["bag"]),
+    ]);
+    if (this.disposed) return;
     showRun(level);
   }
 

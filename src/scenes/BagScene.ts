@@ -170,6 +170,12 @@ export class BagScene extends BaseScene {
     this.draw();
   }
 
+  showToast(message: string, duration = 1.8): void {
+    this.toast = message;
+    this.toastTimer = Math.max(0.1, duration);
+    this.draw();
+  }
+
   refreshAfterWave(entryToast: string): void {
     refreshWaveCandidates(this.state, () => this.rollItem());
     audio.playSfxEvent("bag_refresh");
