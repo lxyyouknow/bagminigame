@@ -21,7 +21,7 @@ export interface RunRecoveryLoadResult {
 
 const storageKey = "backpack_run_recovery_v1";
 const maxRecoveryAgeMs = 1000 * 60 * 40;
-const runRecoveryEnabled = false;
+const runRecoveryEnabled = true;
 
 export function saveRunRecoverySnapshot(snapshot: RunRecoverySnapshot): void {
   if (!runRecoveryEnabled) return;

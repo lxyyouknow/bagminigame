@@ -73,5 +73,14 @@ function persistEntries(): void {
 
 function getStorage(): Storage | undefined {
   if (typeof window === "undefined") return undefined;
-  return window.sessionStorage ?? window.localStorage;
+  try {
+    if (window.sessionStorage) return window.sessionStorage;
+  } catch {
+    // 某些内置浏览器会禁用 sessionStorage，继续尝试 localStorage。
+  }
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
 }

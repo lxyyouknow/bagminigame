@@ -1,6 +1,6 @@
 import type { LifecycleReason } from "../services/LifecycleService";
 import type { BagState, LevelDef } from "../types";
-import { app, audio, data, save } from "../core/runtime";
+import { app, assetManager, audio, data, save } from "../core/runtime";
 import { debugTrace } from "../core/debugTrace";
 import { BaseScene } from "./BaseScene";
 import { BagScene } from "./BagScene";
@@ -38,6 +38,8 @@ export class RunScene extends BaseScene {
   private readonly farmBattleCameraShift: number;
   private recoverySaveElapsed = 0;
   private recoveryEnabled = true;
+  private lastRecoveryTracePhase: RunRecoveryPhase | undefined;
+  private battleStartPending = false;
 
   constructor(private readonly level: LevelDef, initialState?: BagState, entryToast?: string, restoredSession?: RunSessionState) {
     super();
@@ -60,12 +62,13 @@ export class RunScene extends BaseScene {
     this.applyUiTransition();
     this.persistRecoverySnapshot("preparing");
     audio.playMusicEvent("music_bag");
+    void this.preloadCurrentBattleResources();
   }
 
   override update(dt: number): void {
     if (this.lifecycleFrozen) return;
     this.recoverySaveElapsed += Math.max(0, dt);
-    if (this.recoverySaveElapsed >= 0.7) {
+    if (this.recoverySaveElapsed >= 2) {
       this.persistRecoverySnapshot(this.getRecoveryPhase());
       this.recoverySaveElapsed = 0;
     }
@@ -137,6 +140,7 @@ export class RunScene extends BaseScene {
   }
 
   override onAppPause(reason: LifecycleReason): void {
+    this.persistRecoverySnapshot(this.getRecoveryPhase());
     if (this.flow.phase === "fighting") {
       this.battleScene?.onAppPause(reason);
       return;
@@ -153,7 +157,29 @@ export class RunScene extends BaseScene {
   }
 
   private startBattle(): void {
-    if (this.flow.phase !== "preparing" || this.startingBattleUi || this.bagHudEntering || this.battleHudEntering || this.battleHudExiting) return;
+    if (this.flow.phase !== "preparing" || this.battleStartPending || this.startingBattleUi || this.bagHudEntering || this.battleHudEntering || this.battleHudExiting) return;
+    void this.prepareAndStartBattle();
+  }
+
+  private async prepareAndStartBattle(): Promise<void> {
+    this.battleStartPending = true;
+    this.bagScene.container.eventMode = "none";
+    this.bagScene.showToast("正在准备本波战斗资源...", 4);
+    try {
+      await this.preloadCurrentBattleResources();
+    } catch (error) {
+      this.battleStartPending = false;
+      this.bagScene.container.eventMode = "auto";
+      this.bagScene.showToast("战斗资源加载失败，请重试", 2);
+      debugTrace("battle_resource_prepare_failed", {
+        levelId: this.level.id,
+        wave: this.session.currentWave,
+        message: error instanceof Error ? error.message : String(error),
+      });
+      return;
+    }
+    if (this.disposed || this.flow.phase !== "preparing") return;
+    this.battleStartPending = false;
     this.startingBattleUi = true;
     this.startingBattleUiElapsed = 0;
     this.bagHudEntering = false;
@@ -165,6 +191,13 @@ export class RunScene extends BaseScene {
     this.pendingReturnMessage = "";
     this.bagScene.container.eventMode = "none";
     this.bagScene.setTopHudExitProgress(0);
+  }
+
+  private async preloadCurrentBattleResources(): Promise<void> {
+    await Promise.all([
+      assetManager.preloadBattleWave(this.level, this.session.currentWave, this.bagScene.getState()),
+      audio.preloadGroups(["battle"]),
+    ]);
   }
 
   private beginBattleSceneTransition(): void {
@@ -188,6 +221,7 @@ export class RunScene extends BaseScene {
     this.battleScene.setTopHudRevealProgress(0);
     this.battleScene.setFenceRevealProgress(0);
     this.container.addChild(this.battleScene.container);
+    void assetManager.preloadWaveVictoryAnimations();
     this.applyViewOffsets();
     this.applyUiTransition();
   }
@@ -241,6 +275,7 @@ export class RunScene extends BaseScene {
     audio.playMusicEvent("music_bag");
     this.applyViewOffsets();
     this.persistRecoverySnapshot("preparing");
+    void this.preloadCurrentBattleResources();
   }
 
   private applyViewOffsets(): void {
@@ -295,12 +330,15 @@ export class RunScene extends BaseScene {
       bag: this.bagScene.getState(),
       session: this.session,
     });
-    debugTrace("run_recovery_save", {
-      levelId: this.level.id,
-      phase,
-      wave: this.session.currentWave,
-      baseHp: Math.round(this.session.baseHp),
-    });
+    if (this.lastRecoveryTracePhase !== phase) {
+      this.lastRecoveryTracePhase = phase;
+      debugTrace("run_recovery_save", {
+        levelId: this.level.id,
+        phase,
+        wave: this.session.currentWave,
+        baseHp: Math.round(this.session.baseHp),
+      });
+    }
   }
 
   private stopRecoverySnapshot(): void {

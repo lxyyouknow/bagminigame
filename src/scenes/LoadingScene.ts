@@ -38,13 +38,17 @@ export class LoadingScene extends BaseScene {
       await assetManager.preloadGroups(["boot"]);
       if (this.disposed) return;
       this.redraw();
-      await audio.preloadGroups(["boot", "main", "login", "bag", "battle", "ui"]);
-      audio.preloadGroupsInBackground(["main", "bag", "battle"]);
-      await assetManager.preloadGroups(["boot", "main", "login", "bag", "battle", "ui"]);
+      // 首屏只加载登录必需资源，背包和战斗帧动画在进入关卡后按需加载。
+      await audio.preloadGroups(["boot", "main", "login", "ui"]);
+      audio.preloadGroupsInBackground(["main"]);
+      await assetManager.preloadGroups(["main", "login", "ui"]);
       if (this.disposed) return;
       analytics.track("loading_complete", { levelCount: data.levels.length });
       this.progress = 1;
       this.redraw();
+      // 登录页展示后在后台准备背包核心资源，玩家点击开始时通常已可直接进入。
+      void assetManager.preloadBagCore();
+      audio.preloadGroupsInBackground(["bag"]);
       window.setTimeout(() => {
         try {
           const recoveryResult = inspectRunRecoverySnapshot(save.getAccountId());

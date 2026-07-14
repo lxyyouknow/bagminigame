@@ -70,33 +70,16 @@ saveRunRecoverySnapshot({
   session,
 });
 
-assertEqual(storage.getItem("backpack_run_recovery_v1"), null, "禁用恢复后不应写入 localStorage 快照");
-assertEqual(sessionStorage.getItem("backpack_run_recovery_v1"), null, "禁用恢复后不应写入 sessionStorage 快照");
+assertEqual(storage.getItem("backpack_run_recovery_v1") !== null, true, "应写入 localStorage 恢复快照");
+assertEqual(sessionStorage.getItem("backpack_run_recovery_v1") !== null, true, "应写入 sessionStorage 恢复快照");
 
-storage.setItem("backpack_run_recovery_v1", JSON.stringify({
-  version: 1,
-  accountId: "test_lxy",
-  levelId: 1,
-  phase: "preparing",
-  savedAt: 20_000,
-  bag,
-  session,
-}));
-sessionStorage.setItem("backpack_run_recovery_v1", JSON.stringify({
-  version: 1,
-  accountId: "test_lxy",
-  levelId: 1,
-  phase: "preparing",
-  savedAt: 20_000,
-  bag,
-  session,
-}));
-
-assertEqual(loadRunRecoverySnapshot("test_lxy", 21_000), undefined, "禁用恢复后不应恢复旧快照");
-assertEqual(storage.getItem("backpack_run_recovery_v1"), null, "读取恢复时应清理旧 localStorage 快照");
-assertEqual(sessionStorage.getItem("backpack_run_recovery_v1"), null, "读取恢复时应清理旧 sessionStorage 快照");
+const restored = loadRunRecoverySnapshot("test_lxy", 11_000);
+assertEqual(restored?.levelId, 1, "刷新后应恢复原关卡");
+assertEqual(restored?.session.currentWave, 2, "刷新后应恢复当前波次");
+assertEqual(restored?.session.baseHp, 720, "刷新后应恢复基地血量");
+assertEqual(loadRunRecoverySnapshot("other_account", 11_000), undefined, "不同账号不能读取该快照");
 
 clearRunRecoverySnapshot();
-assertEqual(loadRunRecoverySnapshot("test_lxy", 21_000), undefined, "清理后仍不应恢复快照");
+assertEqual(loadRunRecoverySnapshot("test_lxy", 11_000), undefined, "主动退出后不应继续恢复快照");
 
 console.log("run-recovery-state tests ok");
